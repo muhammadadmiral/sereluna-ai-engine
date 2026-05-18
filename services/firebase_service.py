@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import date, datetime
 from typing import Any, Dict, Optional
 
 import firebase_admin
@@ -40,6 +41,26 @@ def initialize_firebase() -> None:
 def get_firestore_client():
     initialize_firebase()
     return firestore.client()
+
+
+def server_timestamp():
+    return firestore.SERVER_TIMESTAMP
+
+
+def user_document(uid: str):
+    return get_firestore_client().collection("users").document(uid)
+
+
+def serialize_firestore_value(value: Any) -> Any:
+    if value is None:
+        return None
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {key: serialize_firestore_value(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [serialize_firestore_value(item) for item in value]
+    return value
 
 
 def verify_id_token(id_token: str) -> Dict[str, Any]:

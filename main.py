@@ -1,6 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import chat_router, context_router, screening_router
+from routers import (
+    chat_router,
+    context_router,
+    device_router,
+    diary_router,
+    notification_router,
+    profile_router,
+    screening_router,
+    sleep_router,
+)
 
 app = FastAPI(title="Sereluna AI Engine", version="1.0.0")
 
@@ -17,6 +26,11 @@ app.add_middleware(
 app.include_router(chat_router.router)
 app.include_router(screening_router.router)
 app.include_router(context_router.router)
+app.include_router(profile_router.router, prefix="/api/v1")
+app.include_router(diary_router.router, prefix="/api/v1")
+app.include_router(notification_router.router, prefix="/api/v1")
+app.include_router(device_router.router, prefix="/api/v1")
+app.include_router(sleep_router.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
