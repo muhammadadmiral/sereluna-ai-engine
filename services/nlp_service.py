@@ -13,6 +13,8 @@ RISK_KEYWORDS = {
     "pii": ["nik", "ktp", "alamat lengkap", "nomor kartu"],
 }
 RISK_WEIGHTS = {"crisis": 3, "violence": 2, "sexual": 1, "pii": 1}
+RISK_THRESHOLDS = {"medium": 2, "high": 3}
+DIARY_RETRIEVAL_THRESHOLD = 0.1
 
 NEGATIVE_WORDS = {
     "sedih", "capek", "lelah", "takut", "cemas", "khawatir", "panik",
@@ -40,29 +42,115 @@ DASS21_THRESHOLDS = {
 def extract_keywords(text: str) -> List[str]:
     if not text:
         return []
-    kw_extractor = yake.KeywordExtractor(lan="id", n=1, top=3, features=None)
-    keywords = kw_extractor.extract_keywords(text)
-    return [kw[0] for kw in keywords]
+    try:
+        kw_extractor = yake.KeywordExtractor(lan="id", n=1, top=3, features=None)
+        keywords = kw_extractor.extract_keywords(text)
+        return [kw[0] for kw in keywords]
+    except Exception:
+        return []
 
 
-def find_relevant_diary(current_text: str, past_diaries: List[str]) -> Optional[str]:
+def find_relevant_diary_with_score(
+    current_text: str,
+    past_diaries: List[str],
+    threshold: float = DIARY_RETRIEVAL_THRESHOLD,
+) -> Dict[str, Any]:
     clean_diaries = [diary for diary in past_diaries if diary and diary.strip()]
     if not clean_diaries or not current_text:
-        return None
+        return {
+            "diary": None,
+            "similarity": 0.0,
+            "index": None,
+            "threshold": threshold,
+        }
 
     documents = clean_diaries + [current_text]
-    vectorizer = TfidfVectorizer().fit_transform(documents)
-    vectors = vectorizer.toarray()
+    try:
+        vectorizer = TfidfVectorizer().fit_transform(documents)
+        vectors = vectorizer.toarray()
+    except ValueError:
+        return {
+            "diary": None,
+            "similarity": 0.0,
+            "index": None,
+            "threshold": threshold,
+        }
 
     current_vec = vectors[-1].reshape(1, -1)
     past_vecs = vectors[:-1]
 
     cosine_sim = cosine_similarity(current_vec, past_vecs).flatten()
     most_relevant_idx = cosine_sim.argsort()[-1]
+    similarity = float(cosine_sim[most_relevant_idx])
 
-    if cosine_sim[most_relevant_idx] > 0.1:
-        return clean_diaries[most_relevant_idx]
-    return None
+    return {
+        "diary": clean_diaries[most_relevant_idx] if similarity > threshold else None,
+        "similarity": similarity,
+        "index": int(most_relevant_idx),
+        "threshold": threshold,
+    }
+
+
+def find_relevant_diary(current_text: str, past_diaries: List[str]) -> Optional[str]:
+    return find_relevant_diary_with_score(current_text, past_diaries)["diary"]
+
+
+def classify_risk(
+    text: str,
+    screening_context: str = "",
+    session_summary: str = "",
+    client_risk: str = "",
+) -> Dict[str, Any]:
+    normalized_client_risk = (client_risk or "").strip().lower()
+    if normalized_client_risk in {"high", "medium"}:
+        return {
+            "level": normalized_client_risk,
+            "score": RISK_THRESHOLDS[normalized_client_risk],
+            "matches": [],
+            "reason": "client_override",
+        }
+
+    combined_text = f"{screening_context or ''} {session_summary or ''} {text or ''}".lower()
+    matches: List[Dict[str, Any]] = []
+    score = 0
+
+    for category, keywords in RISK_KEYWORDS.items():
+        for keyword in keywords:
+            if keyword in combined_text:
+                weight = RISK_WEIGHTS[category]
+                score += weight
+                matches.append({"category": category, "keyword": keyword, "weight": weight})
+
+    crisis_pattern = re.compile(r"(bunuh diri|mengakhiri hidup|menyakiti diri|self harm)", re.IGNORECASE)
+    severe_pattern = re.compile(r"(ekstrem|sangat berat|berat|severe|extremely severe)", re.IGNORECASE)
+    medium_pattern = re.compile(r"(sedang|moderate)", re.IGNORECASE)
+
+    if crisis_pattern.search(combined_text):
+        level = "high"
+        reason = "crisis_pattern"
+    elif score >= RISK_THRESHOLDS["high"]:
+        level = "high"
+        reason = "weighted_keyword_score"
+    elif severe_pattern.search(screening_context or ""):
+        level = "high"
+        reason = "severe_screening_context"
+    elif score >= RISK_THRESHOLDS["medium"]:
+        level = "medium"
+        reason = "weighted_keyword_score"
+    elif medium_pattern.search(screening_context or ""):
+        level = "medium"
+        reason = "moderate_screening_context"
+    else:
+        level = "low"
+        reason = "no_threshold_reached"
+
+    return {
+        "level": level,
+        "score": score,
+        "matches": matches,
+        "reason": reason,
+        "thresholds": RISK_THRESHOLDS,
+    }
 
 
 def calculate_risk_level(
@@ -71,30 +159,7 @@ def calculate_risk_level(
     session_summary: str = "",
     client_risk: str = "",
 ) -> str:
-    normalized_client_risk = (client_risk or "").strip().lower()
-    if normalized_client_risk in {"high", "medium"}:
-        return normalized_client_risk
-
-    combined_text = f"{screening_context or ''} {session_summary or ''} {text or ''}".lower()
-
-    score = 0
-    for category, keywords in RISK_KEYWORDS.items():
-        for keyword in keywords:
-            if keyword in combined_text:
-                score += RISK_WEIGHTS[category]
-
-    crisis_pattern = re.compile(r"(bunuh diri|mengakhiri hidup|menyakiti diri|self harm)", re.IGNORECASE)
-    severe_pattern = re.compile(r"(ekstrem|sangat berat|berat|severe|extremely severe)", re.IGNORECASE)
-    medium_pattern = re.compile(r"(sedang|moderate)", re.IGNORECASE)
-
-    if crisis_pattern.search(combined_text):
-        return "high"
-    if score >= 3 or severe_pattern.search(screening_context or ""):
-        return "high"
-    if score >= 2 or medium_pattern.search(screening_context or ""):
-        return "medium"
-
-    return "low"
+    return classify_risk(text, screening_context, session_summary, client_risk)["level"]
 
 
 def calculate_sentiment_score(text: str, mood_signal: str = "") -> int:
@@ -156,4 +221,41 @@ def score_dass21(answers: List[int]) -> Dict[str, Any]:
         "scores": scores,
         "severity": severity,
         "summary": summary,
+        "algorithm": {
+            "name": "DASS-21 scoring",
+            "description": "Sum selected item groups and multiply by 2, then map scores to severity bands.",
+            "item_indexes": DASS21_INDEXES,
+            "thresholds": DASS21_THRESHOLDS,
+        },
+    }
+
+
+def build_context_algorithm_result(
+    text: str,
+    mood_signal: str,
+    screening_context: str,
+    session_summary: str,
+    past_diaries: List[str],
+) -> Dict[str, Any]:
+    risk = classify_risk(
+        text=text,
+        screening_context=screening_context,
+        session_summary=session_summary,
+    )
+    retrieval = find_relevant_diary_with_score(text, past_diaries)
+    keywords = extract_keywords(text)
+    sentiment_score = calculate_sentiment_score(text, mood_signal)
+
+    return {
+        "risk_level": risk["level"],
+        "risk": risk,
+        "sentiment_score": sentiment_score,
+        "keywords": keywords,
+        "relevant_diary": retrieval["diary"],
+        "retrieval": retrieval,
+        "algorithms": [
+            "weighted_rule_based_risk_classification",
+            "lexicon_based_sentiment_scoring",
+            "tfidf_cosine_similarity_diary_retrieval",
+        ],
     }

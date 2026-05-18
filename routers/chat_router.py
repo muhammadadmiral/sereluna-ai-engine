@@ -16,7 +16,7 @@ from services.context_service import (
 )
 from services.firebase_service import get_current_user
 from services.llm_service import analyze_symptoms_llm, build_fallback_session_summary, generate_dialog, generate_summary
-from services.nlp_service import calculate_risk_level, calculate_sentiment_score, extract_keywords, find_relevant_diary
+from services.nlp_service import build_context_algorithm_result
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 
@@ -66,12 +66,15 @@ async def chat_endpoint(
     history_text = context["session_history"]
     past_diaries = context["past_diaries"]
 
-    risk_level = calculate_risk_level(
+    algorithm_result = build_context_algorithm_result(
         text=user_text,
+        mood_signal=request.mood_signal or "",
         screening_context=screening_context,
         session_summary=session_summary,
+        past_diaries=past_diaries,
     )
-    sentiment_score = calculate_sentiment_score(user_text, request.mood_signal or "")
+    risk_level = algorithm_result["risk_level"]
+    sentiment_score = algorithm_result["sentiment_score"]
 
     if risk_level == "high":
         reply = _safety_reply()
@@ -88,7 +91,11 @@ async def chat_endpoint(
             session_id=session_id,
             role="assistant",
             text=reply,
-            metadata={"risk_level": risk_level, "safety_response": True},
+            metadata={
+                "risk_level": risk_level,
+                "safety_response": True,
+                "algorithm_result": algorithm_result,
+            },
         )
         update_chat_summaries(uid, room_id, session_id, next_summary)
         return ChatResponse(
@@ -104,8 +111,8 @@ async def chat_endpoint(
             session_id=session_id,
         )
 
-    keywords = extract_keywords(user_text)
-    relevant_diary = find_relevant_diary(user_text, past_diaries)
+    keywords = algorithm_result["keywords"]
+    relevant_diary = algorithm_result["relevant_diary"]
     analysis_result = analyze_symptoms_llm(user_text)
     bot_result = generate_dialog(
         user_message=user_text,
@@ -138,8 +145,10 @@ async def chat_endpoint(
         text=reply,
         metadata={
             "risk_level": risk_level,
-            "sentiment_score": bot_result.get("sentiment_score", sentiment_score),
+            "sentiment_score": sentiment_score,
+            "llm_sentiment_score": bot_result.get("sentiment_score"),
             "suggested_action": bot_result.get("suggested_action"),
+            "algorithm_result": algorithm_result,
         },
     )
     update_chat_summaries(uid, room_id, session_id, next_summary)
@@ -147,7 +156,7 @@ async def chat_endpoint(
     return ChatResponse(
         reply=reply,
         ui_metadata=UIMetadata(
-            sentiment_score=bot_result.get("sentiment_score", sentiment_score),
+            sentiment_score=sentiment_score,
             suggested_action=bot_result.get("suggested_action"),
             is_risky=bot_result.get("risk_flag", False),
         ),

@@ -263,6 +263,7 @@ def save_screening(uid: str, result: Dict[str, Any], note: str = "") -> Dict[str
         "scores": result["scores"],
         "severity": result["severity"],
         "summary": result["summary"],
+        "algorithm": result.get("algorithm", {}),
         "note": note or "",
         "createdAt": _server_timestamp(),
         "updatedAt": _server_timestamp(),
