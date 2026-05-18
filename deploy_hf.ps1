@@ -49,11 +49,17 @@ try {
     }
     $groqKey = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($groqKeyPtr)
     $repoId = "$username/$spaceName"
-    $firebaseJson = Get-Content $firebasePath -Raw | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 100
-    $firebaseProjectId = (Get-Content $firebasePath -Raw | ConvertFrom-Json).project_id
+    $firebaseAccount = Get-Content $firebasePath -Raw | ConvertFrom-Json
+    $firebaseJson = $firebaseAccount | ConvertTo-Json -Compress -Depth 100
+    $firebaseProjectId = $firebaseAccount.project_id
     if ([string]::IsNullOrWhiteSpace($firebaseProjectId)) {
         throw "Firebase service account JSON does not contain project_id."
     }
+    $tempSecretsFile = Join-Path $env:TEMP "sereluna-hf-secrets-$([guid]::NewGuid().ToString('N')).env"
+    $tempSecretsContent = @(
+        "GROQ_API_KEY=$groqKey"
+        "FIREBASE_SERVICE_ACCOUNT_JSON=$firebaseJson"
+    ) -join "`n"
 
     Write-Host "Logging in to Hugging Face..."
     Invoke-Hf auth login --token $hfToken --add-to-git-credential
@@ -69,10 +75,17 @@ try {
         --env "APP_TIMEZONE=Asia/Jakarta"
 
     Write-Host "Setting Space secrets..."
-    Invoke-Hf spaces secrets add $repoId `
-        -s "GROQ_API_KEY=$groqKey" `
-        -s "FIREBASE_SERVICE_ACCOUNT_JSON=$firebaseJson" `
-        --token $hfToken
+    Set-Content -LiteralPath $tempSecretsFile -Value $tempSecretsContent -Encoding utf8
+    try {
+        Invoke-Hf spaces secrets add $repoId `
+            --secrets-file $tempSecretsFile `
+            --token $hfToken
+    }
+    finally {
+        if (Test-Path $tempSecretsFile) {
+            Remove-Item -LiteralPath $tempSecretsFile -Force
+        }
+    }
 
     Write-Host "Setting Firebase project variables: $firebaseProjectId"
     Invoke-Hf spaces variables add $repoId `
