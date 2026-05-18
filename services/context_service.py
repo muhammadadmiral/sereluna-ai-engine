@@ -152,6 +152,32 @@ def format_messages(messages: List[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
+def build_memory_context(
+    profile_context: str,
+    latest_screening_summary: str,
+    latest_diary_summary: str,
+    session_summary: str,
+    history_text: str,
+    past_diaries: List[str],
+) -> str:
+    sections: List[str] = []
+    if profile_context.strip():
+        sections.append(f"Profil inti:\n{profile_context.strip()}")
+    if latest_screening_summary.strip():
+        sections.append(f"Ringkasan screening terbaru:\n{latest_screening_summary.strip()}")
+    if latest_diary_summary.strip():
+        sections.append(f"Ringkasan diary terbaru:\n{latest_diary_summary.strip()}")
+    if session_summary.strip():
+        sections.append(f"Ringkasan sesi berjalan:\n{session_summary.strip()}")
+    if past_diaries:
+        recent_diaries = "\n".join(f"- {item}" for item in past_diaries[:5] if item and item.strip())
+        if recent_diaries.strip():
+            sections.append(f"Diary relevan sebelumnya:\n{recent_diaries}")
+    if history_text.strip():
+        sections.append(f"Transcript chat terbaru:\n{history_text.strip()}")
+    return "\n\n".join(sections).strip()
+
+
 def get_recent_diary_summaries(uid: str, limit: int = 5) -> List[str]:
     diaries_ref = _user_ref(uid).collection("diaries")
     summaries: List[str] = []
@@ -188,6 +214,15 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
     latest_diary_summary = user_data.get("latestDiarySummary") or ""
     past_diaries = get_recent_diary_summaries(uid, limit=5)
     has_screening_today = bool(user_data.get("hasScreeningToday")) and user_data.get("lastScreeningDate") == today_id()
+    recent_history_text = format_messages(messages[-60:])
+    memory_context = build_memory_context(
+        profile_context=profile_context,
+        latest_screening_summary=latest_screening_summary,
+        latest_diary_summary=latest_diary_summary,
+        session_summary=session_data.get("summary") or latest_diary_summary,
+        history_text=recent_history_text,
+        past_diaries=past_diaries,
+    )
 
     return {
         "name": name,
@@ -196,7 +231,8 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
         "latest_screening_summary": latest_screening_summary,
         "latest_diary_summary": latest_diary_summary,
         "session_summary": session_data.get("summary") or latest_diary_summary,
-        "session_history": format_messages(messages[-20:]),
+        "session_history": recent_history_text,
+        "memory_context": memory_context,
         "past_diaries": past_diaries,
         "has_screening_today": has_screening_today,
     }

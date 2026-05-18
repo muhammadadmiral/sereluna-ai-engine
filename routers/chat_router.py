@@ -63,6 +63,7 @@ async def chat_endpoint(
     screening_context = context["latest_screening_summary"]
     session_summary = context["session_summary"]
     profile_context = context["profile_context"]
+    memory_context = context["memory_context"]
     history_text = context["session_history"]
     past_diaries = context["past_diaries"]
 
@@ -74,9 +75,15 @@ async def chat_endpoint(
         past_diaries=past_diaries,
     )
     risk_level = algorithm_result["risk_level"]
+    risk_trace = algorithm_result.get("risk", {})
+    route_to_safety = risk_level == "high" and risk_trace.get("reason") in {
+        "current_crisis_signal",
+        "screening_crisis_signal",
+        "severe_screening_context",
+    }
     sentiment_score = algorithm_result["sentiment_score"]
 
-    if risk_level == "high":
+    if route_to_safety:
         reply = _safety_reply()
         next_summary = build_fallback_session_summary(
             previous_summary=session_summary,
@@ -95,6 +102,7 @@ async def chat_endpoint(
                 "risk_level": risk_level,
                 "safety_response": True,
                 "algorithm_result": algorithm_result,
+                "risk_reason": risk_trace.get("reason"),
             },
         )
         update_chat_summaries(uid, room_id, session_id, next_summary)
@@ -121,6 +129,7 @@ async def chat_endpoint(
         screening_context=screening_context,
         session_summary=session_summary,
         profile_context=profile_context,
+        memory_context=memory_context,
         risk_level=risk_level,
         mood_signal=request.mood_signal or "",
         user_name=context["name"],

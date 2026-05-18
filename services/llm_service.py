@@ -15,6 +15,7 @@ def _completion(
     messages: List[Dict[str, str]],
     response_format: Optional[Dict[str, str]] = None,
     temperature: float = 0.4,
+    max_completion_tokens: Optional[int] = None,
 ) -> str:
     api_key = (os.getenv("GROQ_API_KEY") or "").strip()
     if not api_key:
@@ -26,6 +27,8 @@ def _completion(
         "messages": messages,
         "temperature": temperature,
     }
+    if max_completion_tokens is not None:
+        kwargs["max_completion_tokens"] = max_completion_tokens
     if response_format:
         kwargs["response_format"] = response_format
 
@@ -153,6 +156,7 @@ def generate_dialog(
     screening_context: str,
     session_summary: str,
     profile_context: str,
+    memory_context: str,
     risk_level: str,
     mood_signal: str,
     user_name: str,
@@ -199,6 +203,7 @@ def generate_dialog(
 
     system_prompt = f"""Kamu adalah Sereluna, teman curhat dan asisten digital yang empatik untuk {safe_user_name}.
 Gunakan bahasa Indonesia sehari-hari yang hangat, natural, dan tidak menggurui. Kamu bukan pengganti psikolog, tetapi kamu bisa memberi dukungan emosional awal dan mengarahkan user ke fitur Konselor jika perlu.
+Jawaban harus cukup panjang, natural, dan terasa manusiawi. Idealnya 2-4 paragraf ringkas, kecuali user memang meminta jawaban singkat. Jangan terlalu pendek.
 
 DATA USER & KONTEKS:
 - Nama user: {safe_user_name}
@@ -209,6 +214,7 @@ DATA USER & KONTEKS:
 - Profile context: {_truncate(profile_context, 1000) or "N/A"}
 - Kata kunci percakapan: {keywords_str}
 - {diary_context}
+- Memory context gabungan: {_truncate(memory_context, 5000) or "N/A"}
 
 ATURAN:
 1. {greeting_guideline}
@@ -230,7 +236,7 @@ Schema JSON:
 {_truncate(session_summary, 1500) or "N/A"}
 
 Riwayat chat mentah sesi ini:
-{_truncate(history_text, 2000) or "N/A"}
+{_truncate(history_text, 6000) or "N/A"}
 
 Pesan user sekarang:
 {user_message or ""}"""
@@ -243,6 +249,7 @@ Pesan user sekarang:
             ],
             response_format={"type": "json_object"},
             temperature=0.5,
+            max_completion_tokens=900,
         )
         parsed = _parse_json_object(content, {})
         reply = (parsed.get("reply") or fallback_reply).strip()
@@ -311,6 +318,7 @@ def generate_summary(
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0.3,
+            max_completion_tokens=500,
         )
         return content.strip() or _fallback_final_summary(session_raw, session_summary, safe_user_name)
     except Exception:

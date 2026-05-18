@@ -8,13 +8,39 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 RISK_KEYWORDS = {
     "crisis": ["bunuh diri", "mengakhiri hidup", "self harm", "menyakiti diri", "mati saja"],
-    "violence": ["bunuh", "pukul", "bacok", "tusuk", "ledak"],
+    "violence": ["bunuh", "bacok", "tusuk", "ledak", "hajar", "serang"],
     "sexual": ["seks", "porno", "mesum"],
     "pii": ["nik", "ktp", "alamat lengkap", "nomor kartu"],
 }
 RISK_WEIGHTS = {"crisis": 3, "violence": 2, "sexual": 1, "pii": 1}
 RISK_THRESHOLDS = {"medium": 2, "high": 3}
 DIARY_RETRIEVAL_THRESHOLD = 0.1
+
+CRISIS_PATTERNS = [
+    r"\bbunuh\s*diri\b",
+    r"\bmengakhiri\s+hidup\b",
+    r"\bmenyakiti\s+diri\b",
+    r"\bself\s*harm\b",
+    r"\bmati\s+saja\b",
+]
+VIOLENCE_PATTERNS = [
+    r"\bbacok\b",
+    r"\btusuk\b",
+    r"\bledak\b",
+    r"\bhajar\b",
+    r"\bserang\b",
+]
+AMBIGUOUS_VIOLENCE_PATTERNS = [
+    r"\bpukul\s+berapa\b",
+    r"\bpukul\s+\d{1,2}(\.\d{2})?\b",
+    r"\bpukul\s+jam\b",
+]
+PII_PATTERNS = [
+    r"\bnik\b",
+    r"\bktp\b",
+    r"\balamat\s+lengkap\b",
+    r"\bnomor\s+kartu\b",
+]
 
 NEGATIVE_WORDS = {
     "sedih", "capek", "lelah", "takut", "cemas", "khawatir", "panik",
@@ -48,6 +74,25 @@ def extract_keywords(text: str) -> List[str]:
         return [kw[0] for kw in keywords]
     except Exception:
         return []
+
+
+def _normalize_text(text: str) -> str:
+    normalized = (text or "").lower()
+    normalized = re.sub(r"[^\w\s]", " ", normalized)
+    normalized = re.sub(r"\s+", " ", normalized).strip()
+    return normalized
+
+
+def _match_patterns(text: str, patterns: List[str]) -> List[str]:
+    matches: List[str] = []
+    for pattern in patterns:
+        if re.search(pattern, text, flags=re.IGNORECASE):
+            matches.append(pattern)
+    return matches
+
+
+def _has_ambiguous_violence_context(text: str) -> bool:
+    return bool(_match_patterns(text, AMBIGUOUS_VIOLENCE_PATTERNS))
 
 
 def find_relevant_diary_with_score(
@@ -108,35 +153,65 @@ def classify_risk(
             "score": RISK_THRESHOLDS[normalized_client_risk],
             "matches": [],
             "reason": "client_override",
+            "confidence": 1.0,
         }
 
-    combined_text = f"{screening_context or ''} {session_summary or ''} {text or ''}".lower()
+    current_text = _normalize_text(text)
+    screening_text = _normalize_text(screening_context)
+    summary_text = _normalize_text(session_summary)
     matches: List[Dict[str, Any]] = []
     score = 0
 
-    for category, keywords in RISK_KEYWORDS.items():
-        for keyword in keywords:
-            if keyword in combined_text:
-                weight = RISK_WEIGHTS[category]
-                score += weight
-                matches.append({"category": category, "keyword": keyword, "weight": weight})
+    crisis_current = _match_patterns(current_text, CRISIS_PATTERNS)
+    crisis_screening = _match_patterns(screening_text, CRISIS_PATTERNS)
+    crisis_summary = _match_patterns(summary_text, CRISIS_PATTERNS)
+    violence_current = _match_patterns(current_text, VIOLENCE_PATTERNS)
+    sexual_current = _match_patterns(current_text, [r"\bseks\b", r"\bporno\b", r"\bmesum\b"])
+    pii_current = _match_patterns(current_text, PII_PATTERNS)
 
-    crisis_pattern = re.compile(r"(bunuh diri|mengakhiri hidup|menyakiti diri|self harm)", re.IGNORECASE)
+    if crisis_current:
+        score += RISK_WEIGHTS["crisis"]
+        matches.extend({"category": "crisis", "keyword": pattern, "weight": RISK_WEIGHTS["crisis"], "source": "current_text"} for pattern in crisis_current)
+    if crisis_screening:
+        score += RISK_WEIGHTS["crisis"]
+        matches.extend({"category": "crisis", "keyword": pattern, "weight": RISK_WEIGHTS["crisis"], "source": "screening_context"} for pattern in crisis_screening)
+    if crisis_summary and not crisis_current:
+        score += RISK_WEIGHTS["crisis"]
+        matches.extend({"category": "crisis", "keyword": pattern, "weight": RISK_WEIGHTS["crisis"], "source": "session_summary"} for pattern in crisis_summary)
+
+    if violence_current:
+        if _has_ambiguous_violence_context(current_text):
+            matches.extend({"category": "violence", "keyword": pattern, "weight": 0, "source": "ambiguous"} for pattern in violence_current)
+        else:
+            score += RISK_WEIGHTS["violence"]
+            matches.extend({"category": "violence", "keyword": pattern, "weight": RISK_WEIGHTS["violence"], "source": "current_text"} for pattern in violence_current)
+
+    if sexual_current:
+        score += RISK_WEIGHTS["sexual"]
+        matches.extend({"category": "sexual", "keyword": pattern, "weight": RISK_WEIGHTS["sexual"], "source": "current_text"} for pattern in sexual_current)
+
+    if pii_current:
+        score += RISK_WEIGHTS["pii"]
+        matches.extend({"category": "pii", "keyword": pattern, "weight": RISK_WEIGHTS["pii"], "source": "current_text"} for pattern in pii_current)
+
     severe_pattern = re.compile(r"(ekstrem|sangat berat|berat|severe|extremely severe)", re.IGNORECASE)
     medium_pattern = re.compile(r"(sedang|moderate)", re.IGNORECASE)
 
-    if crisis_pattern.search(combined_text):
+    if crisis_current:
         level = "high"
-        reason = "crisis_pattern"
+        reason = "current_crisis_signal"
+    elif crisis_screening:
+        level = "high"
+        reason = "screening_crisis_signal"
     elif score >= RISK_THRESHOLDS["high"]:
         level = "high"
-        reason = "weighted_keyword_score"
+        reason = "weighted_signal_score"
     elif severe_pattern.search(screening_context or ""):
         level = "high"
         reason = "severe_screening_context"
     elif score >= RISK_THRESHOLDS["medium"]:
         level = "medium"
-        reason = "weighted_keyword_score"
+        reason = "weighted_signal_score"
     elif medium_pattern.search(screening_context or ""):
         level = "medium"
         reason = "moderate_screening_context"
@@ -144,11 +219,18 @@ def classify_risk(
         level = "low"
         reason = "no_threshold_reached"
 
+    confidence = 0.25
+    if level == "high":
+        confidence = 0.95 if (crisis_current or crisis_screening) else 0.8
+    elif level == "medium":
+        confidence = 0.6 if score >= 2 else 0.45
+
     return {
         "level": level,
         "score": score,
         "matches": matches,
         "reason": reason,
+        "confidence": confidence,
         "thresholds": RISK_THRESHOLDS,
     }
 
