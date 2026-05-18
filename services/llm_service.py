@@ -1,15 +1,116 @@
-import os
 import json
-from groq import Groq
+import os
+import re
+from typing import Any, Dict, List, Optional
+
 from dotenv import load_dotenv
-from typing import List, Dict, Any, Optional
+from groq import Groq
 
 load_dotenv()
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-MODEL_NAME = "llama-3.1-8b-instant"
+MODEL_NAME = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
-def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
+
+def _completion(
+    messages: List[Dict[str, str]],
+    groq_api_key: Optional[str] = None,
+    response_format: Optional[Dict[str, str]] = None,
+    temperature: float = 0.4,
+) -> str:
+    api_key = (groq_api_key or os.getenv("GROQ_API_KEY") or "").strip()
+    if not api_key:
+        raise RuntimeError("GROQ_API_KEY is missing")
+
+    client = Groq(api_key=api_key)
+    kwargs: Dict[str, Any] = {
+        "model": MODEL_NAME,
+        "messages": messages,
+        "temperature": temperature,
+    }
+    if response_format:
+        kwargs["response_format"] = response_format
+
+    response = client.chat.completions.create(**kwargs)
+    return response.choices[0].message.content or ""
+
+
+def _parse_json_object(raw: str, fallback: Dict[str, Any]) -> Dict[str, Any]:
+    if not raw:
+        return fallback
+
+    cleaned = raw.strip()
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+
+    try:
+        parsed = json.loads(cleaned)
+        return parsed if isinstance(parsed, dict) else fallback
+    except json.JSONDecodeError:
+        start = cleaned.find("{")
+        end = cleaned.rfind("}")
+        if start >= 0 and end > start:
+            try:
+                parsed = json.loads(cleaned[start : end + 1])
+                return parsed if isinstance(parsed, dict) else fallback
+            except json.JSONDecodeError:
+                pass
+    return fallback
+
+
+def _truncate(value: Optional[str], limit: int) -> str:
+    text = (value or "").strip()
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3].rstrip() + "..."
+
+
+def _coerce_score(value: Any, default: int = 3) -> int:
+    try:
+        score = int(value)
+    except (TypeError, ValueError):
+        return default
+    return max(1, min(score, 5))
+
+
+def _coerce_bool(value: Any, default: bool = False) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in {"true", "1", "yes", "ya"}
+    return default
+
+
+def _coerce_optional_text(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text or text.lower() in {"null", "none", "n/a"}:
+        return None
+    return text
+
+
+def build_fallback_session_summary(
+    previous_summary: Optional[str],
+    user_message: Optional[str],
+    assistant_reply: Optional[str],
+    mood_signal: Optional[str] = "",
+    risk_level: Optional[str] = "low",
+) -> str:
+    parts: List[str] = []
+    if previous_summary and previous_summary.strip():
+        parts.append(f"Ringkasan sebelumnya: {_truncate(previous_summary, 900)}")
+    if user_message and user_message.strip():
+        parts.append(f"Pesan terbaru user: {_truncate(user_message, 260)}")
+    if assistant_reply and assistant_reply.strip():
+        parts.append(f"Respons Sereluna: {_truncate(assistant_reply, 260)}")
+    if mood_signal or risk_level:
+        parts.append(f"Sinyal terbaru: mood={mood_signal or 'N/A'}, risiko={risk_level or 'low'}.")
+
+    return " ".join(parts).strip() or "Belum ada ringkasan sesi yang cukup."
+
+
+def analyze_symptoms_llm(user_message: str, groq_api_key: Optional[str] = None) -> Dict[str, Any]:
     dass_reference = """
     Reference DASS-21 Indicators:
     1. DEPRESSION: Hopelessness, devaluation of life, self-deprecation, lack of interest, anhedonia.
@@ -17,28 +118,36 @@ def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
     3. STRESS: Difficulty relaxing, nervous arousal, easily upset/agitated, irritable/over-reactive.
     """
     system_prompt = (
-        f"ROLE: Psychological Screening Assistant.\n"
-        f"TASK: Analyze 'User Input' and map strictly to 'Reference DASS-21'.\n"
+        "ROLE: Psychological Screening Assistant.\n"
+        "TASK: Analyze 'User Input' and map strictly to 'Reference DASS-21'.\n"
         f"{dass_reference}\n\n"
-        f"INSTRUCTION:\n"
-        f"- Identify symptoms present in the text.\n"
-        f"- Return JSON ONLY.\n"
-        f"- Schema: {{ 'detected_symptoms': ['string'], 'dominant_category': 'Depression' | 'Anxiety' | 'Stress' | 'None' | 'Mixed' }}"
+        "INSTRUCTION:\n"
+        "- Identify symptoms present in the text.\n"
+        "- Return JSON ONLY.\n"
+        "- Schema: {\"detected_symptoms\": [\"string\"], "
+        "\"dominant_category\": \"Depression\" | \"Anxiety\" | \"Stress\" | \"None\" | \"Mixed\"}"
     )
-    user_prompt = f"USER INPUT: '{user_message}'"
-    
+    user_prompt = f"USER INPUT: '{user_message or ''}'"
+    fallback = {"detected_symptoms": [], "dominant_category": "None"}
+
     try:
-        response = client.chat.completions.create(
-            model=MODEL_NAME,
+        content = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": user_prompt},
             ],
-            response_format={"type": "json_object"}
+            groq_api_key=groq_api_key,
+            response_format={"type": "json_object"},
+            temperature=0.1,
         )
-        return json.loads(response.choices[0].message.content)
-    except Exception as e:
-        return {"detected_symptoms": [], "dominant_category": "None"}
+        parsed = _parse_json_object(content, fallback)
+        return {
+            "detected_symptoms": parsed.get("detected_symptoms") or [],
+            "dominant_category": parsed.get("dominant_category") or "None",
+        }
+    except Exception:
+        return fallback
+
 
 def generate_dialog(
     user_message: str,
@@ -51,75 +160,164 @@ def generate_dialog(
     user_name: str,
     history_text: str,
     keywords: List[str],
-    relevant_diary: Optional[str] = None
+    relevant_diary: Optional[str] = None,
+    groq_api_key: Optional[str] = None,
 ) -> Dict[str, Any]:
     symptoms = analysis_data.get("detected_symptoms", [])
     category = analysis_data.get("dominant_category", "None")
-    
-    is_new_user = (not session_summary or len(session_summary.strip()) < 10) and (not history_text or len(history_text.strip()) < 10)
+    safe_user_name = (user_name or "Teman").strip() or "Teman"
+
+    is_new_user = (
+        not session_summary
+        or len(session_summary.strip()) < 10
+    ) and (
+        not history_text
+        or len(history_text.strip()) < 10
+    )
     greeting_guideline = (
-        "Ini adalah awal obrolan kalian. Sapa user dengan hangat, tanyakan bagaimana perasaannya hari ini."
-        if is_new_user else
-        "Kalian sedang berada di tengah-tengah obrolan yang sudah berjalan. JANGAN mengulang salam perkenalan (seperti Halo/Selamat pagi/malam). Lanjutkan saja topik yang sedang dibahas."
+        "Ini adalah awal obrolan kalian. Sapa user dengan hangat dan tanyakan kabarnya hari ini."
+        if is_new_user
+        else "Kalian sedang melanjutkan obrolan. Jangan mengulang salam perkenalan; lanjutkan topik yang sedang berjalan."
     )
 
-    diary_context = f"Catatan Diary Masa Lalu yang Relevan: {relevant_diary}" if relevant_diary else "Tidak ada catatan diary masa lalu yang relevan."
+    diary_context = (
+        f"Catatan diary masa lalu yang relevan: {relevant_diary}"
+        if relevant_diary
+        else "Tidak ada catatan diary masa lalu yang relevan."
+    )
     keywords_str = ", ".join(keywords) if keywords else "N/A"
+    symptoms_str = ", ".join(symptoms) if symptoms else "Tidak terdeteksi"
 
-    system_prompt = f"""Kamu adalah Sereluna, teman curhat dan asisten digital yang sangat empatik dan supportif untuk {user_name}.
-Gaya Bicara: Casual, hangat, layaknya sahabat dekat yang mengerti kondisinya. Gunakan bahasa Indonesia sehari-hari yang luwes. Jangan kaku. Berbicaralah dalam beberapa paragraf agar terasa lebih niat dan panjang (jangan hanya 1 paragraf pendek).
+    fallback_reply = (
+        "Aku dengerin, ya. Ceritamu terdengar penting, dan kamu tidak perlu merapikannya dulu "
+        "sebelum cerita ke Sereluna. Coba mulai dari bagian yang paling berat terasa sekarang."
+    )
+    fallback_summary = build_fallback_session_summary(
+        previous_summary=session_summary,
+        user_message=user_message,
+        assistant_reply=fallback_reply,
+        mood_signal=mood_signal,
+        risk_level=risk_level,
+    )
+
+    system_prompt = f"""Kamu adalah Sereluna, teman curhat dan asisten digital yang empatik untuk {safe_user_name}.
+Gunakan bahasa Indonesia sehari-hari yang hangat, natural, dan tidak menggurui. Kamu bukan pengganti psikolog, tetapi kamu bisa memberi dukungan emosional awal dan mengarahkan user ke fitur Konselor jika perlu.
 
 DATA USER & KONTEKS:
-- Skor DASS-21: {category} ({", ".join(symptoms)})
-- Status Sesi: {"Awal Chat (User Baru/Sesi Baru)" if is_new_user else "Melanjutkan Obrolan Lama"}
-- Kata Kunci Percakapan: {keywords_str}
+- Nama user: {safe_user_name}
+- Mood signal dari aplikasi: {mood_signal or "N/A"}
+- Screening context DASS-21: {screening_context or "N/A"}
+- Analisis pesan terbaru: {category} ({symptoms_str})
+- Risk level backend: {risk_level or "low"}
+- Profile context: {_truncate(profile_context, 1000) or "N/A"}
+- Kata kunci percakapan: {keywords_str}
 - {diary_context}
 
-ATURAN WAJIB:
+ATURAN:
 1. {greeting_guideline}
-2. Bicaralah panjang lebar dan komprehensif, tunjukkan empati yang mendalam. Buat user merasa benar-benar didengarkan.
-3. Jika ditanya soal psikolog/konsultasi: Beritahu bahwa Sereluna menyediakan menu "Konselor" di dalam aplikasi dengan konselor khusus yang siap membantu. Arahkan user untuk mencoba menu tersebut.
-4. Jika user toxic/kasar: Tetap sabar dan asik, tanya kenapa dia marah tanpa menceramahi.
-5. JAWAB DALAM FORMAT JSON: {{"reply": "jawaban panjangmu disini (bisa pakai \\n untuk paragraf baru)", "sentiment_score": 1-5, "suggested_action": "saran singkat", "risk_flag": true/false}}"""
+2. Pakai konteks skrining, profil, dan ringkasan sesi hanya untuk menyesuaikan dukungan, bukan untuk memberi diagnosis.
+3. Jika user bertanya soal psikolog atau konsultasi, arahkan ke menu Konselor di aplikasi.
+4. Jika ada tanda bahaya, validasi perasaan user dan sarankan mencari bantuan orang tepercaya atau layanan darurat setempat.
+5. Kembalikan JSON valid saja.
 
-    user_prompt = f"""Konteks Profil: {profile_context or "N/A"}
-Konteks Skrining DASS: {screening_context or "N/A"}
-Konteks Chat/Diary Sebelumnya: {session_summary or "N/A"}
-Riwayat Chat (Terkini):
-{history_text or "Belum ada riwayat"}
+Schema JSON:
+{{
+  "reply": "jawaban Sereluna",
+  "session_summary": "rolling summary singkat yang memperbarui ringkasan sebelumnya dengan pesan dan respons terbaru",
+  "sentiment_score": 1,
+  "suggested_action": "saran singkat atau null",
+  "risk_flag": false
+}}"""
 
-PESAN USER SEKARANG: "{user_message}" """
+    user_prompt = f"""Ringkasan sesi sebelumnya:
+{_truncate(session_summary, 1500) or "N/A"}
+
+Riwayat chat mentah sesi ini:
+{_truncate(history_text, 2000) or "N/A"}
+
+Pesan user sekarang:
+{user_message or ""}"""
 
     try:
-        response = client.chat.completions.create(
-            model=MODEL_NAME,
+        content = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role": "user", "content": user_prompt},
             ],
-            response_format={"type": "json_object"}
+            groq_api_key=groq_api_key,
+            response_format={"type": "json_object"},
+            temperature=0.5,
         )
-        return json.loads(response.choices[0].message.content)
-    except Exception as e:
+        parsed = _parse_json_object(content, {})
+        reply = (parsed.get("reply") or fallback_reply).strip()
+        next_summary = (
+            parsed.get("session_summary")
+            or build_fallback_session_summary(
+                previous_summary=session_summary,
+                user_message=user_message,
+                assistant_reply=reply,
+                mood_signal=mood_signal,
+                risk_level=risk_level,
+            )
+        )
+
         return {
-            "reply": f"Duh, Sereluna lagi pusing nih mikirin kalimat yang pas. Boleh bantu ketik ulang curhatanmu? (Error: {str(e)[:40]})",
+            "reply": reply,
+            "session_summary": next_summary,
+            "sentiment_score": _coerce_score(parsed.get("sentiment_score"), 3),
+            "suggested_action": _coerce_optional_text(parsed.get("suggested_action")),
+            "risk_flag": _coerce_bool(parsed.get("risk_flag"), risk_level == "high"),
+        }
+    except Exception:
+        return {
+            "reply": fallback_reply,
+            "session_summary": fallback_summary,
             "sentiment_score": 3,
             "suggested_action": None,
-            "risk_flag": False
+            "risk_flag": risk_level == "high",
         }
 
-def generate_summary(session_raw: str, session_summary: str, user_name: str) -> str:
-    system_prompt = "Tugasmu adalah merangkum percakapan untuk dijadikan 'Diary' di database. Buat ringkasan yang komprehensif (3-4 kalimat), berbahasa Indonesia, menangkap emosi utama user, masalah yang dibahas, dan dukungan yang telah diberikan."
-    user_prompt = f"Nama: {user_name}\nRiwayat ringkasan lama: {session_summary or 'N/A'}\n\nTeks percakapan lengkap sesi ini:\n{session_raw}"
-    
+
+def _fallback_final_summary(session_raw: str, session_summary: str, user_name: str) -> str:
+    safe_user_name = (user_name or "Teman").strip() or "Teman"
+    if session_summary and session_summary.strip():
+        return session_summary.strip()
+    if session_raw and session_raw.strip():
+        return (
+            f"{safe_user_name} menjalani sesi curhat dengan Sereluna. "
+            f"Percakapan utama: {_truncate(session_raw, 650)}"
+        )
+    return "Sesi selesai, tetapi belum ada cukup percakapan untuk dirangkum."
+
+
+def generate_summary(
+    session_raw: str,
+    session_summary: str,
+    user_name: str,
+    groq_api_key: Optional[str] = None,
+) -> str:
+    safe_user_name = (user_name or "Teman").strip() or "Teman"
+    system_prompt = (
+        "Tugasmu adalah membuat final diary summary dari sesi chat Sereluna. "
+        "Tulis 3-4 kalimat dalam bahasa Indonesia. Rangkum emosi utama user, "
+        "masalah yang dibahas, dukungan yang diberikan, dan tindak lanjut yang relevan. "
+        "Jangan memberi diagnosis klinis."
+    )
+    user_prompt = (
+        f"Nama: {safe_user_name}\n"
+        f"Rolling summary terakhir: {session_summary or 'N/A'}\n\n"
+        f"Teks percakapan lengkap sesi ini:\n{session_raw or 'N/A'}"
+    )
+
     try:
-        response = client.chat.completions.create(
-            model=MODEL_NAME,
+        content = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ]
+                {"role": "user", "content": user_prompt},
+            ],
+            groq_api_key=groq_api_key,
+            temperature=0.3,
         )
-        return response.choices[0].message.content or "Ringkasan tidak tersedia."
+        return content.strip() or _fallback_final_summary(session_raw, session_summary, safe_user_name)
     except Exception:
-        return "Ringkasan tidak tersedia."
+        return _fallback_final_summary(session_raw, session_summary, safe_user_name)
