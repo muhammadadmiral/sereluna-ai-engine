@@ -13,11 +13,10 @@ MODEL_NAME = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
 def _completion(
     messages: List[Dict[str, str]],
-    groq_api_key: Optional[str] = None,
     response_format: Optional[Dict[str, str]] = None,
     temperature: float = 0.4,
 ) -> str:
-    api_key = (groq_api_key or os.getenv("GROQ_API_KEY") or "").strip()
+    api_key = (os.getenv("GROQ_API_KEY") or "").strip()
     if not api_key:
         raise RuntimeError("GROQ_API_KEY is missing")
 
@@ -110,7 +109,7 @@ def build_fallback_session_summary(
     return " ".join(parts).strip() or "Belum ada ringkasan sesi yang cukup."
 
 
-def analyze_symptoms_llm(user_message: str, groq_api_key: Optional[str] = None) -> Dict[str, Any]:
+def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
     dass_reference = """
     Reference DASS-21 Indicators:
     1. DEPRESSION: Hopelessness, devaluation of life, self-deprecation, lack of interest, anhedonia.
@@ -136,7 +135,6 @@ def analyze_symptoms_llm(user_message: str, groq_api_key: Optional[str] = None) 
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            groq_api_key=groq_api_key,
             response_format={"type": "json_object"},
             temperature=0.1,
         )
@@ -161,7 +159,6 @@ def generate_dialog(
     history_text: str,
     keywords: List[str],
     relevant_diary: Optional[str] = None,
-    groq_api_key: Optional[str] = None,
 ) -> Dict[str, Any]:
     symptoms = analysis_data.get("detected_symptoms", [])
     category = analysis_data.get("dominant_category", "None")
@@ -244,7 +241,6 @@ Pesan user sekarang:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            groq_api_key=groq_api_key,
             response_format={"type": "json_object"},
             temperature=0.5,
         )
@@ -294,7 +290,6 @@ def generate_summary(
     session_raw: str,
     session_summary: str,
     user_name: str,
-    groq_api_key: Optional[str] = None,
 ) -> str:
     safe_user_name = (user_name or "Teman").strip() or "Teman"
     system_prompt = (
@@ -315,7 +310,6 @@ def generate_summary(
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
-            groq_api_key=groq_api_key,
             temperature=0.3,
         )
         return content.strip() or _fallback_final_summary(session_raw, session_summary, safe_user_name)

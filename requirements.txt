@@ -1,4 +1,5 @@
 fastapi
+firebase-admin
 groq
 python-dotenv
 scikit-learn
