@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import (
+    auth_router,
     chat_router,
     context_router,
     device_router,
@@ -24,6 +25,7 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(chat_router.router)
+app.include_router(auth_router.router)
 app.include_router(screening_router.router)
 app.include_router(context_router.router)
 app.include_router(profile_router.router, prefix="/api/v1")
