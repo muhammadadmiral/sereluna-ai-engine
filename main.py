@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import chat_router
+from routers import chat_router, context_router, screening_router
 
 app = FastAPI(title="Sereluna AI Engine", version="1.0.0")
 
@@ -15,6 +15,8 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(chat_router.router)
+app.include_router(screening_router.router)
+app.include_router(context_router.router)
 
 @app.get("/")
 async def root():
