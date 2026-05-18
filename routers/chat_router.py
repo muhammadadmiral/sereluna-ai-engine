@@ -109,6 +109,7 @@ async def chat_endpoint(
             session_summary=next_summary,
             room_id=room_id,
             session_id=session_id,
+            algorithm_trace=algorithm_result,
         )
 
     keywords = algorithm_result["keywords"]
@@ -168,6 +169,7 @@ async def chat_endpoint(
         session_summary=next_summary,
         room_id=room_id,
         session_id=session_id,
+        algorithm_trace=algorithm_result,
     )
 
 

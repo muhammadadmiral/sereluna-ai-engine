@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -13,4 +13,5 @@ class ScreeningResponse(BaseModel):
     scores: Dict[str, int]
     severity: Dict[str, str]
     summary: str
+    algorithm: Dict[str, Any] = Field(default_factory=dict)
     has_screening_today: bool = True

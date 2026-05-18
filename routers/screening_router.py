@@ -30,5 +30,6 @@ async def create_screening(
         scores=result["scores"],
         severity=result["severity"],
         summary=result["summary"],
+        algorithm=result.get("algorithm", {}),
         has_screening_today=True,
     )

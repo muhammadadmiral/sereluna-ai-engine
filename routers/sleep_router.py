@@ -1,3 +1,4 @@
+import re
 from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -7,6 +8,7 @@ from services.firebase_service import get_current_user
 from services.sleep_service import list_daily_sleep_metrics, save_daily_sleep_metric
 
 router = APIRouter(prefix="/sleep", tags=["sleep"])
+DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 @router.post("/daily/", response_model=SleepDailyResponse)
@@ -14,8 +16,14 @@ async def save_sleep_daily(
     request: SleepDailyRequest,
     current_user: Dict[str, Any] = Depends(get_current_user),
 ):
-    if not request.date.strip():
+    date_value = request.date.strip()
+    if not date_value:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="date is required")
+    if not DATE_PATTERN.match(date_value):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="date must use yyyy-MM-dd format",
+        )
     if request.total_sleep_hours < 0 or request.total_sleep_hours > 24:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -24,7 +32,7 @@ async def save_sleep_daily(
 
     save_daily_sleep_metric(
         uid=current_user["uid"],
-        date=request.date.strip(),
+        date=date_value,
         sleep_quality=request.sleep_quality.strip(),
         total_sleep_hours=request.total_sleep_hours,
     )
