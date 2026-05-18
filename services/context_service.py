@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 from firebase_admin import firestore
 
 from services.firebase_service import get_firestore_client
+from services.summary_service import clean_diary_summary
 
 
 APP_TIMEZONE = os.getenv("APP_TIMEZONE", "Asia/Jakarta")
@@ -183,7 +184,7 @@ def get_recent_diary_summaries(uid: str, limit: int = 5) -> List[str]:
     summaries: List[str] = []
     for snapshot in diaries_ref.order_by("updatedAt", direction=firestore.Query.DESCENDING).limit(limit).stream():
         data = snapshot.to_dict() or {}
-        summary = data.get("chatSummary") or data.get("summary") or ""
+        summary = clean_diary_summary(data.get("chatSummary") or data.get("summary") or "")
         if summary:
             summaries.append(summary)
     return summaries
@@ -211,7 +212,7 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
         profile_context = f"{profile_context} Personal context: {user_data.get('personalContext')}"
 
     latest_screening_summary = user_data.get("latestScreeningSummary") or ""
-    latest_diary_summary = user_data.get("latestDiarySummary") or ""
+    latest_diary_summary = clean_diary_summary(user_data.get("latestDiarySummary") or "")
     past_diaries = get_recent_diary_summaries(uid, limit=5)
     has_screening_today = bool(user_data.get("hasScreeningToday")) and user_data.get("lastScreeningDate") == today_id()
     recent_history_text = format_messages(messages[-60:])
@@ -219,7 +220,7 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
         profile_context=profile_context,
         latest_screening_summary=latest_screening_summary,
         latest_diary_summary=latest_diary_summary,
-        session_summary=session_data.get("summary") or latest_diary_summary,
+        session_summary=clean_diary_summary(session_data.get("summary") or latest_diary_summary),
         history_text=recent_history_text,
         past_diaries=past_diaries,
     )
@@ -230,7 +231,7 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
         "profile_context": profile_context,
         "latest_screening_summary": latest_screening_summary,
         "latest_diary_summary": latest_diary_summary,
-        "session_summary": session_data.get("summary") or latest_diary_summary,
+        "session_summary": clean_diary_summary(session_data.get("summary") or latest_diary_summary),
         "session_history": recent_history_text,
         "memory_context": memory_context,
         "past_diaries": past_diaries,
@@ -242,13 +243,14 @@ def update_chat_summaries(uid: str, diary_id: str, session_id: str, summary: str
     user_ref = _user_ref(uid)
     diary_ref = user_ref.collection("diaries").document(diary_id)
     session_ref = diary_ref.collection("sessions").document(session_id)
+    cleaned_summary = clean_diary_summary(summary)
 
-    session_ref.set({"summary": summary, "updatedAt": _server_timestamp()}, merge=True)
-    diary_ref.set({"chatSummary": summary, "updatedAt": _server_timestamp()}, merge=True)
+    session_ref.set({"summary": cleaned_summary, "updatedAt": _server_timestamp()}, merge=True)
+    diary_ref.set({"chatSummary": cleaned_summary, "updatedAt": _server_timestamp()}, merge=True)
     user_ref.set(
         {
-            "latestDiarySummary": summary,
-            "personalContext": summary,
+            "latestDiarySummary": cleaned_summary,
+            "personalContext": cleaned_summary,
             "updatedAt": _server_timestamp(),
         },
         merge=True,
@@ -259,21 +261,22 @@ def finish_session(uid: str, diary_id: str, session_id: str, final_summary: str)
     user_ref = _user_ref(uid)
     diary_ref = user_ref.collection("diaries").document(diary_id)
     session_ref = diary_ref.collection("sessions").document(session_id)
+    cleaned_summary = clean_diary_summary(final_summary)
 
     session_ref.set(
         {
-            "summary": final_summary,
+            "summary": cleaned_summary,
             "status": "finished",
             "endTime": _server_timestamp(),
             "updatedAt": _server_timestamp(),
         },
         merge=True,
     )
-    diary_ref.set({"chatSummary": final_summary, "updatedAt": _server_timestamp()}, merge=True)
+    diary_ref.set({"chatSummary": cleaned_summary, "updatedAt": _server_timestamp()}, merge=True)
     user_ref.set(
         {
-            "latestDiarySummary": final_summary,
-            "personalContext": final_summary,
+            "latestDiarySummary": cleaned_summary,
+            "personalContext": cleaned_summary,
             "updatedAt": _server_timestamp(),
         },
         merge=True,
@@ -284,7 +287,7 @@ def finish_session(uid: str, diary_id: str, session_id: str, final_summary: str)
             "source": "chat_finish",
             "diaryId": diary_id,
             "sessionId": session_id,
-            "summary": final_summary,
+            "summary": cleaned_summary,
             "createdAt": _server_timestamp(),
         }
     )
@@ -332,7 +335,7 @@ def get_user_context(uid: str) -> Dict[str, Any]:
     return {
         "profile_context": profile_context,
         "latest_screening_summary": user_data.get("latestScreeningSummary") or "",
-        "latest_diary_summary": user_data.get("latestDiarySummary") or "",
+        "latest_diary_summary": clean_diary_summary(user_data.get("latestDiarySummary") or ""),
         "past_diaries": get_recent_diary_summaries(uid, limit=5),
         "has_screening_today": bool(user_data.get("hasScreeningToday"))
         and user_data.get("lastScreeningDate") == today_id(),

@@ -6,6 +6,8 @@ from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 from groq import Groq
 
+from services.summary_service import clean_diary_summary
+
 load_dotenv()
 
 MODEL_NAME = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
@@ -101,15 +103,15 @@ def build_fallback_session_summary(
 ) -> str:
     parts: List[str] = []
     if previous_summary and previous_summary.strip():
-        parts.append(f"Ringkasan sebelumnya: {_truncate(previous_summary, 900)}")
+        parts.append(clean_diary_summary(_truncate(previous_summary, 900)))
     if user_message and user_message.strip():
-        parts.append(f"Pesan terbaru user: {_truncate(user_message, 260)}")
+        parts.append(f"User menyampaikan: {_truncate(user_message, 260)}")
     if assistant_reply and assistant_reply.strip():
-        parts.append(f"Respons Sereluna: {_truncate(assistant_reply, 260)}")
+        parts.append(f"Sereluna merespons dengan dukungan: {_truncate(assistant_reply, 260)}")
     if mood_signal or risk_level:
-        parts.append(f"Sinyal terbaru: mood={mood_signal or 'N/A'}, risiko={risk_level or 'low'}.")
+        parts.append(f"Kondisi terakhir terbaca mood {mood_signal or 'N/A'} dengan risiko {risk_level or 'low'}.")
 
-    return " ".join(parts).strip() or "Belum ada ringkasan sesi yang cukup."
+    return clean_diary_summary(" ".join(part for part in parts if part).strip()) or "Belum ada cukup percakapan untuk dirangkum."
 
 
 def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
@@ -227,7 +229,7 @@ ATURAN:
 Schema JSON:
 {{
   "reply": "jawaban Sereluna",
-  "session_summary": "rolling summary singkat yang memperbarui ringkasan sebelumnya dengan pesan dan respons terbaru",
+  "session_summary": "catatan diary singkat yang langsung berisi inti percakapan; jangan mulai dengan 'Berikut adalah ringkasan', 'Ringkasan:', atau kalimat pembuka sejenis",
   "sentiment_score": 1,
   "suggested_action": "saran singkat atau null",
   "risk_flag": false
@@ -254,7 +256,7 @@ Pesan user sekarang:
         )
         parsed = _parse_json_object(content, {})
         reply = (parsed.get("reply") or fallback_reply).strip()
-        next_summary = (
+        raw_next_summary = (
             parsed.get("session_summary")
             or build_fallback_session_summary(
                 previous_summary=session_summary,
@@ -264,6 +266,7 @@ Pesan user sekarang:
                 risk_level=risk_level,
             )
         )
+        next_summary = clean_diary_summary(raw_next_summary)
 
         return {
             "reply": reply,
@@ -283,14 +286,10 @@ Pesan user sekarang:
 
 
 def _fallback_final_summary(session_raw: str, session_summary: str, user_name: str) -> str:
-    safe_user_name = (user_name or "Teman").strip() or "Teman"
     if session_summary and session_summary.strip():
-        return session_summary.strip()
+        return clean_diary_summary(session_summary)
     if session_raw and session_raw.strip():
-        return (
-            f"{safe_user_name} menjalani sesi curhat dengan Sereluna. "
-            f"Percakapan utama: {_truncate(session_raw, 650)}"
-        )
+        return clean_diary_summary(f"Percakapan membahas {_truncate(session_raw, 650)}")
     return "Sesi selesai, tetapi belum ada cukup percakapan untuk dirangkum."
 
 
@@ -302,7 +301,10 @@ def generate_summary(
     safe_user_name = (user_name or "Teman").strip() or "Teman"
     system_prompt = (
         "Tugasmu adalah membuat final diary summary dari sesi chat Sereluna. "
-        "Tulis 3-4 kalimat dalam bahasa Indonesia. Rangkum emosi utama user, "
+        "Tulis 3-4 kalimat dalam bahasa Indonesia. Langsung mulai dari inti cerita user. "
+        "Jangan memakai pembuka seperti 'Berikut adalah ringkasan', 'Ringkasan:', "
+        "atau 'Berikut adalah ringkasan dari sesi chat Sereluna dengan ...'. "
+        "Jangan menyebut nama user hanya untuk membuka summary. Rangkum emosi utama user, "
         "masalah yang dibahas, dukungan yang diberikan, dan tindak lanjut yang relevan. "
         "Jangan memberi diagnosis klinis."
     )
@@ -321,6 +323,7 @@ def generate_summary(
             temperature=0.3,
             max_completion_tokens=500,
         )
-        return content.strip() or _fallback_final_summary(session_raw, session_summary, safe_user_name)
+        cleaned = clean_diary_summary(content)
+        return cleaned or _fallback_final_summary(session_raw, session_summary, safe_user_name)
     except Exception:
         return _fallback_final_summary(session_raw, session_summary, safe_user_name)
