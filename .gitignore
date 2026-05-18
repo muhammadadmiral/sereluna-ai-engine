@@ -145,3 +145,7 @@ cython_debug/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Custom secret files
+.env
+.env.example
