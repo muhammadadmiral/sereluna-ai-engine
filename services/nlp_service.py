@@ -225,7 +225,13 @@ def score_dass21(answers: List[int]) -> Dict[str, Any]:
             "name": "DASS-21 scoring",
             "description": "Sum selected item groups and multiply by 2, then map scores to severity bands.",
             "item_indexes": DASS21_INDEXES,
-            "thresholds": DASS21_THRESHOLDS,
+            "thresholds": {
+                category: [
+                    {"max_score": threshold, "severity": severity_label}
+                    for threshold, severity_label in thresholds
+                ]
+                for category, thresholds in DASS21_THRESHOLDS.items()
+            },
         },
     }
 
@@ -253,9 +259,11 @@ def build_context_algorithm_result(
         "keywords": keywords,
         "relevant_diary": retrieval["diary"],
         "retrieval": retrieval,
-        "algorithms": [
-            "weighted_rule_based_risk_classification",
-            "lexicon_based_sentiment_scoring",
-            "tfidf_cosine_similarity_diary_retrieval",
-        ],
+        "algorithms": {
+            "main": [
+                "weighted_rule_based_risk_classification",
+                "tfidf_cosine_similarity_diary_retrieval",
+            ],
+            "supporting": ["lexicon_based_sentiment_scoring"],
+        },
     }
