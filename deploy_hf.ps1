@@ -50,6 +50,10 @@ try {
     $groqKey = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($groqKeyPtr)
     $repoId = "$username/$spaceName"
     $firebaseJson = Get-Content $firebasePath -Raw | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 100
+    $firebaseProjectId = (Get-Content $firebasePath -Raw | ConvertFrom-Json).project_id
+    if ([string]::IsNullOrWhiteSpace($firebaseProjectId)) {
+        throw "Firebase service account JSON does not contain project_id."
+    }
 
     Write-Host "Logging in to Hugging Face..."
     Invoke-Hf auth login --token $hfToken --add-to-git-credential
@@ -65,6 +69,13 @@ try {
         --env "APP_TIMEZONE=Asia/Jakarta" `
         --secrets "GROQ_API_KEY=$groqKey" `
         --secrets "FIREBASE_SERVICE_ACCOUNT_JSON=$firebaseJson"
+
+    Write-Host "Setting Firebase project variables: $firebaseProjectId"
+    Invoke-Hf spaces variables add $repoId `
+        -e "FIREBASE_PROJECT_ID=$firebaseProjectId" `
+        -e "GOOGLE_CLOUD_PROJECT=$firebaseProjectId" `
+        -e "GCLOUD_PROJECT=$firebaseProjectId" `
+        --token $hfToken
 
     Write-Host "Uploading backend files..."
     Invoke-Hf upload $repoId . . `

@@ -529,3 +529,4 @@ ApiClient.api.saveSleepDaily(
 - Save `room_id` and `session_id` from the first chat response if the user continues the same session.
 - Do not put `GROQ_API_KEY`, Firebase service account JSON, or Hugging Face token in the APK.
 - User authentication is Firebase Auth on Android; backend only verifies the Firebase ID token.
+- For password reset on the backend, set `FIREBASE_PROJECT_ID=sereluna2024` in Hugging Face Space variables or secrets if the service-account JSON does not expose the project ID cleanly.

@@ -11,6 +11,33 @@ from firebase_admin import auth, credentials, firestore
 load_dotenv()
 
 
+def _resolve_firebase_project_id(service_account_json: Optional[str] = None, service_account_path: Optional[str] = None) -> Optional[str]:
+    project_id = os.getenv("FIREBASE_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCLOUD_PROJECT")
+    if project_id:
+        return project_id.strip()
+
+    if service_account_json:
+        try:
+            service_account_info = json.loads(service_account_json)
+        except json.JSONDecodeError:
+            return None
+        project_id = service_account_info.get("project_id")
+        if project_id:
+            return str(project_id).strip()
+
+    if service_account_path and os.path.exists(service_account_path):
+        try:
+            with open(service_account_path, "r", encoding="utf-8") as handle:
+                service_account_info = json.load(handle)
+        except (OSError, json.JSONDecodeError):
+            return None
+        project_id = service_account_info.get("project_id")
+        if project_id:
+            return str(project_id).strip()
+
+    return None
+
+
 def initialize_firebase() -> None:
     try:
         firebase_admin.get_app()
@@ -20,6 +47,8 @@ def initialize_firebase() -> None:
 
     service_account_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
     service_account_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH")
+    project_id = _resolve_firebase_project_id(service_account_json, service_account_path)
+    app_options = {"projectId": project_id} if project_id else None
 
     if service_account_json:
         try:
@@ -27,15 +56,15 @@ def initialize_firebase() -> None:
         except json.JSONDecodeError as exc:
             raise RuntimeError("FIREBASE_SERVICE_ACCOUNT_JSON is not valid JSON") from exc
         cred = credentials.Certificate(service_account_info)
-        firebase_admin.initialize_app(cred)
+        firebase_admin.initialize_app(cred, app_options)
         return
 
     if service_account_path:
         cred = credentials.Certificate(service_account_path)
-        firebase_admin.initialize_app(cred)
+        firebase_admin.initialize_app(cred, app_options)
         return
 
-    firebase_admin.initialize_app()
+    firebase_admin.initialize_app(options=app_options)
 
 
 def get_firestore_client():
