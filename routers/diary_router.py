@@ -2,8 +2,8 @@ from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
-from schemas.diary_schema import DiaryDetailResponse, DiaryListResponse, DiaryMessagesResponse
-from services.diary_service import get_diary_detail, list_diaries, list_session_messages
+from schemas.diary_schema import DiaryDetailResponse, DiaryEntryListResponse, DiaryListResponse, DiaryMessagesResponse
+from services.diary_service import get_diary_detail, list_diaries, list_diary_entries, list_session_messages
 from services.firebase_service import get_current_user
 
 router = APIRouter(prefix="/diaries", tags=["diaries"])
@@ -15,6 +15,14 @@ async def read_diaries(
     current_user: Dict[str, Any] = Depends(get_current_user),
 ):
     return DiaryListResponse(items=list_diaries(current_user["uid"], limit))
+
+
+@router.get("/entries/", response_model=DiaryEntryListResponse)
+async def read_diary_entries(
+    limit: int = Query(30, ge=1, le=100),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+):
+    return DiaryEntryListResponse(items=list_diary_entries(current_user["uid"], limit))
 
 
 @router.get("/{diary_id}/", response_model=DiaryDetailResponse)

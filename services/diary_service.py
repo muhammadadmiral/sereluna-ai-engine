@@ -71,6 +71,45 @@ def list_diaries(uid: str, limit: int = 30) -> List[Dict[str, Any]]:
     return items
 
 
+def list_diary_entries(uid: str, limit: int = 30) -> List[Dict[str, Any]]:
+    safe_limit = max(1, min(limit, 100))
+    diaries_ref = user_document(uid).collection("diaries")
+    entries: List[Dict[str, Any]] = []
+
+    for diary_snapshot in diaries_ref.order_by("date", direction=firestore.Query.DESCENDING).limit(100).stream():
+        diary_data = diary_snapshot.to_dict() or {}
+        diary_id = diary_snapshot.id
+        date = diary_data.get("date") or diary_id
+
+        for session in _list_sessions(diary_snapshot.reference):
+            session_id = session["id"]
+            entries.append(
+                {
+                    "id": f"{diary_id}:{session_id}",
+                    "diary_id": diary_id,
+                    "session_id": session_id,
+                    "date": date,
+                    "summary": session["summary"],
+                    "preview": session["preview"],
+                    "status": session["status"],
+                    "model": session["model"],
+                    "start_time": session["start_time"],
+                    "end_time": session["end_time"],
+                    "updated_at": session["updated_at"],
+                }
+            )
+
+    entries.sort(
+        key=lambda item: (
+            item.get("date") or "",
+            item.get("updated_at") or item.get("start_time") or "",
+            item.get("session_id") or "",
+        ),
+        reverse=True,
+    )
+    return entries[:safe_limit]
+
+
 def get_diary_detail(uid: str, diary_id: str) -> Optional[Dict[str, Any]]:
     diary_ref = user_document(uid).collection("diaries").document(diary_id)
     diary_data = _not_found_none(diary_ref.get())

@@ -29,6 +29,24 @@ class DiaryListResponse(BaseModel):
     items: List[DiaryItem] = Field(default_factory=list)
 
 
+class DiaryEntryItem(BaseModel):
+    id: str
+    diary_id: str
+    session_id: str
+    date: str = ""
+    summary: str = ""
+    preview: str = ""
+    status: str = ""
+    model: str = ""
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    updated_at: Optional[str] = None
+
+
+class DiaryEntryListResponse(BaseModel):
+    items: List[DiaryEntryItem] = Field(default_factory=list)
+
+
 class DiaryDetailResponse(BaseModel):
     id: str
     date: str = ""
