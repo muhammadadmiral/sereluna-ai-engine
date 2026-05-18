@@ -4,7 +4,7 @@ from firebase_admin.auth import EmailNotFoundError, UserNotFoundError
 from schemas.auth_schema import ForgotPasswordRequest, ForgotPasswordResponse
 from services.auth_service import generate_password_reset_link
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 
 @router.post("/forgot-password/", response_model=ForgotPasswordResponse)
