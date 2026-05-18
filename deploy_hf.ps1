@@ -66,9 +66,13 @@ try {
         --exist-ok `
         --token $hfToken `
         --env "GROQ_MODEL=llama-3.1-8b-instant" `
-        --env "APP_TIMEZONE=Asia/Jakarta" `
-        --secrets "GROQ_API_KEY=$groqKey" `
-        --secrets "FIREBASE_SERVICE_ACCOUNT_JSON=$firebaseJson"
+        --env "APP_TIMEZONE=Asia/Jakarta"
+
+    Write-Host "Setting Space secrets..."
+    Invoke-Hf spaces secrets add $repoId `
+        -s "GROQ_API_KEY=$groqKey" `
+        -s "FIREBASE_SERVICE_ACCOUNT_JSON=$firebaseJson" `
+        --token $hfToken
 
     Write-Host "Setting Firebase project variables: $firebaseProjectId"
     Invoke-Hf spaces variables add $repoId `
