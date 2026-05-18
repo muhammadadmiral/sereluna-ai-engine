@@ -1,0 +1,6 @@
+fastapi
+groq
+python-dotenv
+scikit-learn
+uvicorn[standard]
+yake
