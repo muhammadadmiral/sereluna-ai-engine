@@ -1,0 +1,15 @@
+.git
+.gitignore
+__pycache__/
+*.py[cod]
+.env
+.venv/
+env/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+*.log
+firebase*.json
+*serviceAccount*.json
+*service-account*.json
