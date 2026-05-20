@@ -75,6 +75,7 @@ async def chat_endpoint(
         session_summary=session_summary,
         past_diaries=past_diaries,
     )
+    algorithm_result["recent_daily_context"] = recent_daily_context
     risk_level = algorithm_result["risk_level"]
     risk_trace = algorithm_result.get("risk", {})
     route_to_safety = risk_trace.get("reason") in {
