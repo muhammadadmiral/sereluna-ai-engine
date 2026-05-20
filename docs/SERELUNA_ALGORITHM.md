@@ -1,89 +1,57 @@
-# Sereluna AI Engine Algorithm Notes
+# Sereluna AI Engine Algorithm Notes (Thesis Edition)
 
-Sereluna tidak hanya meneruskan pesan user ke LLM. Backend membangun beberapa sinyal NLP dan psikologi komputasional lebih dulu, lalu sinyal itu dipakai untuk mengatur respons, safety routing, memori, dan rekomendasi coping.
+Sereluna tidak hanya meneruskan pesan user ke LLM. Backend membangun beberapa sinyal NLP dan psikologi komputasional lebih dulu, lalu sinyal itu dipakai untuk mengatur respons, safety routing, memori, dan rekomendasi coping. Pendekatan ini dirancang untuk memenuhi standar akademis skripsi IT dengan fokus pada **Explainability**, **Hybrid NLP**, dan **Proactive Mental Health Support**.
 
-Pendekatan ini termasuk algoritma konvensional, data mining ringan, explainable NLP, dan machine learning klasik. Beberapa modul berbasis data lexicon CSV. Modul ML utama memakai dataset `data/training/emotion_dataset.csv` untuk melatih TF-IDF + Logistic Regression emotion classifier, lalu dievaluasi dengan accuracy, precision, recall, F1-score, dan confusion matrix. Setiap modul punya input, proses, output, dan alasan keputusan yang bisa dilihat di `algorithm_trace`.
+Setiap modul memiliki input, proses, output, dan alasan keputusan yang bisa dilihat di `algorithm_trace` (konsep **Explainable AI / XAI**).
 
-## Pipeline Utama
+## Arsitektur Hybrid NLP
 
-1. **Risk Classification**
-   - Metode: weighted rule-based classifier.
-   - Input: pesan terbaru, ringkasan screening, ringkasan sesi.
-   - Output: `low`, `medium`, atau `high`, plus alasan dan evidence.
-   - Fungsi: membedakan chat normal, sinyal risiko sedang, dan krisis yang perlu diarahkan ke bantuan manusia.
+Sereluna menggabungkan tiga pendekatan utama:
+1.  **Rule-based & Lexicon:** Untuk akurasi tinggi pada kata-kata kunci sensitif (Risk & Crisis).
+2.  **Machine Learning Klasik (TF-IDF + Logistic Regression):** Untuk fleksibilitas dalam menangani variasi bahasa gaul/slang Indonesia yang dinamis.
+3.  **Generative AI (LLM):** Sebagai layer Natural Language Generation (NLG) yang sudah terkondisi oleh sinyal algoritma backend.
 
-2. **NLP Preprocessing Obfuscation Filter**
-   - Metode: leetspeak normalization, punctuation stripping, compact matching, dan bounded Levenshtein fuzzy matching.
-   - Input: pesan mentah user.
-   - Output: normalized text, toxicity/crisis/sensitive-content flags, evidence term, severity, dan match type.
-   - Fungsi: mendeteksi kata krisis/toxic yang disamarkan seperti typo, angka, simbol, atau spasi antar huruf sebelum masuk ke risk classifier dan LLM.
-   - Catatan: ini bukan machine learning, tetapi termasuk algoritma preprocessing/filtering yang deterministic dan explainable.
+## Pipeline & Algoritma Utama
 
-3. **Sentiment Scoring**
-   - Metode: lexicon-based scoring bahasa Indonesia.
-   - Input: pesan user dan mood signal dari aplikasi.
-   - Output: skor 1-5.
-   - Fungsi: memberi sinyal kasar apakah respons perlu lebih suportif, netral, atau celebratory.
+### 1. Risk & Crisis Classification (Weighted Rule-Based)
+Mendeteksi sinyal bahaya (bunuh diri, kekerasan, dsb) menggunakan pembobotan kata kunci dari `risk_patterns.csv`. Outputnya adalah `risk_level` yang menentukan apakah user butuh bantuan manusia segera.
 
-4. **Diary Retrieval**
-   - Metode: TF-IDF vectorization + cosine similarity.
-   - Input: pesan terbaru dan ringkasan diary sebelumnya.
-   - Output: diary paling relevan jika similarity melewati threshold.
-   - Fungsi: membuat Sereluna bisa mengingat konteks user, bukan hanya menjawab satu pesan.
+### 2. Obfuscation Filter (Deterministic Preprocessing)
+Mendeteksi kata-kata sensitif yang disamarkan (misal: "b.u.n.u.h", "4nj1ng"). Menggunakan kombinasi Leetspeak Normalization dan Levenshtein Fuzzy Matching.
+- **Contextual Slang Handling:** Algoritma ini memiliki logika khusus untuk mendeteksi konteks positif (seperti "wkwk" atau "gokil") guna mencegah "False Positive" pada penggunaan slang intensifier.
 
-5. **Keyword Extraction**
-   - Metode: YAKE keyword extraction.
-   - Input: pesan user.
-   - Output: kata kunci percakapan.
-   - Fungsi: membantu respons tetap fokus pada topik utama.
+### 3. Hybrid Emotion Classification (Lexicon vs. Supervised ML)
+Ini adalah inti dari **Comparative Analysis** dalam skripsi:
+- **Lexicon Profiler:** Mengukur emosi berdasarkan kamus kata (`emotion_lexicon.csv`). Sangat akurat untuk kata emosi yang eksplisit.
+- **Logistic Regression Classifier:** Melatih model dengan dataset `emotion_dataset.csv` menggunakan fitur TF-IDF (N-Grams). Sangat efektif untuk menangkap pola kalimat informal dan slang yang tidak ada di kamus.
+- **Explainability:** Sistem mencatat "evidence" (bukti kata) dan skor probabilitas untuk setiap prediksi.
 
-6. **Emotion Lexicon Profiler**
-   - Metode: weighted Indonesian emotion lexicon dari CSV + mood signal.
-   - Output: emosi utama, intensitas, secondary emotions, dan evidence.
-   - Fungsi: membedakan apakah user lebih dominan cemas, sedih, marah, lelah, malu, atau lega.
+### 4. Implicit DASS-21 Prediction (Proactive Screening)
+Fitur inovatif untuk skripsi: Sistem memetakan emosi, intensitas, dan distorsi kognitif user ke dalam kategori DASS-21 (Depression, Anxiety, Stress) secara implisit.
+- **Tujuan:** Memberikan peringatan dini (early warning) jika user menunjukkan tren gejala gangguan mental tanpa harus mengisi form tes yang panjang setiap saat.
 
-7. **TF-IDF Nearest-Centroid Emotion Classifier**
-   - Metode: machine learning konvensional.
-   - Training source: `data/lexicons/emotion_lexicon.csv`.
-   - Proses: sistem melakukan `fit` TF-IDF character n-gram dari term emosi, membentuk centroid per kelas emosi, lalu memprediksi emosi pesan user dengan cosine similarity.
-   - Fungsi: memberi pembanding ML ringan terhadap hasil lexicon scoring tanpa membutuhkan Kaggle, Jupyter, atau dataset besar.
+### 5. CBT-Inspired Cognitive Distortion Mining
+Mendeteksi pola pikir tidak sehat (seperti *catastrophizing* atau *overgeneralization*) menggunakan teknik Pattern Matching. Hasil deteksi ini digunakan untuk memberikan arahan "Reframing" pada respons AI.
 
-8. **TF-IDF Logistic Regression Emotion Classifier**
-   - Metode: supervised machine learning klasik.
-   - Training source: `data/training/emotion_dataset.csv`.
-   - Proses: dataset dilatih dengan gabungan TF-IDF word n-gram, TF-IDF character n-gram, dan lexicon-score features, lalu diklasifikasi dengan Logistic Regression. Data di-split menjadi train/test, lalu dievaluasi memakai accuracy, macro precision, macro recall, macro F1, weighted F1, dan confusion matrix.
-   - Fungsi: memberi prediksi emosi berbasis training data kecil yang terpisah dari lexicon agar tidak hanya rule-based.
-   - Evaluasi saat ini: 270 data, 202 train, 68 test, accuracy 0.8235, macro F1 0.8321.
+### 6. Coping Pathway Decision Tree
+Menentukan strategi dukungan terbaik berbasis logika pohon keputusan. Menggabungkan input dari Risk, Emotion, dan Cognitive Distortion untuk memilih jalur intervensi (misal: Grounding, Emotional Validation, atau Problem Solving).
 
-9. **CBT-Inspired Cognitive Distortion Pattern Miner**
-   - Metode: pattern matching pada teks yang sudah dinormalisasi.
-   - Output: pola seperti catastrophizing, all-or-nothing thinking, mind reading, fortune telling, self-labeling, dan should statement.
-   - Fungsi: mendeteksi pola pikiran yang bisa dibantu dengan reframing tanpa memberi diagnosis.
+### 7. Adaptive Response Planner
+Mengatur gaya bahasa AI secara dinamis:
+- **User Register:** Menyesuaikan penggunaan "aku-kamu" atau "gua-lu" berdasarkan input user.
+- **Relationship Stage:** Semakin sering chat, respons AI semakin santai dan kontekstual (mengurangi pembukaan formal).
 
-10. **Coping Pathway Decision Tree**
-   - Metode: decision tree berbasis risk level, sentiment, emotion profile, distortion count, dan intent.
-   - Output: pathway seperti `cbt_reframe_plus_problem_solving`, `grounding_then_plan`, `low_energy_next_step`, atau `safety_triage`.
-   - Fungsi: menentukan bentuk dukungan yang paling cocok sebelum LLM membuat kalimat akhir.
+## Jawaban Skripsi: "Kenapa Pakai Hybrid, Bukan Deep Learning Saja?"
 
-11. **Adaptive Response Planner**
-   - Metode: rule-based conversation planning.
-   - Input: jumlah turn di room, register bahasa user, intent, risk, sentiment, dan history.
-   - Output: target panjang respons, gaya bahasa, batas penggunaan nama, emoji policy, dan continuity guidance.
-   - Fungsi: makin panjang room chat, respons makin santai, kontekstual, dan tidak membuka ulang seperti bot baru.
+1.  **Explainability:** Dalam kesehatan mental, kita harus tahu *kenapa* AI mengambil keputusan tertentu. Model hybrid kita jauh lebih mudah diaudit daripada model Black Box (Deep Learning).
+2.  **Efficiency:** Model TF-IDF + Logistic Regression sangat ringan, cepat, dan bisa dilatih dengan dataset kecil namun berkualitas (curated dataset).
+3.  **Safety:** Menghindari halusinasi LLM dengan memberikan batasan instruksi (constraints) yang ketat berdasarkan hasil perhitungan algoritma deterministik di backend.
 
-## Jawaban Singkat Jika Ditanya "Ini Cuma Hit API?"
+## Metrik Evaluasi Model (Bab 4 Skripsi)
 
-Tidak. LLM dipakai sebagai natural language generation layer, tetapi keputusan responsnya dikontrol oleh backend Sereluna. Sebelum prompt dikirim ke LLM, sistem melakukan risk scoring, sentiment scoring, TF-IDF diary retrieval, YAKE keyword extraction, emotion profiling dari CSV lexicon, TF-IDF nearest-centroid emotion classification, TF-IDF Logistic Regression emotion classification, cognitive distortion mining, coping pathway selection, dan adaptive response planning. Jadi output akhir LLM sudah dikondisikan oleh algoritma NLP, data mining ringan, dan machine learning konvensional yang berjalan di backend.
+Model supervised ML kita dievaluasi menggunakan metrik formal:
+- **Accuracy:** Seberapa sering prediksi emosi benar secara keseluruhan.
+- **Precision & Recall:** Penting untuk memastikan emosi negatif (seperti Sadness) tidak terlewatkan (Recall) dan tidak salah tebak (Precision).
+- **F1-Score:** Keseimbangan antara Precision dan Recall.
 
-## Kenapa Tidak Training Model Sendiri?
-
-Untuk domain kesehatan mental, training model deep learning sendiri butuh dataset sensitif, validasi etik, dan evaluasi safety yang kuat. Sereluna memilih pendekatan hybrid yang lebih aman untuk MVP: algoritma konvensional yang explainable untuk risk, retrieval, emotion, dan coping decision; ditambah machine learning klasik berbasis TF-IDF centroid dan TF-IDF Logistic Regression dari dataset kecil terkurasi; lalu LLM dipakai untuk merangkai respons natural. Pendekatan ini lebih mudah diaudit karena setiap keputusan penting tetap punya trace di `algorithm_trace`.
-
-## Rumus Evaluasi ML
-
-- Accuracy = jumlah prediksi benar / total data uji.
-- Precision = TP / (TP + FP).
-- Recall = TP / (TP + FN).
-- F1-score = 2 * (Precision * Recall) / (Precision + Recall).
-
-Metrik evaluasi model tersedia di `algorithm_trace.supervised_model_evaluation`.
+Data evaluasi real-time tersedia di objek `supervised_model_evaluation` dalam setiap respon sistem.

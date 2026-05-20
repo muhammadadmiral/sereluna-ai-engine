@@ -7,3 +7,9 @@ mind_reading,mind reading / menebak penilaian orang lain,\b(pasti\s+(dia|mereka)
 fortune_telling,fortune telling / menganggap masa depan sudah pasti buruk,\b(bakal|akan)\s+(gagal|kacau|dibantai|ditolak|dihancurin)\b,pisahkan skenario terburuk dari bukti yang benar-benar ada
 self_labeling,self-labeling / memberi label keras ke diri sendiri,\b(aku|gua|gue|gw|saya)\s+(bodoh|gagal|payah|lemah|tolol|ngg?a?k\s+berguna)\b,ganti label diri dengan deskripsi perilaku atau situasi yang lebih spesifik
 should_statement,should statement / tekanan harus-sempurna,\b(harus|mestinya|seharusnya|wajib)\b.{0,35}\b(sempurna|bisa|kuat|selesai|berhasil)\b,turunkan tekanan 'harus' menjadi langkah realistis berikutnya
+overgeneralization,overgeneralization / menggeneralisasi satu kejadian buruk,\b(selalu|terus-terusan|ga\s+pernah|semuanya|semua\s+orang)\b,cari pengecualian: kapan terakhir kali hal ini tidak terjadi?
+discounting_the_positive,discounting the positive / menolak hal positif,\b(cuma\s+kebetulan|cuma\s+hoki|biasa\s+aja|gapapa\s+lah|hanya)\b,akui keberhasilan kecil sebagai bukti nyata kemampuan Anda
+emotional_reasoning,emotional reasoning / emosi dianggap sebagai fakta,\b(aku\s+kerasa|gua\s+kerasa|gw\s+kerasa|rasanya)\s+(pasti|bakal|akan)\b,sadari bahwa perasaan tidak selalu merupakan fakta objektif
+personalization,personalization / menyalahkan diri sendiri atas hal di luar kendali,\b(salah\s+aku|salah\s+gua|salah\s+gue|gara-gara\s+aku|gara-gara\s+gua)\b,pisahkan tanggung jawab Anda dari faktor eksternal lainnya
+mental_filter,mental filter / hanya fokus pada satu detail negatif,\b(tapi|cuma|sayangnya)\s+(ada\s+satu|bagian\s+itu|kurang)\b,lihat keseluruhan gambar: apa hal lain yang berjalan baik?
+magnification_minimization,magnification or minimization / membesarkan masalah atau mengecilkan solusi,\b(banget|parah|kiamat|lebay|biasa\s+aja)\b,letakkan masalah pada skala 1-10 untuk melihat urgensi yang sebenarnya

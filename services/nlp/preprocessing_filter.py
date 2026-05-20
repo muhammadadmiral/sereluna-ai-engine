@@ -1,7 +1,7 @@
 import re
 from typing import Any, Dict, List
 
-from services.nlp_lexicons import FILTER_TERM_ENTRIES
+from services.nlp.lexicons import FILTER_TERM_ENTRIES
 
 
 LEET_TRANSLATION = str.maketrans(

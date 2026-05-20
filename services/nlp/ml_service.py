@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.preprocessing import normalize
 
-from services.nlp_lexicons import EMOTION_LEXICON, EMOTION_LEXICON_ENTRIES, EMOTION_WEIGHTS
+from services.nlp.lexicons import EMOTION_LEXICON, EMOTION_LEXICON_ENTRIES, EMOTION_WEIGHTS
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
