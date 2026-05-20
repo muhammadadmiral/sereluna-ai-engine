@@ -171,6 +171,12 @@ interface SerelunaApi {
         @Query("limit") limit: Int = 30
     ): DiaryListResponse
 
+    @GET("api/v1/diaries/entries/")
+    suspend fun getDiaryEntries(
+        @Header("Authorization") auth: String,
+        @Query("limit") limit: Int = 30
+    ): DiaryEntryListResponse
+
     @GET("api/v1/diaries/{diaryId}/")
     suspend fun getDiaryDetail(
         @Header("Authorization") auth: String,
@@ -313,10 +319,31 @@ data class DiaryListResponse(
     val items: List<DiaryItem> = emptyList()
 )
 
+data class DiaryEntryListResponse(
+    val items: List<DiaryEntryItem> = emptyList()
+)
+
+data class DiaryEntryItem(
+    val id: String,
+    val diary_id: String,
+    val session_id: String,
+    val date: String = "",
+    val summary: String = "",
+    val preview: String = "",
+    val status: String = "",
+    val model: String = "",
+    val start_time: String? = null,
+    val end_time: String? = null,
+    val updated_at: String? = null
+)
+
 data class DiaryItem(
     val id: String,
     val date: String = "",
     val chat_summary: String = "",
+    val preview: String = "",
+    val session_count: Int = 0,
+    val sessions: List<DiarySessionItem> = emptyList(),
     val created_at: String? = null,
     val updated_at: String? = null
 )
@@ -325,6 +352,8 @@ data class DiaryDetailResponse(
     val id: String,
     val date: String = "",
     val chat_summary: String = "",
+    val preview: String = "",
+    val session_count: Int = 0,
     val sessions: List<DiarySessionItem> = emptyList()
 )
 
@@ -332,8 +361,11 @@ data class DiarySessionItem(
     val id: String,
     val model: String = "",
     val summary: String = "",
+    val preview: String = "",
+    val status: String = "",
     val start_time: String? = null,
-    val end_time: String? = null
+    val end_time: String? = null,
+    val updated_at: String? = null
 )
 
 data class DiaryMessagesResponse(
@@ -460,6 +492,19 @@ ApiClient.api.finishChat(
 )
 ```
 
+Diary list UI pattern:
+
+```kotlin
+val entries = ApiClient.api.getDiaryEntries("Bearer ${authRepository.getIdToken()}")
+
+// Use this endpoint for the main diary feed.
+// One item is one diary session, not one date.
+// Render entry.preview in the card/list row.
+// Open entry.summary for "lihat lebih lanjut".
+// To open the full transcript, call:
+// getDiaryMessages(auth, entry.diary_id, entry.session_id)
+```
+
 Submit DASS-21 screening:
 
 ```kotlin
@@ -512,7 +557,8 @@ ApiClient.api.saveSleepDaily(
 | POST | `/api/v1/chat/` | Yes | Send chat message |
 | POST | `/api/v1/chat/finish/` | Yes | Finish chat session |
 | POST | `/api/v1/screening/` | Yes | Save DASS-21 screening |
-| GET | `/api/v1/diaries/` | Yes | List diaries |
+| GET | `/api/v1/diaries/entries/` | Yes | List diary entries, one item per session |
+| GET | `/api/v1/diaries/` | Yes | List diaries grouped by date |
 | GET | `/api/v1/diaries/{diaryId}/` | Yes | Diary detail |
 | GET | `/api/v1/diaries/{diaryId}/sessions/{sessionId}/messages/` | Yes | Chat messages in a diary session |
 | GET | `/api/v1/notifications/` | Yes | List notifications |

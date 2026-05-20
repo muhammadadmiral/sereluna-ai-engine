@@ -159,6 +159,7 @@ def generate_dialog(
     session_summary: str,
     profile_context: str,
     memory_context: str,
+    recent_daily_context: str,
     risk_level: str,
     mood_signal: str,
     user_name: str,
@@ -214,9 +215,10 @@ DATA USER & KONTEKS:
 - Analisis pesan terbaru: {category} ({symptoms_str})
 - Risk level backend: {risk_level or "low"}
 - Profile context: {_truncate(profile_context, 1000) or "N/A"}
+- Konteks 3 hari terakhir: {_truncate(recent_daily_context, 1200) or "N/A"}
 - Kata kunci percakapan: {keywords_str}
 - {diary_context}
-- Memory context gabungan: {_truncate(memory_context, 5000) or "N/A"}
+- Memory context gabungan: {_truncate(memory_context, 2500) or "N/A"}
 
 ATURAN:
 1. {greeting_guideline}
@@ -224,7 +226,7 @@ ATURAN:
 3. Jika user bertanya soal psikolog atau konsultasi, arahkan ke menu Konselor di aplikasi.
 4. Jika ada tanda bahaya, validasi perasaan user dan sarankan mencari bantuan orang tepercaya atau layanan darurat setempat.
 5. Jika risk level berasal dari screening lama tetapi pesan user sekarang bersifat normal atau santai, jangan pakai respons krisis. Balas percakapan normal dengan empati.
-5. Kembalikan JSON valid saja.
+6. Kembalikan JSON valid saja.
 
 Schema JSON:
 {{

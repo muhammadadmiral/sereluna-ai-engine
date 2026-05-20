@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 
 from firebase_admin import firestore
 
+from services.daily_dashboard_service import build_recent_daily_context
 from services.firebase_service import get_firestore_client
 from services.summary_service import clean_diary_summary
 
@@ -156,6 +157,7 @@ def format_messages(messages: List[Dict[str, Any]]) -> str:
 def build_memory_context(
     profile_context: str,
     latest_screening_summary: str,
+    recent_daily_context: str,
     latest_diary_summary: str,
     session_summary: str,
     history_text: str,
@@ -166,12 +168,14 @@ def build_memory_context(
         sections.append(f"Profil inti:\n{profile_context.strip()}")
     if latest_screening_summary.strip():
         sections.append(f"Ringkasan screening terbaru:\n{latest_screening_summary.strip()}")
+    if recent_daily_context.strip():
+        sections.append(f"Konteks harian 3 hari terakhir:\n{recent_daily_context.strip()}")
     if latest_diary_summary.strip():
         sections.append(f"Ringkasan diary terbaru:\n{latest_diary_summary.strip()}")
     if session_summary.strip():
         sections.append(f"Ringkasan sesi berjalan:\n{session_summary.strip()}")
     if past_diaries:
-        recent_diaries = "\n".join(f"- {item}" for item in past_diaries[:5] if item and item.strip())
+        recent_diaries = "\n".join(f"- {item}" for item in past_diaries[:3] if item and item.strip())
         if recent_diaries.strip():
             sections.append(f"Diary relevan sebelumnya:\n{recent_diaries}")
     if history_text.strip():
@@ -213,12 +217,14 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
 
     latest_screening_summary = user_data.get("latestScreeningSummary") or ""
     latest_diary_summary = clean_diary_summary(user_data.get("latestDiarySummary") or "")
-    past_diaries = get_recent_diary_summaries(uid, limit=5)
+    past_diaries = get_recent_diary_summaries(uid, limit=3)
+    recent_daily_context = build_recent_daily_context(uid, days=3)
     has_screening_today = bool(user_data.get("hasScreeningToday")) and user_data.get("lastScreeningDate") == today_id()
-    recent_history_text = format_messages(messages[-60:])
+    recent_history_text = format_messages(messages[-20:])
     memory_context = build_memory_context(
         profile_context=profile_context,
         latest_screening_summary=latest_screening_summary,
+        recent_daily_context=recent_daily_context,
         latest_diary_summary=latest_diary_summary,
         session_summary=clean_diary_summary(session_data.get("summary") or latest_diary_summary),
         history_text=recent_history_text,
@@ -233,6 +239,7 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
         "latest_diary_summary": latest_diary_summary,
         "session_summary": clean_diary_summary(session_data.get("summary") or latest_diary_summary),
         "session_history": recent_history_text,
+        "recent_daily_context": recent_daily_context,
         "memory_context": memory_context,
         "past_diaries": past_diaries,
         "has_screening_today": has_screening_today,
