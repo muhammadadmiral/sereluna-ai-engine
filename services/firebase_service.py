@@ -1,4 +1,5 @@
 import json
+import math
 import os
 from datetime import date, datetime
 from typing import Any, Dict, Optional
@@ -83,19 +84,59 @@ def user_document(uid: str):
 def serialize_firestore_value(value: Any) -> Any:
     if value is None:
         return None
-    
-    # Handle numpy types if they exist
-    if hasattr(value, "item") and callable(value.item):
-        return value.item()
-    
+
+    # 1. Handle basic primitives
+    if isinstance(value, str):
+        return value
+    if isinstance(value, (int, bool)):
+        return value
+    if isinstance(value, float):
+        if math.isnan(value) or math.isinf(value):
+            return 0.0
+        return value
+
+    # 2. Handle known serializable objects
     if isinstance(value, (datetime, date)):
         return value.isoformat()
+
+    # 3. Handle numpy types specifically
+    # Check for item() method (numpy scalars)
+    if hasattr(value, "item") and callable(value.item):
+        try:
+            return serialize_firestore_value(value.item())
+        except Exception:
+            pass
+
+    # Check for tolist() method (numpy arrays)
+    if hasattr(value, "tolist") and callable(value.tolist):
+        try:
+            return [serialize_firestore_value(item) for item in value.tolist()]
+        except Exception:
+            pass
+
+    # 4. Handle containers (recursive)
     if isinstance(value, dict):
-        return {str(key): serialize_firestore_value(item) for key, item in value.items()}
+        serialized_dict = {}
+        for key, item in value.items():
+            # Sanitize key: force string, handle empty, replace dots/slashes
+            safe_key = str(key) if key is not None else "None"
+            if not safe_key:
+                safe_key = "empty_key"
+            # Dots and slashes are forbidden in Firestore field names
+            safe_key = safe_key.replace(".", "_").replace("/", "_")
+            serialized_dict[safe_key] = serialize_firestore_value(item)
+        return serialized_dict
+
     if isinstance(value, (list, tuple, set)):
         return [serialize_firestore_value(item) for item in value]
-    
-    # Fallback for other potential numpy types or objects
+
+    # 5. Handle special Firestore types (sentinels like SERVER_TIMESTAMP)
+    # These must NOT be modified
+    type_name = type(value).__name__
+    if type_name in ("Sentinel", "ServerTimestamp"):
+        return value
+
+    # 6. Fallback for other potential numpy types or objects
     try:
         if type(value).__module__ == "numpy":
             if hasattr(value, "tolist"):
@@ -104,7 +145,11 @@ def serialize_firestore_value(value: Any) -> Any:
     except Exception:
         pass
 
-    return value
+    # 7. Final resort: convert to string to avoid Firestore 'invalid nested entity' error
+    try:
+        return str(value)
+    except Exception:
+        return f"unserializable:{type(value).__name__}"
 
 
 def verify_id_token(id_token: str) -> Dict[str, Any]:
