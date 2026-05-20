@@ -98,6 +98,7 @@ async def chat_endpoint(
     risk_trace = algorithm_result.get("risk", {})
     route_to_safety = risk_trace.get("reason") in {
         "current_crisis_signal",
+        "preprocessing_crisis_filter",
     }
     sentiment_score = algorithm_result["sentiment_score"]
 

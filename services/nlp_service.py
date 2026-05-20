@@ -1,21 +1,17 @@
-import csv
 import re
-from functools import lru_cache
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import numpy as np
 import yake
-from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.model_selection import train_test_split
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import FeatureUnion, Pipeline
-from sklearn.preprocessing import normalize
 
+from services.nlp_ml_service import (
+    SUPERVISED_CONFIDENCE_THRESHOLD,
+    classify_emotion_ml,
+    classify_emotion_supervised,
+    evaluate_supervised_emotion_model,
+)
+from services.nlp_preprocessing_filter import analyze_preprocessing_filter
 from services.nlp_lexicons import (
     ACHIEVEMENT_WORDS,
     ADVICE_CUES,
@@ -29,7 +25,6 @@ from services.nlp_lexicons import (
     DISTORTION_REFRAME_TARGETS,
     EMOJI_ROTATION,
     EMOTION_LEXICON,
-    EMOTION_LEXICON_ENTRIES,
     EMOTION_WEIGHTS,
     GREETING_PATTERNS,
     MOOD_TO_EMOTION,
@@ -44,8 +39,6 @@ from services.nlp_lexicons import (
 )
 
 DIARY_RETRIEVAL_THRESHOLD = 0.1
-SUPERVISED_EMOTION_DATASET = Path(__file__).resolve().parent.parent / "data" / "training" / "emotion_dataset.csv"
-SUPERVISED_CONFIDENCE_THRESHOLD = 0.35
 
 
 def extract_keywords(text: str) -> List[str]:
@@ -168,275 +161,6 @@ def _phrase_score(normalized_text: str, phrase: str) -> int:
     if phrase not in normalized_text:
         return 0
     return 2 if " " in phrase else 1
-
-
-@lru_cache(maxsize=1)
-def _emotion_centroid_model() -> Dict[str, Any]:
-    training_rows = [
-        {
-            "term": row["term"],
-            "emotion": row["emotion"],
-            "weight": int(row.get("weight") or 1),
-        }
-        for row in EMOTION_LEXICON_ENTRIES
-        if row.get("term") and row.get("emotion")
-    ]
-    terms = [row["term"] for row in training_rows]
-    labels = [row["emotion"] for row in training_rows]
-    weights = np.array([max(1, row["weight"]) for row in training_rows], dtype=float)
-
-    vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5), lowercase=True)
-    vectors = normalize(vectorizer.fit_transform(terms))
-
-    centroids: Dict[str, Any] = {}
-    for emotion in sorted(set(labels)):
-        indexes = [index for index, label in enumerate(labels) if label == emotion]
-        if not indexes:
-            continue
-        class_weights = weights[indexes]
-        class_vectors = vectors[indexes].multiply(class_weights[:, None])
-        centroid = sparse.csr_matrix(class_vectors.sum(axis=0)) / class_weights.sum()
-        centroids[emotion] = normalize(centroid)
-
-    return {
-        "vectorizer": vectorizer,
-        "centroids": centroids,
-        "training_rows": len(training_rows),
-        "classes": sorted(centroids),
-    }
-
-
-def classify_emotion_ml(text: str) -> Dict[str, Any]:
-    normalized = _normalize_text(text)
-    if not normalized:
-        return {
-            "predicted_emotion": "neutral",
-            "confidence": 0.0,
-            "scores": {},
-            "algorithm": {
-                "name": "TF-IDF Nearest-Centroid Emotion Classifier",
-                "version": "1.0",
-                "training_source": "data/lexicons/emotion_lexicon.csv",
-            },
-        }
-
-    model = _emotion_centroid_model()
-    query_vector = normalize(model["vectorizer"].transform([normalized]))
-    scores = {
-        emotion: float(cosine_similarity(query_vector, centroid)[0][0])
-        for emotion, centroid in model["centroids"].items()
-    }
-    predicted_emotion, confidence = max(scores.items(), key=lambda item: item[1])
-    if confidence < 0.02:
-        predicted_emotion = "neutral"
-
-    return {
-        "predicted_emotion": predicted_emotion,
-        "confidence": round(float(confidence), 4),
-        "scores": {emotion: round(score, 4) for emotion, score in sorted(scores.items())},
-        "algorithm": {
-            "name": "TF-IDF Nearest-Centroid Emotion Classifier",
-            "version": "1.0",
-            "method": "fit TF-IDF character n-gram vectors from curated emotion lexicon, then classify by cosine distance to class centroids",
-            "training_source": "data/lexicons/emotion_lexicon.csv",
-            "training_rows": model["training_rows"],
-            "classes": model["classes"],
-        },
-    }
-
-
-def _read_supervised_emotion_dataset() -> List[Dict[str, str]]:
-    with SUPERVISED_EMOTION_DATASET.open("r", encoding="utf-8", newline="") as file:
-        rows = [
-            {"text": (row.get("text") or "").strip(), "label": (row.get("label") or "").strip()}
-            for row in csv.DictReader(file)
-        ]
-    return [row for row in rows if row["text"] and row["label"]]
-
-
-class EmotionLexiconFeatureExtractor(BaseEstimator, TransformerMixin):
-    def __init__(self) -> None:
-        self.emotions = sorted(EMOTION_LEXICON)
-
-    def fit(self, texts, y=None):
-        return self
-
-    def transform(self, texts):
-        rows: List[List[float]] = []
-        for text in texts:
-            normalized = _normalize_text(str(text))
-            features: List[float] = []
-            for emotion in self.emotions:
-                score = 0.0
-                for term in EMOTION_LEXICON.get(emotion, []):
-                    score += _phrase_score(normalized, term) * EMOTION_WEIGHTS.get(emotion, {}).get(term, 1)
-                features.append(score)
-            total = sum(features)
-            if total > 0:
-                features = [score / total for score in features]
-            rows.append(features)
-        return sparse.csr_matrix(np.asarray(rows, dtype=float))
-
-
-def _emotion_classification_pipeline() -> Pipeline:
-    return Pipeline(
-        steps=[
-            (
-                "features",
-                FeatureUnion(
-                    transformer_list=[
-                        (
-                            "word_tfidf",
-                            TfidfVectorizer(
-                                analyzer="word",
-                                ngram_range=(1, 2),
-                                lowercase=True,
-                                sublinear_tf=True,
-                            ),
-                        ),
-                        (
-                            "char_tfidf",
-                            TfidfVectorizer(
-                                analyzer="char_wb",
-                                ngram_range=(3, 5),
-                                lowercase=True,
-                                sublinear_tf=True,
-                            ),
-                        ),
-                        ("lexicon_scores", EmotionLexiconFeatureExtractor()),
-                    ]
-                ),
-            ),
-            (
-                "classifier",
-                LogisticRegression(
-                    max_iter=1000,
-                    class_weight="balanced",
-                    C=4.0,
-                    random_state=42,
-                ),
-            ),
-        ]
-    )
-
-
-@lru_cache(maxsize=1)
-def _supervised_emotion_model() -> Dict[str, Any]:
-    rows = _read_supervised_emotion_dataset()
-    texts = [row["text"] for row in rows]
-    labels = [row["label"] for row in rows]
-    classes = sorted(set(labels))
-
-    x_train, x_test, y_train, y_test = train_test_split(
-        texts,
-        labels,
-        test_size=0.25,
-        random_state=42,
-        stratify=labels,
-    )
-
-    evaluation_model = _emotion_classification_pipeline()
-    evaluation_model.fit(x_train, y_train)
-    y_pred = evaluation_model.predict(x_test)
-
-    report = classification_report(
-        y_test,
-        y_pred,
-        labels=classes,
-        output_dict=True,
-        zero_division=0,
-    )
-    matrix = confusion_matrix(y_test, y_pred, labels=classes)
-    evaluation = {
-        "dataset_path": str(SUPERVISED_EMOTION_DATASET.relative_to(Path(__file__).resolve().parent.parent)),
-        "dataset_size": len(rows),
-        "train_size": len(x_train),
-        "test_size": len(x_test),
-        "classes": classes,
-        "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
-        "macro_precision": round(float(report["macro avg"]["precision"]), 4),
-        "macro_recall": round(float(report["macro avg"]["recall"]), 4),
-        "macro_f1": round(float(report["macro avg"]["f1-score"]), 4),
-        "weighted_f1": round(float(report["weighted avg"]["f1-score"]), 4),
-        "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
-        "confusion_matrix": {
-            "labels": classes,
-            "matrix": matrix.astype(int).tolist(),
-        },
-        "per_class": {
-            label: {
-                "precision": round(float(report[label]["precision"]), 4),
-                "recall": round(float(report[label]["recall"]), 4),
-                "f1": round(float(report[label]["f1-score"]), 4),
-                "support": int(report[label]["support"]),
-            }
-            for label in classes
-        },
-    }
-
-    production_model = _emotion_classification_pipeline()
-    production_model.fit(texts, labels)
-    return {
-        "model": production_model,
-        "evaluation": evaluation,
-    }
-
-
-def evaluate_supervised_emotion_model() -> Dict[str, Any]:
-    return _supervised_emotion_model()["evaluation"]
-
-
-def classify_emotion_supervised(text: str) -> Dict[str, Any]:
-    normalized = _normalize_text(text)
-    if not normalized:
-        return {
-            "predicted_emotion": "neutral",
-            "confidence": 0.0,
-            "accepted": False,
-            "top_probabilities": [],
-            "algorithm": {
-                "name": "TF-IDF Logistic Regression Emotion Classifier",
-                "version": "1.0",
-                "training_source": "data/training/emotion_dataset.csv",
-                "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
-            },
-        }
-
-    model_bundle = _supervised_emotion_model()
-    model = model_bundle["model"]
-    probabilities = model.predict_proba([normalized])[0]
-    classes = list(model.classes_)
-    ranked = sorted(
-        (
-            {"emotion": emotion, "probability": round(float(probability), 4)}
-            for emotion, probability in zip(classes, probabilities)
-        ),
-        key=lambda item: item["probability"],
-        reverse=True,
-    )
-    top = ranked[0]
-    confidence = float(top["probability"])
-
-    return {
-        "predicted_emotion": top["emotion"],
-        "confidence": round(confidence, 4),
-        "accepted": confidence >= SUPERVISED_CONFIDENCE_THRESHOLD,
-        "top_probabilities": ranked[:3],
-        "evaluation_summary": {
-            "accuracy": model_bundle["evaluation"]["accuracy"],
-            "macro_f1": model_bundle["evaluation"]["macro_f1"],
-            "weighted_f1": model_bundle["evaluation"]["weighted_f1"],
-            "test_size": model_bundle["evaluation"]["test_size"],
-            "classes": model_bundle["evaluation"]["classes"],
-        },
-        "algorithm": {
-            "name": "TF-IDF Logistic Regression Emotion Classifier",
-            "version": "1.0",
-            "method": "train/test split on curated emotion dataset, TF-IDF word n-gram + character n-gram + lexicon-score features, Logistic Regression classifier",
-            "training_source": "data/training/emotion_dataset.csv",
-            "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
-        },
-    }
 
 
 def build_emotion_profile(text: str, mood_signal: str, sentiment_score: int, risk_level: str) -> Dict[str, Any]:
@@ -693,6 +417,7 @@ def build_response_style_plan(
         support_moves.extend([
             "validasi emosi berdasarkan detail pesan, bukan diagnosis",
             "tawarkan satu micro-action ringan seperti napas, minum, atau tulis satu kalimat",
+            "kalau user baru memberi potongan cerita pendek, boleh lanjutkan dengan attentive continuer seperti 'ohh terus?' atau 'lanjut, aku ngikutin'",
             "akhiri dengan satu pertanyaan lembut tentang bagian paling berat",
         ])
     elif intent == "celebration_or_progress":
@@ -737,8 +462,8 @@ def build_response_style_plan(
         "user_register": user_register,
         "desired_paragraphs": desired_paragraphs,
         "target_words": {
-            "minimum": 180 if desired_paragraphs == 3 else 260 if desired_paragraphs == 4 else 90,
-            "maximum": 220 if desired_paragraphs == 2 else 360 if desired_paragraphs == 3 else 520,
+            "minimum": 220 if desired_paragraphs == 3 else 320 if desired_paragraphs == 4 else 90,
+            "maximum": 240 if desired_paragraphs == 2 else 460 if desired_paragraphs == 3 else 700,
         },
         "opening_strategy": opening_strategy,
         "support_moves": support_moves,
@@ -1004,20 +729,43 @@ def build_context_algorithm_result(
     session_summary: str,
     past_diaries: List[str],
 ) -> Dict[str, Any]:
+    preprocessing_filter = analyze_preprocessing_filter(text)
+    analysis_text = " ".join(
+        part
+        for part in [text, preprocessing_filter.get("normalized_text", "")]
+        if part and part.strip()
+    )
     current_is_greeting = _is_greeting_only(_normalize_text(text))
     risk = classify_risk(
-        text=text,
+        text=analysis_text,
         screening_context="" if current_is_greeting else screening_context,
         session_summary="" if current_is_greeting else session_summary,
     )
+    if preprocessing_filter.get("has_crisis") and risk["level"] != "high":
+        risk = {
+            **risk,
+            "level": "high",
+            "reason": "preprocessing_crisis_filter",
+            "confidence": 0.92,
+            "matches": risk.get("matches", []) + [
+                {
+                    "category": "crisis",
+                    "keyword": item["term"],
+                    "weight": RISK_THRESHOLDS["high"],
+                    "source": item["match_type"],
+                }
+                for item in preprocessing_filter.get("matches", [])
+                if item.get("category") == "crisis"
+            ],
+        }
     retrieval = (
         {"diary": None, "similarity": 0.0, "index": None, "threshold": DIARY_RETRIEVAL_THRESHOLD}
         if current_is_greeting
-        else find_relevant_diary_with_score(text, past_diaries)
+        else find_relevant_diary_with_score(analysis_text, past_diaries)
     )
-    keywords = extract_keywords(text)
-    sentiment_score = calculate_sentiment_score(text, mood_signal)
-    emotion_profile = build_emotion_profile(text, mood_signal, sentiment_score, risk["level"])
+    keywords = extract_keywords(analysis_text)
+    sentiment_score = calculate_sentiment_score(analysis_text, mood_signal)
+    emotion_profile = build_emotion_profile(analysis_text, mood_signal, sentiment_score, risk["level"])
     ml_emotion = (
         {
             "predicted_emotion": "neutral",
@@ -1031,7 +779,7 @@ def build_context_algorithm_result(
             },
         }
         if current_is_greeting
-        else classify_emotion_ml(text)
+        else classify_emotion_ml(analysis_text)
     )
     supervised_emotion = (
         {
@@ -1048,7 +796,7 @@ def build_context_algorithm_result(
             },
         }
         if current_is_greeting
-        else classify_emotion_supervised(text)
+        else classify_emotion_supervised(analysis_text)
     )
     emotion_profile["ml_prediction"] = ml_emotion
     emotion_profile["supervised_prediction"] = supervised_emotion
@@ -1062,7 +810,7 @@ def build_context_algorithm_result(
     elif emotion_profile["primary_emotion"] in {"neutral", "distress"} and ml_emotion["predicted_emotion"] != "neutral":
         emotion_profile["primary_emotion"] = ml_emotion["predicted_emotion"]
         emotion_profile["intensity"] = "low"
-    distortion_profile = detect_cognitive_distortions(text)
+    distortion_profile = detect_cognitive_distortions(analysis_text)
     coping_pathway = select_coping_pathway(
         text=text,
         risk_level=risk["level"],
@@ -1073,6 +821,7 @@ def build_context_algorithm_result(
 
     return {
         "risk_level": risk["level"],
+        "preprocessing_filter": preprocessing_filter,
         "risk": risk,
         "sentiment_score": sentiment_score,
         "keywords": keywords,
@@ -1091,6 +840,7 @@ def build_context_algorithm_result(
                 "emotion_lexicon_intensity_profile",
                 "tfidf_nearest_centroid_emotion_classifier",
                 "tfidf_logistic_regression_emotion_classifier",
+                "nlp_preprocessing_obfuscation_filter",
                 "cognitive_distortion_pattern_mining",
                 "coping_pathway_decision_tree",
             ],
