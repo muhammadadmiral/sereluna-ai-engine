@@ -119,11 +119,18 @@ def _format_style_plan(style_plan: Optional[Dict[str, Any]], user_name: str) -> 
         if emoji_policy.get("allowed")
         else "jangan pakai emoji untuk respons ini"
     )
+    target_words = style_plan.get("target_words") or {}
 
     return f"""Intent: {style_plan.get("intent", "reflective_companion")}
 Intensitas emosi: {style_plan.get("emotional_intensity", "neutral")}
+Relationship stage room ini: {style_plan.get("relationship_stage", "new_room")} ({style_plan.get("assistant_turns", 0)} balasan Sereluna sebelumnya).
+Register user: {style_plan.get("user_register", "aku-kamu santai")}.
 Target panjang: {style_plan.get("desired_paragraphs", 2)} paragraf.
+Target kata: minimal {target_words.get("minimum", 100)}, maksimal {target_words.get("maximum", 280)}.
+Blueprint panjang: paragraf 1 respons langsung ke pesan user, paragraf 2 validasi/urai konteks, paragraf 3 beri insight atau langkah praktis, paragraf 4 lanjutkan obrolan dengan satu pertanyaan ringan jika target 4 paragraf.
 Strategi pembuka: {style_plan.get("opening_strategy", "langsung respons inti pesan user")}
+Tone guidance: {style_plan.get("tone_guidance", "natural dan hangat")}
+Continuity guidance: {style_plan.get("continuity_guidance", "lanjutkan konteks obrolan")}
 Kebijakan nama: {name_policy.get("instruction", "Jangan menyebut nama user di pembuka")} Maksimal {name_policy.get("max_mentions", 0)} kali.
 Kebijakan emoji: {emoji_text}.
 Budget pertanyaan: maksimal {style_plan.get("question_budget", 1)} pertanyaan di akhir.
@@ -140,6 +147,7 @@ def _strip_repetitive_openers(reply: str, user_name: str) -> str:
 
     name = re.escape((user_name or "").strip())
     if name and len(name) > 1:
+        text = re.sub(rf"^\s*(?:wah|aduh|duh)\s*,?\s*{name}\s*[,!.]\s*", "", text, flags=re.IGNORECASE)
         text = re.sub(rf"^\s*{name}\s*[,!.]\s*", "", text, flags=re.IGNORECASE)
 
     opener_pattern = (
@@ -147,11 +155,29 @@ def _strip_repetitive_openers(reply: str, user_name: str) -> str:
         r"tentu|baiklah|baik|oke|okay|siap)\s*[,!.]\s*"
     )
     text = re.sub(opener_pattern, "", text, count=1, flags=re.IGNORECASE).lstrip()
+    text = re.sub(
+        r"^\s*(?:wah|aduh|duh)\s*,?\s*(?:saya\s+sangat\s+prihatin|aku\s+ikut\s+khawatir)\s*",
+        "",
+        text,
+        count=1,
+        flags=re.IGNORECASE,
+    ).lstrip()
+    text = re.sub(
+        r"^\s*(?:saya\s+sangat\s+prihatin\s+(?:mendengar|dengar)?|"
+        r"aku\s+(?:merasa\s+)?khawatir\s+(?:mendengar|dengar)?)\s*",
+        "",
+        text,
+        count=1,
+        flags=re.IGNORECASE,
+    ).lstrip()
 
     if name and len(name) > 1:
         text = re.sub(rf"^\s*{name}\s*[,!.]\s*", "", text, count=1, flags=re.IGNORECASE)
 
-    return text.strip() or reply.strip()
+    text = text.strip()
+    if text and text[0].islower():
+        text = text[0].upper() + text[1:]
+    return text or reply.strip()
 
 
 def _limit_name_mentions(reply: str, user_name: str, max_mentions: int) -> str:
@@ -171,6 +197,7 @@ def _limit_name_mentions(reply: str, user_name: str, max_mentions: int) -> str:
         text = pattern.sub("", text)
 
     text = re.sub(r"\s+([,.!?])", r"\1", text)
+    text = re.sub(r"([,.!?]){2,}", r"\1", text)
     text = re.sub(r"[ \t]{2,}", " ", text)
     text = re.sub(r"^\s*[,!.]\s*", "", text)
     return text.strip() or reply
@@ -302,18 +329,19 @@ def generate_dialog(
     symptoms = analysis_data.get("detected_symptoms", [])
     category = analysis_data.get("dominant_category", "None")
     safe_user_name = (user_name or "Teman").strip() or "Teman"
+    assistant_turns = int((style_plan or {}).get("assistant_turns", 0) or 0)
 
     is_new_user = (
+        assistant_turns <= 0
+        and (
         not session_summary
         or len(session_summary.strip()) < 10
-    ) and (
-        not history_text
-        or len(history_text.strip()) < 10
+        )
     )
     greeting_guideline = (
         "Ini adalah awal obrolan kalian. Sapa user dengan hangat dan tanyakan kabarnya hari ini."
         if is_new_user
-        else "Kalian sedang melanjutkan obrolan. Jangan mengulang salam perkenalan; lanjutkan topik yang sedang berjalan."
+        else "Kalian sedang melanjutkan obrolan di room yang sama. Jangan mengulang salam perkenalan; langsung lanjutkan topik dan emosi yang sedang berjalan."
     )
 
     diary_context = (
@@ -343,8 +371,12 @@ Sereluna bukan sekadar chatbot umum: kamu memakai sinyal mood, ringkasan diary, 
 GAYA SERELUNA:
 - Bahasa Indonesia sehari-hari, hangat, luwes, dan boleh sedikit seperti teman sebaya, tapi tetap sensitif.
 - Jawaban terasa seperti obrolan AI companion yang pintar: nyambung, spesifik ke cerita user, tidak kaku, dan tidak menggurui.
-- Umumnya 2-4 paragraf sesuai planner. Boleh lebih pendek untuk sapaan sederhana, boleh lebih terstruktur kalau user minta saran.
+- Prioritaskan jawaban panjang yang enak dibaca: ikuti target paragraf dan target kata dari planner. Jangan menjawab satu paragraf pendek kecuali user cuma menyapa sangat singkat.
+- Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
+- Makin panjang room chat, makin santai dan makin kontekstual. Jangan bersikap seperti baru kenal kalau riwayat chat sudah ada.
+- Ikuti register user. Kalau user biasa pakai "gua/lu", boleh balas lebih santai; kalau user pakai "aku/kamu", gunakan aku-kamu hangat.
 - Jangan membuka tiap balasan dengan "Aku paham", "Tentu", "Baiklah", atau menyebut nama user. Nama user maksimal sesuai planner.
+- Jangan pakai gaya "Wah, NAMA, saya sangat prihatin" karena terdengar kaku dan template.
 - Hindari template konseling yang berulang. Validasi harus spesifik ke detail pesan user.
 - Emoji boleh sesekali sesuai planner, maksimal satu, dan jangan dipakai untuk situasi krisis.
 - Jangan kebanyakan pertanyaan. Maksimal satu pertanyaan yang paling membantu untuk lanjut ngobrol.

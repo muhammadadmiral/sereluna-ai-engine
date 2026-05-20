@@ -80,6 +80,8 @@ BANNED_CHAT_OPENERS = [
     "Tentu, {name}!",
     "Baiklah, {name}.",
     "Aku mengerti, {name}.",
+    "Wah, {name}, saya sangat prihatin.",
+    "Halo lagi, {name}.",
 ]
 
 DASS21_INDEXES = {
@@ -137,6 +139,47 @@ def _assistant_turn_count(history_text: str) -> int:
     return len(re.findall(r"(?m)^Sereluna:", history_text or ""))
 
 
+def _relationship_stage(assistant_turns: int) -> str:
+    if assistant_turns <= 0:
+        return "new_room"
+    if assistant_turns <= 2:
+        return "warming_up"
+    if assistant_turns <= 7:
+        return "familiar"
+    return "deep_room"
+
+
+def _detect_user_register(text: str, history_text: str) -> str:
+    combined = _normalize_text(f"{history_text or ''} {text or ''}")
+    if re.search(r"\b(gua|gue|gw|lu|lo|elo)\b", combined):
+        return "gue-lu santai"
+    if re.search(r"\b(aku|kamu|dirimu)\b", combined):
+        return "aku-kamu hangat"
+    if re.search(r"\b(saya|anda)\b", combined):
+        return "saya-anda lembut"
+    return "aku-kamu santai"
+
+
+def _tone_guidance(stage: str, user_register: str) -> str:
+    if stage == "new_room":
+        return f"mulai hangat tapi tetap natural; pakai register {user_register}; jangan terlalu formal"
+    if stage == "warming_up":
+        return f"lanjutkan obrolan seperti sudah mulai kenal; pakai register {user_register}; kurangi sapaan pembuka"
+    if stage == "familiar":
+        return f"lebih santai dan responsif seperti teman yang sudah mengikuti cerita; pakai register {user_register}"
+    return f"deep session: jangan reset konteks; pakai register {user_register}; respons harus terasa mengikuti alur chat panjang"
+
+
+def _continuity_guidance(stage: str) -> str:
+    if stage == "new_room":
+        return "boleh membuka ruang ngobrol, tapi tetap langsung nyambung ke pesan user."
+    if stage == "warming_up":
+        return "lanjutkan dari pesan sebelumnya dan jangan memperkenalkan Sereluna ulang."
+    if stage == "familiar":
+        return "rujuk detail obrolan sebelumnya kalau relevan, seolah Sereluna benar-benar mengikuti sesi ini."
+    return "anggap ini room yang sudah panjang; jangan pakai pembuka generik, jangan recap berlebihan, dan respons sebagai lanjutan langsung dari konteks terakhir."
+
+
 def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> str:
     normalized = _normalize_text(text)
     if not normalized:
@@ -183,15 +226,17 @@ def build_response_style_plan(
     assistant_turns = _assistant_turn_count(history_text)
     intent = classify_chat_intent(text, sentiment_score, risk_level)
     intensity = estimate_emotional_intensity(text, mood_signal, sentiment_score, risk_level)
+    stage = _relationship_stage(assistant_turns)
+    user_register = _detect_user_register(text, history_text)
 
     if intent == "check_in":
-        desired_paragraphs = 2
+        desired_paragraphs = 2 if stage == "new_room" else 3
     elif intent in {"advice_or_problem_solving", "emotional_support"} or intensity in {"heavy", "tender"}:
-        desired_paragraphs = 3 if word_count < 45 else 4
+        desired_paragraphs = 4 if stage in {"familiar", "deep_room"} or word_count >= 45 else 3
     elif intent == "safety_support":
         desired_paragraphs = 2
     else:
-        desired_paragraphs = 2 if word_count < 30 else 3
+        desired_paragraphs = 4 if stage == "deep_room" else 3
 
     opening_variants = {
         "check_in": [
@@ -264,21 +309,34 @@ def build_response_style_plan(
         risk_level != "high"
         and intensity != "crisis"
         and intent != "safety_support"
-        and (assistant_turns + word_count) % 3 == 1
+        and (assistant_turns + word_count) % 3 != 0
     )
     emoji = EMOJI_ROTATION[(assistant_turns + len(normalized)) % len(EMOJI_ROTATION)] if emoji_allowed else None
-    name_allowed = assistant_turns % 4 == 0 and intent in {"check_in", "celebration_or_progress"}
+    name_allowed = (
+        assistant_turns <= 1 and intent == "check_in"
+    ) or (
+        intent == "celebration_or_progress" and assistant_turns % 6 == 0
+    )
 
     return {
         "intent": intent,
         "emotional_intensity": intensity,
+        "relationship_stage": stage,
+        "assistant_turns": assistant_turns,
+        "user_register": user_register,
         "desired_paragraphs": desired_paragraphs,
+        "target_words": {
+            "minimum": 120 if desired_paragraphs == 3 else 160 if desired_paragraphs == 4 else 80,
+            "maximum": 260 if desired_paragraphs <= 3 else 360,
+        },
         "opening_strategy": opening_strategy,
         "support_moves": support_moves,
+        "tone_guidance": _tone_guidance(stage, user_register),
+        "continuity_guidance": _continuity_guidance(stage),
         "name_policy": {
             "allowed": name_allowed,
             "max_mentions": 1 if name_allowed else 0,
-            "instruction": "Jangan menyebut nama user di pembuka; pakai nama hanya kalau terasa sangat natural.",
+            "instruction": "Nama user hanya boleh muncul sesekali sebagai sentuhan personal, bukan pembuka template. Jangan tulis pola seperti 'Wah, NAMA, saya sangat prihatin'.",
         },
         "emoji_policy": {
             "allowed": emoji_allowed,
@@ -294,6 +352,8 @@ def build_response_style_plan(
             "version": "1.0",
             "signals": {
                 "assistant_turns": assistant_turns,
+                "relationship_stage": stage,
+                "user_register": user_register,
                 "word_count": word_count,
                 "sentiment_score": sentiment_score,
                 "risk_level": risk_level,
