@@ -51,6 +51,36 @@ POSITIVE_WORDS = {
     "senang", "lega", "tenang", "bahagia", "semangat", "baik", "aman",
     "bersyukur", "nyaman", "membaik", "kuat", "terbantu",
 }
+QUESTION_CUES = {
+    "apa", "gimana", "bagaimana", "kenapa", "mengapa", "harus", "boleh",
+    "bisa", "cara", "saran", "solusi", "menurutmu", "menurut lu",
+}
+ADVICE_CUES = {
+    "saran", "solusi", "cara", "gimana caranya", "harus apa", "aku harus",
+    "tolong bantu", "bantu aku", "kasih tips", "kasih advice",
+}
+GREETING_PATTERNS = [
+    r"^(hai|halo|hello|hi|pagi|siang|sore|malam)(\s+(sereluna|luna))?$",
+    r"^(hai|halo|hello|hi)\s+(semua|guys)$",
+]
+ACHIEVEMENT_WORDS = {
+    "berhasil", "akhirnya", "senang", "lega", "bangga", "lulus", "selesai",
+    "membaik", "diterima", "menang",
+}
+EMOJI_ROTATION = [
+    "\U0001f331",
+    "\U0001f319",
+    "\U0001f642",
+    "\U0001f90d",
+    "\u2728",
+]
+BANNED_CHAT_OPENERS = [
+    "Aku paham, {name}.",
+    "{name}, aku merasa khawatir...",
+    "Tentu, {name}!",
+    "Baiklah, {name}.",
+    "Aku mengerti, {name}.",
+]
 
 DASS21_INDEXES = {
     "depression": [2, 4, 9, 12, 15, 16, 20],
@@ -93,6 +123,184 @@ def _match_patterns(text: str, patterns: List[str]) -> List[str]:
 
 def _has_ambiguous_violence_context(text: str) -> bool:
     return bool(_match_patterns(text, AMBIGUOUS_VIOLENCE_PATTERNS))
+
+
+def _contains_any(text: str, cues: set[str]) -> bool:
+    return any(cue in text for cue in cues)
+
+
+def _is_greeting_only(normalized_text: str) -> bool:
+    return bool(_match_patterns(normalized_text, GREETING_PATTERNS))
+
+
+def _assistant_turn_count(history_text: str) -> int:
+    return len(re.findall(r"(?m)^Sereluna:", history_text or ""))
+
+
+def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> str:
+    normalized = _normalize_text(text)
+    if not normalized:
+        return "empty"
+    if risk_level == "high":
+        return "safety_support"
+    if _is_greeting_only(normalized):
+        return "check_in"
+    if "?" in (text or "") or _contains_any(normalized, ADVICE_CUES):
+        return "advice_or_problem_solving"
+    if sentiment_score <= 2 or _contains_any(normalized, NEGATIVE_WORDS):
+        return "emotional_support"
+    if _contains_any(normalized, ACHIEVEMENT_WORDS) or sentiment_score >= 4:
+        return "celebration_or_progress"
+    if _contains_any(normalized, QUESTION_CUES):
+        return "curious_question"
+    return "reflective_companion"
+
+
+def estimate_emotional_intensity(text: str, mood_signal: str, sentiment_score: int, risk_level: str) -> str:
+    normalized = _normalize_text(text)
+    negative_hits = sum(1 for word in NEGATIVE_WORDS if word in normalized)
+    if risk_level == "high":
+        return "crisis"
+    if risk_level == "medium" or negative_hits >= 3 or sentiment_score == 1:
+        return "heavy"
+    if negative_hits >= 1 or sentiment_score == 2 or (mood_signal or "").lower() in {"sad", "angry", "anxious"}:
+        return "tender"
+    if sentiment_score >= 4:
+        return "light"
+    return "neutral"
+
+
+def build_response_style_plan(
+    text: str,
+    mood_signal: str,
+    risk_level: str,
+    sentiment_score: int,
+    session_summary: str,
+    history_text: str,
+) -> Dict[str, Any]:
+    normalized = _normalize_text(text)
+    word_count = len(normalized.split()) if normalized else 0
+    assistant_turns = _assistant_turn_count(history_text)
+    intent = classify_chat_intent(text, sentiment_score, risk_level)
+    intensity = estimate_emotional_intensity(text, mood_signal, sentiment_score, risk_level)
+
+    if intent == "check_in":
+        desired_paragraphs = 2
+    elif intent in {"advice_or_problem_solving", "emotional_support"} or intensity in {"heavy", "tender"}:
+        desired_paragraphs = 3 if word_count < 45 else 4
+    elif intent == "safety_support":
+        desired_paragraphs = 2
+    else:
+        desired_paragraphs = 2 if word_count < 30 else 3
+
+    opening_variants = {
+        "check_in": [
+            "sapa balik singkat lalu ajak user cerita kondisi hari ini",
+            "mulai dengan energi hangat tanpa menyebut nama user",
+        ],
+        "advice_or_problem_solving": [
+            "jawab pertanyaan inti dulu sebelum validasi emosi",
+            "petakan masalah user secara ringkas lalu beri langkah konkret",
+        ],
+        "emotional_support": [
+            "pantulkan satu detail spesifik dari cerita user",
+            "validasi rasa lelah atau berat tanpa kalimat template",
+        ],
+        "celebration_or_progress": [
+            "ikut merayakan progres user secara natural",
+            "tandai hal kecil yang layak diapresiasi",
+        ],
+        "safety_support": [
+            "validasi kondisi berat dan arahkan ke bantuan nyata",
+            "bicara tenang, langsung, dan tidak panjang berlebihan",
+        ],
+        "curious_question": [
+            "jawab seperti teman ngobrol yang informatif",
+            "beri jawaban jelas lalu kaitkan dengan konteks Sereluna",
+        ],
+        "reflective_companion": [
+            "lanjutkan topik tanpa sapaan ulang",
+            "mulai dari respons yang terasa spontan dan relevan",
+        ],
+    }
+    options = opening_variants.get(intent, opening_variants["reflective_companion"])
+    opening_strategy = options[(assistant_turns + word_count) % len(options)]
+
+    support_moves = ["pakai bahasa Indonesia kasual yang tetap aman dan suportif"]
+    if intent == "advice_or_problem_solving":
+        support_moves.extend([
+            "beri 2-3 langkah praktis yang bisa dicoba hari ini",
+            "jelaskan alasan singkat di balik saran",
+            "akhiri dengan satu pertanyaan pilihan supaya user mudah balas",
+        ])
+    elif intent == "emotional_support":
+        support_moves.extend([
+            "validasi emosi berdasarkan detail pesan, bukan diagnosis",
+            "tawarkan satu micro-action ringan seperti napas, minum, atau tulis satu kalimat",
+            "akhiri dengan satu pertanyaan lembut tentang bagian paling berat",
+        ])
+    elif intent == "celebration_or_progress":
+        support_moves.extend([
+            "beri apresiasi yang spesifik",
+            "ajak user menyimpan pola baik yang sedang muncul",
+        ])
+    elif intent == "check_in":
+        support_moves.extend([
+            "jangan membuka obrolan dengan kalimat formal",
+            "beri ruang user memilih mau cerita singkat atau panjang",
+        ])
+    elif intent == "safety_support":
+        support_moves.extend([
+            "prioritaskan keselamatan dan bantuan manusia tepercaya",
+            "hindari emoji, candaan, dan instruksi yang terdengar menggurui",
+        ])
+    else:
+        support_moves.extend([
+            "respons seperti teman sebaya yang nyambung",
+            "gunakan konteks memori hanya jika benar-benar relevan",
+        ])
+
+    emoji_allowed = (
+        risk_level != "high"
+        and intensity != "crisis"
+        and intent != "safety_support"
+        and (assistant_turns + word_count) % 3 == 1
+    )
+    emoji = EMOJI_ROTATION[(assistant_turns + len(normalized)) % len(EMOJI_ROTATION)] if emoji_allowed else None
+    name_allowed = assistant_turns % 4 == 0 and intent in {"check_in", "celebration_or_progress"}
+
+    return {
+        "intent": intent,
+        "emotional_intensity": intensity,
+        "desired_paragraphs": desired_paragraphs,
+        "opening_strategy": opening_strategy,
+        "support_moves": support_moves,
+        "name_policy": {
+            "allowed": name_allowed,
+            "max_mentions": 1 if name_allowed else 0,
+            "instruction": "Jangan menyebut nama user di pembuka; pakai nama hanya kalau terasa sangat natural.",
+        },
+        "emoji_policy": {
+            "allowed": emoji_allowed,
+            "max_count": 1 if emoji_allowed else 0,
+            "suggested": emoji,
+            "instruction": "Emoji boleh muncul sesekali, maksimal satu, dan jangan dipakai pada respons krisis.",
+        },
+        "avoid_openers": BANNED_CHAT_OPENERS,
+        "question_budget": 1,
+        "memory_policy": "Sebut pola dari diary/screening hanya kalau relevan dengan pesan terbaru.",
+        "algorithm": {
+            "name": "Sereluna Response Planner",
+            "version": "1.0",
+            "signals": {
+                "assistant_turns": assistant_turns,
+                "word_count": word_count,
+                "sentiment_score": sentiment_score,
+                "risk_level": risk_level,
+                "has_session_summary": bool(session_summary and session_summary.strip()),
+            },
+        },
+    }
 
 
 def find_relevant_diary_with_score(

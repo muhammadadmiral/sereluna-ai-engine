@@ -16,7 +16,7 @@ from services.context_service import (
 )
 from services.firebase_service import get_current_user
 from services.llm_service import analyze_symptoms_llm, build_fallback_session_summary, generate_dialog, generate_summary
-from services.nlp_service import build_context_algorithm_result
+from services.nlp_service import build_context_algorithm_result, build_response_style_plan
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 
@@ -77,6 +77,16 @@ async def chat_endpoint(
     )
     algorithm_result["recent_daily_context"] = recent_daily_context
     risk_level = algorithm_result["risk_level"]
+    style_plan = build_response_style_plan(
+        text=user_text,
+        mood_signal=request.mood_signal or "",
+        risk_level=risk_level,
+        sentiment_score=algorithm_result["sentiment_score"],
+        session_summary=session_summary,
+        history_text=history_text,
+    )
+    algorithm_result["style_plan"] = style_plan
+    algorithm_result.setdefault("algorithms", {}).setdefault("supporting", []).append("sereluna_response_planner")
     risk_trace = algorithm_result.get("risk", {})
     route_to_safety = risk_trace.get("reason") in {
         "current_crisis_signal",
@@ -138,6 +148,7 @@ async def chat_endpoint(
         history_text=history_text,
         keywords=keywords,
         relevant_diary=relevant_diary,
+        style_plan=style_plan,
     )
 
     reply = bot_result.get("reply") or "Aku dengerin, ya. Bisa ceritain sedikit lagi?"

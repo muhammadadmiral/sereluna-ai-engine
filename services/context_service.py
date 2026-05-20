@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
 
 from firebase_admin import firestore
+from google.cloud.firestore_v1 import FieldFilter
 
 from services.daily_dashboard_service import build_recent_daily_context
 from services.firebase_service import get_firestore_client
@@ -82,7 +83,7 @@ def get_or_create_session(uid: str, diary_id: str, session_id: Optional[str] = N
             return session_id, {"summary": "", "status": "active"}
         return session_id, snapshot.to_dict() or {}
 
-    active_sessions = sessions_ref.where("status", "==", "active").limit(1).stream()
+    active_sessions = sessions_ref.where(filter=FieldFilter("status", "==", "active")).limit(1).stream()
     for session_snapshot in active_sessions:
         return session_snapshot.id, session_snapshot.to_dict() or {}
 

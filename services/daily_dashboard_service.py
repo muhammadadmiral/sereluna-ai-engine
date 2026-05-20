@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional
 from zoneinfo import ZoneInfo
 
 from firebase_admin import firestore
+from google.cloud.firestore_v1 import FieldFilter
 
 from services.firebase_service import serialize_firestore_value, server_timestamp, user_document
 from services.nlp_service import calculate_sentiment_score, classify_risk
@@ -92,7 +93,7 @@ def _diary_summary_for_date(uid: str, date_value: str) -> str:
     if summary:
         return summary
 
-    for snapshot in _diaries_collection(uid).where("date", "==", date_value).limit(1).stream():
+    for snapshot in _diaries_collection(uid).where(filter=FieldFilter("date", "==", date_value)).limit(1).stream():
         summary = _diary_summary_from_snapshot(snapshot)
         if summary:
             return summary
@@ -313,7 +314,10 @@ def list_calendar_summary(uid: str, year: int, month: int) -> List[Dict[str, Any
     metrics_by_date: Dict[str, Dict[str, Any]] = {}
 
     metrics_ref = _daily_metrics_collection(uid)
-    for snapshot in metrics_ref.where("date", ">=", start_date).where("date", "<=", end_date).stream():
+    metrics_query = metrics_ref.where(filter=FieldFilter("date", ">=", start_date)).where(
+        filter=FieldFilter("date", "<=", end_date)
+    )
+    for snapshot in metrics_query.stream():
         data = snapshot.to_dict() or {}
         date_value = data.get("date") or snapshot.id
         if not start_date <= date_value <= end_date:
@@ -323,7 +327,10 @@ def list_calendar_summary(uid: str, year: int, month: int) -> List[Dict[str, Any
         items_by_date[date_value] = _summary_item(date_value, metric_data=data)
 
     diaries_ref = _diaries_collection(uid)
-    for snapshot in diaries_ref.where("date", ">=", start_date).where("date", "<=", end_date).stream():
+    diaries_query = diaries_ref.where(filter=FieldFilter("date", ">=", start_date)).where(
+        filter=FieldFilter("date", "<=", end_date)
+    )
+    for snapshot in diaries_query.stream():
         data = snapshot.to_dict() or {}
         date_value = data.get("date") or snapshot.id
         if not start_date <= date_value <= end_date:
