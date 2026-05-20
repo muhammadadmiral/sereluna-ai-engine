@@ -159,6 +159,7 @@ def generate_dialog(
     session_summary: str,
     profile_context: str,
     memory_context: str,
+    recent_daily_context: str,
     risk_level: str,
     mood_signal: str,
     user_name: str,
@@ -214,9 +215,10 @@ DATA USER & KONTEKS:
 - Analisis pesan terbaru: {category} ({symptoms_str})
 - Risk level backend: {risk_level or "low"}
 - Profile context: {_truncate(profile_context, 1000) or "N/A"}
+- Konteks 3 hari terakhir: {_truncate(recent_daily_context, 1200) or "N/A"}
 - Kata kunci percakapan: {keywords_str}
 - {diary_context}
-- Memory context gabungan: {_truncate(memory_context, 5000) or "N/A"}
+- Memory context gabungan: {_truncate(memory_context, 2500) or "N/A"}
 
 ATURAN:
 1. {greeting_guideline}

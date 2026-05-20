@@ -64,6 +64,7 @@ async def chat_endpoint(
     session_summary = context["session_summary"]
     profile_context = context["profile_context"]
     memory_context = context["memory_context"]
+    recent_daily_context = context["recent_daily_context"]
     history_text = context["session_history"]
     past_diaries = context["past_diaries"]
 
@@ -129,6 +130,7 @@ async def chat_endpoint(
         session_summary=session_summary,
         profile_context=profile_context,
         memory_context=memory_context,
+        recent_daily_context=recent_daily_context,
         risk_level=risk_level,
         mood_signal=request.mood_signal or "",
         user_name=context["name"],

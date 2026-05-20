@@ -2,10 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import (
     auth_router,
+    calendar_router,
     chat_router,
     context_router,
     device_router,
     diary_router,
+    mood_router,
     notification_router,
     profile_router,
     screening_router,
@@ -33,6 +35,8 @@ app.include_router(diary_router.router, prefix="/api/v1")
 app.include_router(notification_router.router, prefix="/api/v1")
 app.include_router(device_router.router, prefix="/api/v1")
 app.include_router(sleep_router.router, prefix="/api/v1")
+app.include_router(mood_router.router, prefix="/api/v1")
+app.include_router(calendar_router.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
