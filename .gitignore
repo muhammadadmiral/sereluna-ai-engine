@@ -153,3 +153,6 @@ Thumbs.db
 # Firebase & Integrations
 google-service.json
 docs/ANDROID_INTEGRATION.md
+
+# Deployment Scripts
+deploy_hf.ps1
