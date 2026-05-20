@@ -49,7 +49,7 @@ def get_profile(uid: str, firebase_user: Dict[str, Any]) -> Dict[str, Any]:
             "createdAt": server_timestamp(),
             "updatedAt": server_timestamp(),
         }
-        user_ref.set(user_data, merge=True)
+        user_ref.set(serialize_firestore_value(user_data), merge=True)
         snapshot = user_ref.get()
         user_data = snapshot.to_dict() or user_data
 
@@ -86,6 +86,6 @@ def update_profile(
     elif not snapshot.exists:
         payload["photoUrl"] = ""
 
-    user_ref.set(payload, merge=True)
+    user_ref.set(serialize_firestore_value(payload), merge=True)
     create_notification(uid, "Profil diperbarui", "Data profil kamu berhasil diperbarui.", "profile")
     return get_profile(uid, firebase_user)

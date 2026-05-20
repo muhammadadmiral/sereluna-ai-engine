@@ -83,12 +83,27 @@ def user_document(uid: str):
 def serialize_firestore_value(value: Any) -> Any:
     if value is None:
         return None
+    
+    # Handle numpy types if they exist
+    if hasattr(value, "item") and callable(value.item):
+        return value.item()
+    
     if isinstance(value, (datetime, date)):
         return value.isoformat()
     if isinstance(value, dict):
-        return {key: serialize_firestore_value(item) for key, item in value.items()}
-    if isinstance(value, list):
+        return {str(key): serialize_firestore_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
         return [serialize_firestore_value(item) for item in value]
+    
+    # Fallback for other potential numpy types or objects
+    try:
+        if type(value).__module__ == "numpy":
+            if hasattr(value, "tolist"):
+                return serialize_firestore_value(value.tolist())
+            return float(value)
+    except Exception:
+        pass
+
     return value
 
 
