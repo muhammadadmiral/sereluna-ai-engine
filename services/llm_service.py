@@ -94,6 +94,164 @@ def _coerce_optional_text(value: Any) -> Optional[str]:
     return text
 
 
+_EMOJI_PATTERN = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF]")
+
+
+def _format_style_plan(style_plan: Optional[Dict[str, Any]], user_name: str) -> str:
+    if not style_plan:
+        return (
+            "Tidak ada planner khusus. Gunakan gaya natural, tidak template, "
+            "nama user tidak perlu disebut di pembuka."
+        )
+
+    support_moves = style_plan.get("support_moves") or []
+    avoid_openers = [
+        str(item).format(name=user_name)
+        for item in (style_plan.get("avoid_openers") or [])
+    ]
+    name_policy = style_plan.get("name_policy") or {}
+    emoji_policy = style_plan.get("emoji_policy") or {}
+
+    support_text = "\n".join(f"- {move}" for move in support_moves) or "- Respons natural dan relevan."
+    avoid_text = "; ".join(avoid_openers) or "pembuka generik dan repetitif"
+    emoji_text = (
+        f"boleh, maksimal {emoji_policy.get('max_count', 0)}, contoh {emoji_policy.get('suggested')}"
+        if emoji_policy.get("allowed")
+        else "jangan pakai emoji untuk respons ini"
+    )
+    target_words = style_plan.get("target_words") or {}
+
+    return f"""Intent: {style_plan.get("intent", "reflective_companion")}
+Intensitas emosi: {style_plan.get("emotional_intensity", "neutral")}
+Relationship stage room ini: {style_plan.get("relationship_stage", "new_room")} ({style_plan.get("assistant_turns", 0)} balasan Sereluna sebelumnya).
+Register user: {style_plan.get("user_register", "aku-kamu santai")}.
+Target panjang: {style_plan.get("desired_paragraphs", 2)} paragraf.
+Target kata: minimal {target_words.get("minimum", 100)}, maksimal {target_words.get("maximum", 280)}.
+Blueprint panjang: paragraf 1 respons langsung ke pesan user, paragraf 2 validasi/urai konteks, paragraf 3 beri insight atau langkah praktis, paragraf 4 lanjutkan obrolan dengan satu pertanyaan ringan jika target 4 paragraf.
+Strategi pembuka: {style_plan.get("opening_strategy", "langsung respons inti pesan user")}
+Tone guidance: {style_plan.get("tone_guidance", "natural dan hangat")}
+Continuity guidance: {style_plan.get("continuity_guidance", "lanjutkan konteks obrolan")}
+Kebijakan nama: {name_policy.get("instruction", "Jangan menyebut nama user di pembuka")} Maksimal {name_policy.get("max_mentions", 0)} kali.
+Kebijakan emoji: {emoji_text}.
+Budget pertanyaan: maksimal {style_plan.get("question_budget", 1)} pertanyaan di akhir.
+Memory policy: {style_plan.get("memory_policy", "Pakai memori hanya jika relevan.")}
+Support moves:
+{support_text}
+Hindari pembuka ini: {avoid_text}."""
+
+
+def _strip_repetitive_openers(reply: str, user_name: str) -> str:
+    text = (reply or "").strip()
+    if not text:
+        return text
+
+    name = re.escape((user_name or "").strip())
+    if name and len(name) > 1:
+        text = re.sub(rf"^\s*(?:wah|aduh|duh)\s*,?\s*{name}\s*[,!.]\s*", "", text, flags=re.IGNORECASE)
+        text = re.sub(rf"^\s*{name}\s*[,!.]\s*", "", text, flags=re.IGNORECASE)
+
+    opener_pattern = (
+        r"^\s*(?:aku\s+(?:paham|mengerti|ngerti|dengerin)|"
+        r"tentu|baiklah|baik|oke|okay|siap)\s*[,!.]\s*"
+    )
+    text = re.sub(opener_pattern, "", text, count=1, flags=re.IGNORECASE).lstrip()
+    text = re.sub(
+        r"^\s*(?:wah|aduh|duh)\s*,?\s*(?:saya\s+sangat\s+prihatin|aku\s+ikut\s+khawatir)\s*",
+        "",
+        text,
+        count=1,
+        flags=re.IGNORECASE,
+    ).lstrip()
+    text = re.sub(
+        r"^\s*(?:saya\s+sangat\s+prihatin\s+(?:mendengar|dengar)?|"
+        r"aku\s+(?:merasa\s+)?khawatir\s+(?:mendengar|dengar)?)\s*",
+        "",
+        text,
+        count=1,
+        flags=re.IGNORECASE,
+    ).lstrip()
+
+    if name and len(name) > 1:
+        text = re.sub(rf"^\s*{name}\s*[,!.]\s*", "", text, count=1, flags=re.IGNORECASE)
+
+    text = text.strip()
+    if text and text[0].islower():
+        text = text[0].upper() + text[1:]
+    return text or reply.strip()
+
+
+def _limit_name_mentions(reply: str, user_name: str, max_mentions: int) -> str:
+    name = (user_name or "").strip()
+    if not name or len(name) <= 1:
+        return reply
+
+    pattern = re.compile(rf"\b{re.escape(name)}\b", flags=re.IGNORECASE)
+    matches = list(pattern.finditer(reply))
+    if len(matches) <= max_mentions:
+        return reply
+
+    text = reply
+    for match in reversed(matches[max_mentions:]):
+        text = text[: match.start()] + text[match.end() :]
+    if max_mentions == 0 and matches:
+        text = pattern.sub("", text)
+
+    text = re.sub(r"\s+([,.!?])", r"\1", text)
+    text = re.sub(r"([,.!?]){2,}", r"\1", text)
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    text = re.sub(r"^\s*[,!.]\s*", "", text)
+    return text.strip() or reply
+
+
+def _shape_paragraphs(reply: str, desired_paragraphs: int) -> str:
+    text = (reply or "").strip()
+    if desired_paragraphs <= 1 or "\n\n" in text or "\n-" in text or "\n1." in text:
+        return text
+
+    sentences = [sentence.strip() for sentence in re.split(r"(?<=[.!?])\s+", text) if sentence.strip()]
+    if len(sentences) < desired_paragraphs:
+        return text
+
+    group_size = max(1, (len(sentences) + desired_paragraphs - 1) // desired_paragraphs)
+    paragraphs = [
+        " ".join(sentences[index : index + group_size]).strip()
+        for index in range(0, len(sentences), group_size)
+    ]
+    return "\n\n".join(paragraph for paragraph in paragraphs if paragraph)
+
+
+def _maybe_add_planned_emoji(reply: str, style_plan: Optional[Dict[str, Any]]) -> str:
+    if not style_plan:
+        return reply
+
+    emoji_policy = style_plan.get("emoji_policy") or {}
+    if not emoji_policy.get("allowed") or not emoji_policy.get("max_count"):
+        return reply
+    if _EMOJI_PATTERN.search(reply):
+        return reply
+
+    emoji = emoji_policy.get("suggested")
+    if not emoji:
+        return reply
+
+    paragraphs = reply.split("\n\n")
+    if not paragraphs:
+        return reply
+    paragraphs[0] = paragraphs[0].rstrip() + f" {emoji}"
+    return "\n\n".join(paragraphs)
+
+
+def _polish_sereluna_reply(reply: str, user_name: str, style_plan: Optional[Dict[str, Any]]) -> str:
+    text = _strip_repetitive_openers(reply, user_name)
+    name_policy = (style_plan or {}).get("name_policy") or {}
+    text = _limit_name_mentions(text, user_name, int(name_policy.get("max_mentions", 0) or 0))
+    text = _shape_paragraphs(text, int((style_plan or {}).get("desired_paragraphs", 2) or 2))
+    text = _maybe_add_planned_emoji(text, style_plan)
+    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip() or reply.strip()
+
+
 def build_fallback_session_summary(
     previous_summary: Optional[str],
     user_message: Optional[str],
@@ -166,22 +324,24 @@ def generate_dialog(
     history_text: str,
     keywords: List[str],
     relevant_diary: Optional[str] = None,
+    style_plan: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     symptoms = analysis_data.get("detected_symptoms", [])
     category = analysis_data.get("dominant_category", "None")
     safe_user_name = (user_name or "Teman").strip() or "Teman"
+    assistant_turns = int((style_plan or {}).get("assistant_turns", 0) or 0)
 
     is_new_user = (
+        assistant_turns <= 0
+        and (
         not session_summary
         or len(session_summary.strip()) < 10
-    ) and (
-        not history_text
-        or len(history_text.strip()) < 10
+        )
     )
     greeting_guideline = (
         "Ini adalah awal obrolan kalian. Sapa user dengan hangat dan tanyakan kabarnya hari ini."
         if is_new_user
-        else "Kalian sedang melanjutkan obrolan. Jangan mengulang salam perkenalan; lanjutkan topik yang sedang berjalan."
+        else "Kalian sedang melanjutkan obrolan di room yang sama. Jangan mengulang salam perkenalan; langsung lanjutkan topik dan emosi yang sedang berjalan."
     )
 
     diary_context = (
@@ -191,10 +351,11 @@ def generate_dialog(
     )
     keywords_str = ", ".join(keywords) if keywords else "N/A"
     symptoms_str = ", ".join(symptoms) if symptoms else "Tidak terdeteksi"
+    style_plan_text = _format_style_plan(style_plan, safe_user_name)
 
     fallback_reply = (
-        "Aku dengerin, ya. Ceritamu terdengar penting, dan kamu tidak perlu merapikannya dulu "
-        "sebelum cerita ke Sereluna. Coba mulai dari bagian yang paling berat terasa sekarang."
+        "Aku dengerin, ya. Ceritamu nggak harus rapi dulu buat bisa mulai dibahas di sini. "
+        "Kalau sekarang rasanya penuh, kita bisa ambil satu bagian yang paling kerasa berat dan pelan-pelan urai bareng."
     )
     fallback_summary = build_fallback_session_summary(
         previous_summary=session_summary,
@@ -204,9 +365,21 @@ def generate_dialog(
         risk_level=risk_level,
     )
 
-    system_prompt = f"""Kamu adalah Sereluna, teman curhat dan asisten digital yang empatik untuk {safe_user_name}.
-Gunakan bahasa Indonesia sehari-hari yang hangat, natural, dan tidak menggurui. Kamu bukan pengganti psikolog, tetapi kamu bisa memberi dukungan emosional awal dan mengarahkan user ke fitur Konselor jika perlu.
-Jawaban harus cukup panjang, natural, dan terasa manusiawi. Idealnya 2-4 paragraf ringkas, kecuali user memang meminta jawaban singkat. Jangan terlalu pendek.
+    system_prompt = f"""Kamu adalah Sereluna, teman bicara kesehatan mental untuk {safe_user_name}.
+Sereluna bukan sekadar chatbot umum: kamu memakai sinyal mood, ringkasan diary, screening DASS-21, risk classifier, dan planner respons untuk memberi dukungan yang terasa personal, kontekstual, dan aman. Kamu bukan pengganti psikolog, tetapi kamu bisa memberi dukungan emosional awal, bantu user mengurai pikiran, dan mengarahkan user ke fitur Konselor jika perlu.
+
+GAYA SERELUNA:
+- Bahasa Indonesia sehari-hari, hangat, luwes, dan boleh sedikit seperti teman sebaya, tapi tetap sensitif.
+- Jawaban terasa seperti obrolan AI companion yang pintar: nyambung, spesifik ke cerita user, tidak kaku, dan tidak menggurui.
+- Prioritaskan jawaban panjang yang enak dibaca: ikuti target paragraf dan target kata dari planner. Jangan menjawab satu paragraf pendek kecuali user cuma menyapa sangat singkat.
+- Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
+- Makin panjang room chat, makin santai dan makin kontekstual. Jangan bersikap seperti baru kenal kalau riwayat chat sudah ada.
+- Ikuti register user. Kalau user biasa pakai "gua/lu", boleh balas lebih santai; kalau user pakai "aku/kamu", gunakan aku-kamu hangat.
+- Jangan membuka tiap balasan dengan "Aku paham", "Tentu", "Baiklah", atau menyebut nama user. Nama user maksimal sesuai planner.
+- Jangan pakai gaya "Wah, NAMA, saya sangat prihatin" karena terdengar kaku dan template.
+- Hindari template konseling yang berulang. Validasi harus spesifik ke detail pesan user.
+- Emoji boleh sesekali sesuai planner, maksimal satu, dan jangan dipakai untuk situasi krisis.
+- Jangan kebanyakan pertanyaan. Maksimal satu pertanyaan yang paling membantu untuk lanjut ngobrol.
 
 DATA USER & KONTEKS:
 - Nama user: {safe_user_name}
@@ -219,6 +392,9 @@ DATA USER & KONTEKS:
 - Kata kunci percakapan: {keywords_str}
 - {diary_context}
 - Memory context gabungan: {_truncate(memory_context, 2500) or "N/A"}
+
+RESPONSE PLANNER:
+{style_plan_text}
 
 ATURAN:
 1. {greeting_guideline}
@@ -253,11 +429,11 @@ Pesan user sekarang:
                 {"role": "user", "content": user_prompt},
             ],
             response_format={"type": "json_object"},
-            temperature=0.5,
-            max_completion_tokens=900,
+            temperature=0.72,
+            max_completion_tokens=1200,
         )
         parsed = _parse_json_object(content, {})
-        reply = (parsed.get("reply") or fallback_reply).strip()
+        reply = _polish_sereluna_reply((parsed.get("reply") or fallback_reply).strip(), safe_user_name, style_plan)
         raw_next_summary = (
             parsed.get("session_summary")
             or build_fallback_session_summary(
