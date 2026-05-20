@@ -653,11 +653,19 @@ def calculate_sentiment_score(text: str, mood_signal: str = "") -> int:
     normalized_mood = (mood_signal or "").lower()
 
     lexical_score = 0
+    # Higher weight for laughter to override potential intensifiers
+    laughter_cues = {"wkwk", "haha", "ngakak", "kocak", "lucu"}
     for word in POSITIVE_WORDS:
         if word in normalized_text:
-            lexical_score += 1
+            weight = 2 if any(cue in word for cue in laughter_cues) else 1
+            lexical_score += weight
     for word in NEGATIVE_WORDS:
         if word in normalized_text:
+            # If laughter is present, reduce impact of negative intensifiers like 'anjing' or 'bangsat'
+            is_intensifier = word in {"anjing", "bangsat", "goblok", "tolol"}
+            has_laughter = any(cue in normalized_text for cue in laughter_cues)
+            if has_laughter and is_intensifier:
+                continue
             lexical_score -= 1
 
     if normalized_mood in {"negative", "sad", "angry", "anxious", "stress", "stressed"}:

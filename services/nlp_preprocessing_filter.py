@@ -100,12 +100,21 @@ def analyze_preprocessing_filter(text: str) -> Dict[str, Any]:
     if matches:
         highest_severity = max(matches, key=lambda item: SEVERITY_RANK.get(item["severity"], 0))["severity"]
 
+    # Contextual check: if laughing or highly positive, toxicity might be slang intensifiers
+    positive_cues = ["wkwk", "haha", "ngakak", "kocak", "lucu", "gokil", "keren", "mantap", "asik", "seru", "anjir", "anjrit"]
+    has_positive_context = any(cue in normalized_text for cue in positive_cues)
+    has_toxicity = any(item["category"] == "toxicity" for item in matches)
+    
+    # Suppress low/medium toxicity if positive context is present
+    if has_positive_context and has_toxicity and highest_severity in {"low", "medium"}:
+        has_toxicity = False
+
     return {
         "normalized_text": normalized_text,
         "compact_text": compact_text,
         "matches": matches,
         "has_crisis": any(item["category"] == "crisis" for item in matches),
-        "has_toxicity": any(item["category"] == "toxicity" for item in matches),
+        "has_toxicity": has_toxicity,
         "has_sensitive_content": any(item["category"] in {"sexual", "pii"} for item in matches),
         "highest_severity": highest_severity,
         "algorithm": {

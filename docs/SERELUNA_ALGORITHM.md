@@ -12,53 +12,60 @@ Pendekatan ini termasuk algoritma konvensional, data mining ringan, explainable 
    - Output: `low`, `medium`, atau `high`, plus alasan dan evidence.
    - Fungsi: membedakan chat normal, sinyal risiko sedang, dan krisis yang perlu diarahkan ke bantuan manusia.
 
-2. **Sentiment Scoring**
+2. **NLP Preprocessing Obfuscation Filter**
+   - Metode: leetspeak normalization, punctuation stripping, compact matching, dan bounded Levenshtein fuzzy matching.
+   - Input: pesan mentah user.
+   - Output: normalized text, toxicity/crisis/sensitive-content flags, evidence term, severity, dan match type.
+   - Fungsi: mendeteksi kata krisis/toxic yang disamarkan seperti typo, angka, simbol, atau spasi antar huruf sebelum masuk ke risk classifier dan LLM.
+   - Catatan: ini bukan machine learning, tetapi termasuk algoritma preprocessing/filtering yang deterministic dan explainable.
+
+3. **Sentiment Scoring**
    - Metode: lexicon-based scoring bahasa Indonesia.
    - Input: pesan user dan mood signal dari aplikasi.
    - Output: skor 1-5.
    - Fungsi: memberi sinyal kasar apakah respons perlu lebih suportif, netral, atau celebratory.
 
-3. **Diary Retrieval**
+4. **Diary Retrieval**
    - Metode: TF-IDF vectorization + cosine similarity.
    - Input: pesan terbaru dan ringkasan diary sebelumnya.
    - Output: diary paling relevan jika similarity melewati threshold.
    - Fungsi: membuat Sereluna bisa mengingat konteks user, bukan hanya menjawab satu pesan.
 
-4. **Keyword Extraction**
+5. **Keyword Extraction**
    - Metode: YAKE keyword extraction.
    - Input: pesan user.
    - Output: kata kunci percakapan.
    - Fungsi: membantu respons tetap fokus pada topik utama.
 
-5. **Emotion Lexicon Profiler**
+6. **Emotion Lexicon Profiler**
    - Metode: weighted Indonesian emotion lexicon dari CSV + mood signal.
    - Output: emosi utama, intensitas, secondary emotions, dan evidence.
    - Fungsi: membedakan apakah user lebih dominan cemas, sedih, marah, lelah, malu, atau lega.
 
-6. **TF-IDF Nearest-Centroid Emotion Classifier**
+7. **TF-IDF Nearest-Centroid Emotion Classifier**
    - Metode: machine learning konvensional.
    - Training source: `data/lexicons/emotion_lexicon.csv`.
    - Proses: sistem melakukan `fit` TF-IDF character n-gram dari term emosi, membentuk centroid per kelas emosi, lalu memprediksi emosi pesan user dengan cosine similarity.
    - Fungsi: memberi pembanding ML ringan terhadap hasil lexicon scoring tanpa membutuhkan Kaggle, Jupyter, atau dataset besar.
 
-7. **TF-IDF Logistic Regression Emotion Classifier**
+8. **TF-IDF Logistic Regression Emotion Classifier**
    - Metode: supervised machine learning klasik.
    - Training source: `data/training/emotion_dataset.csv`.
    - Proses: dataset dilatih dengan gabungan TF-IDF word n-gram, TF-IDF character n-gram, dan lexicon-score features, lalu diklasifikasi dengan Logistic Regression. Data di-split menjadi train/test, lalu dievaluasi memakai accuracy, macro precision, macro recall, macro F1, weighted F1, dan confusion matrix.
    - Fungsi: memberi prediksi emosi berbasis training data kecil yang terpisah dari lexicon agar tidak hanya rule-based.
-   - Evaluasi saat ini: 180 data, 135 train, 45 test, accuracy 0.8222, macro F1 0.8321.
+   - Evaluasi saat ini: 270 data, 202 train, 68 test, accuracy 0.8235, macro F1 0.8321.
 
-8. **CBT-Inspired Cognitive Distortion Pattern Miner**
+9. **CBT-Inspired Cognitive Distortion Pattern Miner**
    - Metode: pattern matching pada teks yang sudah dinormalisasi.
    - Output: pola seperti catastrophizing, all-or-nothing thinking, mind reading, fortune telling, self-labeling, dan should statement.
    - Fungsi: mendeteksi pola pikiran yang bisa dibantu dengan reframing tanpa memberi diagnosis.
 
-9. **Coping Pathway Decision Tree**
+10. **Coping Pathway Decision Tree**
    - Metode: decision tree berbasis risk level, sentiment, emotion profile, distortion count, dan intent.
    - Output: pathway seperti `cbt_reframe_plus_problem_solving`, `grounding_then_plan`, `low_energy_next_step`, atau `safety_triage`.
    - Fungsi: menentukan bentuk dukungan yang paling cocok sebelum LLM membuat kalimat akhir.
 
-10. **Adaptive Response Planner**
+11. **Adaptive Response Planner**
    - Metode: rule-based conversation planning.
    - Input: jumlah turn di room, register bahasa user, intent, risk, sentiment, dan history.
    - Output: target panjang respons, gaya bahasa, batas penggunaan nama, emoji policy, dan continuity guidance.
