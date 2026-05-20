@@ -45,8 +45,13 @@ def _metric_sleep_payload(data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     if not has_sleep_data:
         return None
 
+    try:
+        sleep_hours = float(total_sleep_hours or 0)
+    except (TypeError, ValueError):
+        sleep_hours = 0
+
     return {
-        "total_sleep_hours": float(total_sleep_hours or 0),
+        "total_sleep_hours": sleep_hours,
         "sleep_quality": sleep_quality,
         "bedtime": bedtime,
         "wakeup": wakeup,
@@ -90,13 +95,6 @@ def _diary_summary_for_date(uid: str, date_value: str) -> str:
             return summary
 
     return ""
-
-
-def _has_diary_for_snapshot(snapshot) -> bool:
-    if not snapshot.exists:
-        return False
-    data = snapshot.to_dict() or {}
-    return bool(data.get("chatSummary") or data.get("chat_summary") or data.get("summary") or data.get("date"))
 
 
 def _month_bounds(year: int, month: int) -> tuple[str, str]:
