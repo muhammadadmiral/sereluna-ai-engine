@@ -149,3 +149,7 @@ Thumbs.db
 # Custom secret files
 .env
 .env.example
+
+# Firebase & Integrations
+google-service.json
+docs/ANDROID_INTEGRATION.md
