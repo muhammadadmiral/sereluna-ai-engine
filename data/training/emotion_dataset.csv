@@ -1,0 +1,614 @@
+text,label
+aku cemas banget mikirin sidang besok,anxiety
+gua takut dosen bakal nanya yang susah,anxiety
+rasanya deg degan dari tadi pagi,anxiety
+aku overthinking sampai susah tidur,anxiety
+takut semuanya jadi kacau pas presentasi,anxiety
+gue khawatir jawabanku nanti kosong,anxiety
+aku panik setiap buka revisi,anxiety
+rasanya gelisah dan nggak bisa tenang,anxiety
+saya gugup menghadapi ujian akhir,anxiety
+aku takut mengecewakan orang rumah,anxiety
+gua was was nunggu kabar dosen,anxiety
+cemas banget kalau aplikasinya error,anxiety
+aku takut dinilai nggak siap,anxiety
+pikiranku muter terus soal kemungkinan buruk,anxiety
+aku tegang banget sebelum bimbingan,anxiety
+hari ini aku sedih banget,sadness
+rasanya pengen nangis dari tadi,sadness
+aku kecewa sama hasil yang keluar,sadness
+hati rasanya kosong banget,sadness
+gue down setelah denger komentar itu,sadness
+aku murung dan nggak semangat,sadness
+rasanya patah karena usahaku nggak dihargai,sadness
+aku merasa kehilangan arah,sadness
+saya sedih karena merasa gagal,sadness
+rasanya berat dan ingin menangis,sadness
+aku kecewa sama diri sendiri,sadness
+hari ini semuanya terasa suram,sadness
+aku merasa hampa setelah kejadian itu,sadness
+gue sedih tapi bingung mau cerita ke siapa,sadness
+rasanya hati turun banget malam ini,sadness
+aku marah banget sama perlakuannya,anger
+gue kesal karena dia meremehkan kerjaanku,anger
+rasanya pengen meledak karena capek dituntut,anger
+aku jengkel tiap dia ngomong begitu,anger
+saya frustrasi dengan aturan yang berubah terus,anger
+gue muak denger komentar yang sama,anger
+aku emosi karena tidak didengar,anger
+rasanya sebel banget sama situasi ini,anger
+aku dongkol karena sudah berusaha tapi disalahkan,anger
+gue benci cara dia ngomong ke aku,anger
+aku kesel karena kerja kelompok nggak adil,anger
+saya marah tapi berusaha menahan diri,anger
+rasanya frustrasi menghadapi revisi tanpa arahan,anger
+gue emosi tiap ingat omongannya,anger
+aku sebel sama diri sendiri karena telat mulai,anger
+aku capek banget hari ini,fatigue
+gue lelah sampai susah mikir,fatigue
+rasanya energi habis total,fatigue
+aku burnout ngerjain tugas terus,fatigue
+saya letih setelah begadang berhari hari,fatigue
+gue pusing karena kebanyakan revisi,fatigue
+rasanya nggak kuat lanjut malam ini,fatigue
+aku tumbang kalau dipaksa terus,fatigue
+capek mental dan fisik jadi satu,fatigue
+aku lelah menghadapi tekanan kampus,fatigue
+gue gakuat kalau harus lembur lagi,fatigue
+rasanya otak sudah penuh banget,fatigue
+aku butuh istirahat tapi masih banyak kerjaan,fatigue
+saya merasa terkuras setelah presentasi,fatigue
+gue capek pura pura baik baik saja,fatigue
+aku merasa sendirian akhir akhir ini,loneliness
+gue kesepian walau banyak orang di sekitar,loneliness
+rasanya nggak ada yang benar benar ngerti,loneliness
+aku merasa ditinggal teman teman,loneliness
+saya terasing di kelas sendiri,loneliness
+gue bingung mau cerita ke siapa,loneliness
+rasanya semua orang sibuk sendiri,loneliness
+aku merasa nggak punya tempat pulang,loneliness
+sendirian banget rasanya malam ini,loneliness
+gue merasa jauh dari semua orang,loneliness
+aku pengen ditemani tapi takut merepotkan,loneliness
+rasanya sepi padahal hari biasa,loneliness
+saya merasa tidak dianggap,loneliness
+gue merasa nggak ada yang peduli,loneliness
+aku cuma pengen ada yang dengerin,loneliness
+aku malu banget sama hasilku,shame
+gue merasa payah dibanding teman teman,shame
+aku bodoh banget kenapa nggak kepikiran,shame
+rasanya aku gagal jadi mahasiswa,shame
+saya merasa rendah setelah dikritik,shame
+gue nggak berguna kalau hasilnya begini,shame
+aku malu kalau harus menjelaskan ini,shame
+rasanya hina banget waktu diremehkan,shame
+aku merasa tidak pantas dapat kesempatan ini,shame
+gue kecewa karena merasa kalah jauh,shame
+aku menyalahkan diri sendiri terus,shame
+rasanya semua orang lebih hebat dari aku,shame
+saya malu karena belum paham materinya,shame
+gue merasa kecil di depan dosen,shame
+aku takut kelihatan bodoh,shame
+aku mulai lega setelah cerita,relief
+rasanya lebih tenang sekarang,relief
+gue merasa aman setelah dibantu,relief
+aku bersyukur masalahnya mulai jelas,relief
+saya merasa terbantu dengan arahan tadi,relief
+rasanya beban sedikit berkurang,relief
+aku bisa napas lebih pelan sekarang,relief
+gue mulai melihat jalan keluarnya,relief
+aku merasa lebih baik daripada tadi,relief
+rasanya nggak seberat sebelumnya,relief
+saya tenang setelah membuat rencana,relief
+gue lega karena revisinya selesai,relief
+aku merasa didengar dan itu membantu,relief
+rasanya sudah lebih aman untuk lanjut,relief
+aku mulai percaya bisa melewati ini,relief
+aku senang banget hari ini,joy
+gue bangga akhirnya fiturnya jalan,joy
+rasanya bahagia karena berhasil selesai,joy
+aku semangat lagi setelah dapat kabar baik,joy
+saya senang presentasinya lancar,joy
+gue berhasil compile tanpa error,joy
+aku bahagia karena diterima magang,joy
+rasanya puas setelah kerja keras terbayar,joy
+aku bangga sama progres kecil ini,joy
+gue menang lawan rasa malas hari ini,joy
+aku senang dosen akhirnya approve,joy
+saya bersyukur hasilnya membaik,joy
+rasanya semangat balik lagi,joy
+gue lega dan senang setelah demo sukses,joy
+aku merasa lebih optimis sekarang,joy
+halo guys,neutral
+hai sereluna,neutral
+aku mau mulai chat baru,neutral
+hari ini aku cuma mau ngobrol sebentar,neutral
+aku lagi buka aplikasi,neutral
+saya ingin mencatat sesuatu,neutral
+gue mau tanya sebentar,neutral
+ini cuma test message,neutral
+aku sedang duduk di kamar,neutral
+hari ini jadwalku cukup biasa,neutral
+gue baru pulang dari kampus,neutral
+aku mau cerita tapi belum tahu mulai dari mana,neutral
+saya sedang mengecek fitur chat,neutral
+halo apa kabar,neutral
+aku ingin ngobrol dulu,neutral
+aku takut semua pertanyaan dosen menjebak,anxiety
+gue cemas karena deadline makin dekat,anxiety
+rasanya panik kalau lihat daftar revisi,anxiety
+saya khawatir tidak bisa menjawab dengan runtut,anxiety
+aku deg degan tiap mikirin demo aplikasi,anxiety
+aku sedih karena usahaku terasa sia sia,sadness
+gue merasa patah setelah revisi ditolak,sadness
+rasanya murung dari pagi sampai malam,sadness
+saya kecewa karena target belum tercapai,sadness
+aku down karena merasa tertinggal jauh,sadness
+aku marah karena kerjaanku dianggap gampang,anger
+gue kesel banget dikira cuma main main,anger
+rasanya frustrasi karena arahan berubah terus,anger
+saya jengkel karena tidak diberi kesempatan menjelaskan,anger
+aku muak dengan tekanan yang datang terus,anger
+aku lelah karena tidurku berantakan,fatigue
+gue capek harus mikir tanpa jeda,fatigue
+rasanya badan dan kepala sama sama berat,fatigue
+saya letih karena banyak tugas menumpuk,fatigue
+aku burnout setelah revisi berulang kali,fatigue
+aku merasa sendirian menghadapi masalah ini,loneliness
+gue kesepian karena tidak ada teman diskusi,loneliness
+rasanya nggak ada yang paham tekanan ini,loneliness
+saya merasa terasing waktu semua orang sibuk,loneliness
+aku ingin ditemani tapi malu meminta,loneliness
+aku malu karena belum menguasai materinya,shame
+gue merasa payah saat dibandingkan dengan teman,shame
+rasanya aku bodoh karena hal kecil saja bingung,shame
+saya merasa gagal memenuhi ekspektasi,shame
+aku takut terlihat tidak kompeten,shame
+aku lega karena akhirnya tahu langkah berikutnya,relief
+gue lebih tenang setelah masalahnya dipetakan,relief
+rasanya aman karena ada rencana cadangan,relief
+saya merasa terbantu setelah diskusi tadi,relief
+aku bersyukur bebannya mulai ringan,relief
+aku senang karena progresnya kelihatan,joy
+gue bangga bisa menyelesaikan fitur sulit,joy
+rasanya bahagia saat demo berjalan lancar,joy
+saya semangat karena hasil uji coba bagus,joy
+aku optimis setelah dapat feedback positif,joy
+selamat pagi aku cuma cek aplikasi,neutral
+gue lagi lihat halaman chat,neutral
+aku belum punya topik khusus,neutral
+saya ingin mengetes respons sistem,neutral
+hari ini aku hanya membuka room baru,neutral
+aku cemas karena belum siap menjelaskan algoritmanya,anxiety
+gue takut penguji menganggap pekerjaanku terlalu sederhana,anxiety
+saya khawatir sistemnya tidak berjalan saat demo,anxiety
+aku panik membaca komentar revisi yang panjang,anxiety
+rasanya tegang karena waktu sidang semakin dekat,anxiety
+gue was was setiap memikirkan pertanyaan teknis,anxiety
+aku takut salah ngomong saat presentasi,anxiety
+saya gugup karena belum lancar menjawab konsep machine learning,anxiety
+aku overthinking soal kemungkinan aplikasi error,anxiety
+gue cemas kalau ditanya bagian backend,anxiety
+aku sedih karena merasa usahaku tidak cukup,sadness
+gue down setelah membandingkan diri dengan teman,sadness
+saya kecewa karena progresku terasa lambat,sadness
+rasanya hampa setelah seharian mengerjakan revisi,sadness
+aku murung karena belum menemukan solusi,sadness
+gue pengen nangis karena merasa sendirian,sadness
+aku sedih setiap mengingat komentar dosen,sadness
+saya merasa patah semangat malam ini,sadness
+rasanya suram ketika melihat pekerjaan belum selesai,sadness
+aku kecewa karena hasilnya belum sesuai harapan,sadness
+aku kesal karena aplikasiku diremehkan,anger
+gue marah waktu dibilang cuma hit api,anger
+saya frustrasi karena penjelasan saya dipotong,anger
+aku emosi karena kerja kerasku dianggap kecil,anger
+rasanya muak dengan standar yang berubah terus,anger
+gue jengkel karena revisi datang mendadak,anger
+aku sebel karena sudah capek tapi masih disalahkan,anger
+saya dongkol karena pertanyaan tidak jelas,anger
+rasanya ingin membantah tapi takut makin kacau,anger
+gue frustrasi menghadapi komentar yang merendahkan,anger
+aku lelah mikirin skripsi dari pagi,fatigue
+gue capek karena otakku tidak berhenti bekerja,fatigue
+saya letih setelah debugging berjam jam,fatigue
+rasanya tenaga habis setelah menyiapkan presentasi,fatigue
+aku burnout karena revisi tidak selesai selesai,fatigue
+gue pusing membaca error yang sama,fatigue
+aku nggak kuat kalau harus begadang lagi,fatigue
+saya terkuras setelah mencoba banyak solusi,fatigue
+rasanya badan berat dan pikiran penuh,fatigue
+gue capek mental menghadapi deadline,fatigue
+aku merasa tidak punya teman diskusi,loneliness
+gue sendirian menghadapi semua persiapan ini,loneliness
+saya merasa tidak ada yang memahami tekananku,loneliness
+rasanya sepi saat harus mengerjakan semuanya sendiri,loneliness
+aku merasa jauh dari teman sekelas,loneliness
+gue bingung cerita ke siapa soal takut sidang,loneliness
+aku merasa tidak dianggap waktu minta bantuan,loneliness
+saya merasa terasing karena tertinggal materi,loneliness
+rasanya sendirian meski banyak orang bertanya,loneliness
+gue butuh ditemani tapi nggak tahu harus minta ke siapa,loneliness
+aku malu karena belum paham konsep dasarnya,shame
+gue merasa bodoh saat membaca ulang kodeku,shame
+saya merasa gagal karena harus mengulang mata kuliah,shame
+aku takut kelihatan payah di depan penguji,shame
+rasanya rendah ketika melihat proyek teman lebih kompleks,shame
+gue merasa tidak berguna waktu sistem error,shame
+aku malu karena jawabanku sering berantakan,shame
+saya merasa kalah jauh dari teman seangkatan,shame
+rasanya hina ketika pekerjaanku diremehkan,shame
+gue menyalahkan diri sendiri karena telat belajar,shame
+aku lega setelah pipeline backend mulai jelas,relief
+gue lebih tenang karena ada metrik evaluasi,relief
+saya merasa aman karena sudah punya penjelasan algoritma,relief
+rasanya beban turun setelah kode berhasil jalan,relief
+aku terbantu ketika alurnya dibuat rapi,relief
+gue lega karena ada dokumen buat presentasi,relief
+aku merasa lebih baik setelah tahu langkah berikutnya,relief
+saya tenang karena error akhirnya ketemu,relief
+rasanya lebih ringan setelah cerita panjang,relief
+gue mulai bisa napas setelah masalah dipetakan,relief
+aku senang karena modelnya berhasil dilatih,joy
+gue bangga melihat akurasinya naik,joy
+saya bahagia karena fitur backend makin kuat,joy
+rasanya semangat karena progresnya nyata,joy
+aku optimis setelah pipeline evaluasi selesai,joy
+gue puas karena chatbotnya makin nyambung,joy
+aku senang dosen bisa lihat ada algoritma,joy
+saya bangga karena dokumentasinya lebih rapi,joy
+rasanya bahagia ketika demo berjalan mulus,joy
+gue semangat lanjut setelah hasil test oke,joy
+halo aku baru masuk room,neutral
+gue cuma mau cek chat sebentar,neutral
+saya sedang membuka halaman ini,neutral
+aku belum tahu mau bahas apa,neutral
+hari ini aku ingin ngobrol ringan,neutral
+gue mau lihat respons sistem dulu,neutral
+aku cuma mengetik contoh pesan,neutral
+saya sedang mencoba fitur baru,neutral
+ini percakapan baru saja,neutral
+halo semua aku mulai dari sini,neutral
+wkwkwk bangsat itu cerita lucu banget anjing,joy
+anjing gokil banget sumpah,joy
+bangsat kaget gua tapi lucu sih wkwk,joy
+lucu banget parah ngakak,joy
+anjir keren banget aplikasinya,joy
+gila ini keren parah sih,joy
+wkwk kocak banget temen gua,joy
+gue ngakak ampe sakit perut wkwkwk,joy
+asik banget hari ini dapet kabar baik,joy
+mantap jiwa akhirnya kelar juga,joy
+anjay dapet giveaway wkwk,joy
+njir kok bisa gitu sih lucu banget,joy
+awokawok lucu amat si lu,joy
+parah sih ini gokil abis,joy
+wah gila sih keren banget,joy
+wkwkwk anjing emang tuh orang,joy
+bangsat beneran dong wkwk,joy
+anjrit kaget gua,joy
+anjir lah lucu banget wkwkwk,joy
+ngakak guling-guling gua,joy
+kocak parah sih ini,joy
+seru banget tadi main sama temen,joy
+asik akhirnya bisa santai wkwk,joy
+gokil bro makasih ya,joy
+mantap bener dah,joy
+capek banget parah hari ini,fatigue
+lelah jiwa raga ngerjain revisi,fatigue
+burnout banget sumpah pengen libur,fatigue
+mampus ini deadline besok belum kelar,fatigue
+pusing pala barbie liat kodingan error,fatigue
+gakuat lagi gua pengen tidur aja,fatigue
+tumbang nih kayaknya bentar lagi,fatigue
+energi abis total buat hari ini,fatigue
+lelah ya Allah semoga berkah,fatigue
+capek mental dengerin orang ngedumel,fatigue
+sedih banget diputusin pas lagi sayang-sayangnya,sadness
+hampa rasanya hidup tanpa dia wkwk eh sedih deng,sadness
+down parah gara-gara nilai jelek,sadness
+patah hati banget sumpah,sadness
+kecewa sama diri sendiri kenapa telat,sadness
+murung terus dari tadi pagi,sadness
+pengen nangis tapi malu,sadness
+berasa gada harganya gua di depan dia,sadness
+suram banget masa depan gua kayaknya,sadness
+kehilangan arah banget sumpah bingung,sadness
+kesal banget sama dosen pembimbing,anger
+jengkel parah dibilang ga kerja,anger
+muak gua denger janji manis doang,anger
+sebel banget sama temen sekelompok,anger
+emosi jiwa liat kelakuannya,anger
+frustrasi banget kodingan ga jalan-jalan,anger
+benci banget sama situasi kayak gini,anger
+dongkol banget sumpah pengen teriak,anger
+marah banget gua gapapa lah ya,anger
+frustrasi parah revisi ga abis-abis,anger
+cemas banget nunggu pengumuman,anxiety
+takut banget gagal lagi,anxiety
+panik liat jam udah mepet,anxiety
+khawatir ortu bakal marah,anxiety
+deg-degan parah mau presentasi,anxiety
+overthinking mulu sampe begadang,anxiety
+gelisah banget gabisa diem,anxiety
+was-was nunggu kabar dia,anxiety
+gugup banget mau ketemu doi,anxiety
+tegang liat muka penguji,anxiety
+kesepian banget gapunya temen chat,loneliness
+sendirian mulu kayak kiper,loneliness
+merasa terasing di lingkungan baru,loneliness
+gada yang ngertiin gua emang,loneliness
+sepi banget malem minggu di kamar,loneliness
+pengen ada yang nemenin tapi siapa,loneliness
+berasa gapunya temen curhat,loneliness
+terabaikan banget gua di sini,loneliness
+sendiri lagi sendiri lagi,loneliness
+numpang lewat doang gua mah,loneliness
+malu banget sumpah salah ngomong tadi,shame
+merasa bodoh banget hal simpel aja gatau,shame
+payah banget gua dibanding yang lain,shame
+gagal mulu gua emang gada bakat,shame
+merasa rendah banget di depan mereka,shame
+hina banget rasanya diketawain,shame
+nyesel banget kenapa tadi begitu,shame
+malu-maluin banget kejadian tadi,shame
+merasa ga berguna buat keluarga,shame
+kecil banget gua rasanya di sini,shame
+halo Sereluna apa kabar hari ini,neutral
+gue mau tanya soal fitur diary,neutral
+aku lagi belajar koding nih seru juga,joy
+akhirnya ngerti konsep machine learning wkwk,joy
+tadi ke kampus cuma bentar doang,neutral
+cuaca hari ini mendung banget ya,neutral
+lagi nunggu temen di kafe nih,neutral
+sereluna lu bisa bantu apa aja sih,neutral
+gue pengen tau cara ngatur waktu yang baik,neutral
+capek sih dikit tapi gapapa lah,fatigue
+agak sedih liat temen udah pada lulus,sadness
+seneng bgt liat progres aplikasi gua,joy
+mantap bener dah kodingannya jalan,joy
+gila ini keren parah aplikasinya wkwk,joy
+anjir kok bisa error gitu sih bingung gua,anxiety
+bangsat kaget gua tiba-tiba ada notif,anxiety
+wkwk konyol banget emang kejadian tadi,joy
+lucu banget liat kucing main bola,joy
+ngakak guling-guling denger ceritanya,joy
+kocak banget lu sereluna bisa aja,joy
+asik bgt dapet diskon makanan wkwk,joy
+seru ya kalo ngobrol sama lu,joy
+keren nih updatenya makin mantap,joy
+gue bangga bisa nyelesain tugas susah,joy
+lega rasanya udah submit revisi,relief
+tenang bgt dengerin lagu sambil koding,relief
+aman kodingannya udah gua backup,relief
+bersyukur masih bisa makan enak hari ini,relief
+membaik nih kondisi gua pelan-pelan,relief
+kuat kok gua tenang aja,relief
+terbantu bgt sama saran lu tadi,relief
+makasih ya sereluna udah dengerin,relief
+paham gua sekarang maksudnya gimana,relief
+nyaman bgt ngobrol di room ini,relief
+asik dapet temen baru di kampus,joy
+seru banget tadi main futsal bareng,joy
+gokil emang temen gua satu itu wkwk,joy
+mantap jiwa akhirnya libur juga,joy
+keren parah sih ini mah,joy
+senang sekali hari ini dapet kado,joy
+bahagia itu sederhana ya wkwk,joy
+semangat terus buat hari esok,joy
+berhasil juga akhirnya login fiturnya,joy
+menang banyak nih gua dapet promo,joy
+diterima kerja cuy seneng bgt,joy
+lulus sidang dapet nilai A,joy
+wkwkwk gokil bgt sumpah ceritanya,joy
+ngakak parah ampe nangis,joy
+lucu bgt liat adek bayi ketawa,joy
+kocak abis nih meme-nya wkwk,joy
+akhirnya dapet nilai A seneng banget,joy
+lulus sidang dapet A dong wkwk,joy
+puji Tuhan lulus sidang nilai memuaskan,joy
+alhamdulillah dapet A sidangnya,joy
+sidang lancar jaya dapet A,joy
+seneng bgt dapet nilai A matkul susah,joy
+revisi dikit dapet A mantap,joy
+ipk naik gara-gara dapet A terus,joy
+target dapet A tercapai juga,joy
+akhirnya bisa dapet A di transkrip,joy
+ipk gua turun gara-gara dapet C,sadness
+sedih bgt dapet nilai jelek matkul ini,sadness
+revisi mulu dapet nilai pas-pasan,sadness
+nyesel ga belajar dapet D dong,shame
+malu bgt dapet nilai paling rendah sekelas,shame
+gua emang bego dapet E mulu,shame
+takut dapet nilai jelek pas pengumuman,anxiety
+cemas liat nilai di portal,anxiety
+deg-degan nunggu nilai keluar,anxiety
+berdoa aja semoga ga dapet C,anxiety
+buset kaget gua dapet nilai segini,joy
+anjir dapet A beneran dong wkwk,joy
+bangsat kaget gua lulus juga akhirnya,joy
+gokil dapet A tanpa belajar wkwk,joy
+kocak parah dapet A gara-gara hoki,joy
+ngakak dapet nilai bagus padahal ngasal,joy
+mantap dapet A lagi kita,joy
+asik dapet A bisa pamer ke emak,joy
+seru bgt dapet dosen baik nilai A,joy
+keren nih nilai gua dapet A semua,joy
+capek bgt belajar dapetnya cuma segini,fatigue
+lelah jiwa raga ngejar nilai A,fatigue
+burnout ngerjain tugas biar dapet A,fatigue
+mampus dapet nilai merah,fatigue
+pusing pala barbie mikirin nilai,fatigue
+gakuat liat transkrip berantakan,fatigue
+tumbang demi dapet ipk bagus,fatigue
+energi abis buat uas dapetnya segini,fatigue
+lelah ya Allah pengen nilai bagus,fatigue
+capek mental dengerin nilai dibanding-bandingin,fatigue
+sendirian di perpustakaan demi nilai,loneliness
+gada temen belajar dapet nilai jelek,loneliness
+merasa terasing gara-gara nilai paling kecil,loneliness
+gada yang ngertiin perjuangan gua buat nilai,loneliness
+sepi bgt pengumuman nilai gada yang diajak diskusi,loneliness
+pengen ada yang nyemangatin biar nilai bagus,loneliness
+berasa gapunya temen yang pinter,loneliness
+terabaikan bgt gua di kelas ini,loneliness
+sendiri lagi dapet nilai kecil lagi,loneliness
+numpang lewat doang nama gua di daftar nilai,loneliness
+malu bgt sumpah salah liat nilai,shame
+merasa bodoh bgt konsep dasar aja gatau,shame
+payah bgt gua dapet nilai di bawah kkm,shame
+gagal mulu gua dapet nilai bagus,shame
+merasa rendah bgt di depan anak ambis,shame
+hina bgt rasanya dikasih nilai kasihan,shame
+nyesel bgt kenapa tadi nyontek dapet E,shame
+malu-maluin bgt nilai gua paling ancur,shame
+merasa ga berguna kalo nilai jelek mulu,shame
+kecil bgt gua rasanya dibanding mereka yang dapet A,shame
+wkwk beneran gokil aplikasinya,joy
+ngakak parah liat tingkah temen,joy
+lucu bgt ampe mules perut gua,joy
+kocak abis dah pokonya wkwk,joy
+asik dapet jatah libur panjang,joy
+seru bgt acara tadi malem,joy
+keren nih updatenya makin mantul,joy
+gokil bro makasih banyak infonya,joy
+mantap bgt lah pokoknya top bgt,joy
+wah gila sih ini keren abis,joy
+anjir keren parah sih lu,joy
+bangsat kaget gua tbtb ada lu,joy
+wkwkwk anjing emang tuh bocah,joy
+ngakak guling-guling liat videonya,joy
+kocak parah sih ga boong,joy
+asik akhirnya bisa beli hape baru,joy
+seru banget main game bareng mereka,joy
+gokil abis emang ide lu,joy
+mantap djiwa akhirnya kelar,joy
+keren banget sumpah ga ada lawan,joy
+anjrit kaget gua dapet hadiah,joy
+anjir lah kok bisa gitu wkwk,joy
+wkwk kocak amat sih lu jadi orang,joy
+ngakak banget denger ceritanya,joy
+lucu parah sih ini mah,joy
+kocak bgt sumpah demi apa,joy
+asik dapet makan gratis wkwk,joy
+seru abis acaranya pecah bgt,joy
+gokil parah emang temen gua,joy
+mantap bener dah hoki gua hari ini,joy
+keren bgt pemandangan di sini,joy
+wah gila sih ini mah juara,joy
+anjir dapet surprise dari doi,joy
+bangsat kaget gua ada kucing tbtb,joy
+wkwkwk anjing lucu amat si,joy
+ngakak liat muka lu pas kaget,joy
+kocak bgt emang si bambang,joy
+asik akhirnya gajian juga wkwk,joy
+seru bgt jalan-jalan hari ini,joy
+gokil dapet diskon gede bgt,joy
+mantap lah pokoknya ga kecewa,joy
+keren abis gayanya gokil,joy
+wah gila sih ini mantap bgt,joy
+anjrit kaget gua liat harganya,joy
+anjir lah lucu banget sumpah,joy
+wkwk kocak bgt lu mah ada-ada aja,joy
+ngakak parah denger jokes-nya,joy
+lucu bgt emang lu mah wkwk,joy
+kocak abis ceritanya gila,joy
+asik dapet kabar baik hari ini,joy
+galau banget di-ghosting pas lagi sayang-sayangnya,sadness
+nyesek parah tbtb dia ngilang gada kabar,sadness
+baper sendiri ujung-ujungnya cuma dianggep temen,sadness
+sakit hati bgt liat story dia sama yang lain,sadness
+kok jahat bgt ya tbtb block gua tanpa sebab,sadness
+nangis semaleman gara-gara diputusin sepihak,sadness
+hampa bgt rasanya ditinggal pas lagi butuh,sadness
+kecewa bgt kirain dia bakal beda ternyata sama aja,sadness
+down parah ngerasa gapantes buat siapa-siapa,shame
+rasanya pengen ngilang aja dari dunia ini capek galau,sadness
+lagi overthinking bgt soal masa depan,anxiety
+takut bgt ntar lulus mau jadi apa,anxiety
+cemas liat temen udah pada dapet kerja gua belum,anxiety
+deg-degan tbtb kepikiran kesalahan masa lalu,anxiety
+gelisah bgt gabisa tidur mikirin nasib,anxiety
+was-was nunggu pengumuman loker,anxiety
+tegang bgt mau interview kerja besok,anxiety
+takut gagal lagi interview ke sekian kalinya,anxiety
+overthinking mulu sampe pala mau pecah,anxiety
+panik tbtb inget tugas belum dikumpulin,anxiety
+capek bgt kerja lembur tiap hari gapernah dihargai,fatigue
+burnout parah liat kerjaan numpuk ga abis-abis,fatigue
+lelah jiwa raga ngadepin bos yang rese,fatigue
+mampus kodingan error pas mau demo,fatigue
+pusing bgt deadline mepet tapi otak nge-stuck,fatigue
+gakuat lagi gua pengen resign aja rasanya,fatigue
+tumbang demi kejar target perusahaan,fatigue
+energi abis total buat meeting seharian,fatigue
+lelah ya Allah pengen istirahat tenang,fatigue
+capek mental dengerin drama kantor mulu,fatigue
+sendiri lagi malem minggu cuma scroll tiktok,loneliness
+kesepian bgt gada temen buat deep talk,loneliness
+merasa terasing di lingkungan kerja baru,loneliness
+gada yang bener-bener ngertiin kondisi gua,loneliness
+sepi bgt malem-malem tbtb pengen ada yang meluk,loneliness
+pengen ada sandaran tapi gada siapa-siapa,loneliness
+berasa gapunya temen deket di kota ini,loneliness
+terabaikan bgt gua di grup chat tbtb hening,loneliness
+sendiri lagi di kosan gada yang nanya kabar,loneliness
+numpang lewat doang gua mah di hidup orang,loneliness
+malu bgt tadi salah sebut nama pas meeting,shame
+merasa bodoh bgt gatau hal teknis dasar,shame
+payah bgt gua dapet kritik pedes dari bos,shame
+gagal mulu gua ngerasa ga becus kerja,shame
+merasa rendah bgt liat temen seangkatan udah sukses,shame
+hina bgt rasanya dikasihani orang lain,shame
+nyesel bgt kenapa tadi ngomong gitu ke dia,shame
+malu-maluin bgt kejadian tadi siang,shame
+merasa ga berguna buat pacar sendiri,shame
+kecil bgt gua rasanya dibanding mereka yang hebat,shame
+seneng bgt dapet surprise dari temen kantor,joy
+bahagia itu pas liat saldo atm nambah wkwk,joy
+lega bgt akhirnya resign dari tempat toxic,relief
+tenang bgt bisa tidur nyenyak malem ini,relief
+aman dokumennya udah gua kirim semua,relief
+bersyukur dapet temen yang suportif bgt,relief
+membaik nih hubungan gua sama dia,relief
+kuat kok gua demi masa depan,relief
+terbantu bgt dapet wejangan dari lu,relief
+makasih ya udah mau nemenin gua begadang,relief
+paham gua sekarang alurnya makasih ya,relief
+nyaman bgt bisa curhat lepas kayak gini,relief
+asik dapet bonus akhir tahun wkwk,joy
+seru bgt liburan bareng keluarga kemaren,joy
+gokil emang pengalaman pertama naik gunung,joy
+mantap jiwa akhirnya project kelar juga,joy
+keren parah sih hasil fotonya lu jago,joy
+senang sekali hari ini dapet kado ultah,joy
+bahagia itu sederhana liat doi senyum wkwk,joy
+semangat terus pantang menyerah,joy
+berhasil juga akhirnya diet gua,joy
+menang lomba dapet hadiah jutaan,joy
+diterima di perusahaan impian seneng bgt,joy
+lulus training dapet sertifikat keren,joy
+wkwkwk kocak bgt liat video kucing,joy
+ngakak parah ampe sakit perut beneran,joy
+lucu bgt liat tingkah ponakan,joy
+kocak abis nih meme-nya dapet aja lu,joy
+anjir keren bgt setup pc lu,joy
+bangsat kaget gua tbtb ada lu di sini,joy
+wkwk konyol bgt kejadian di mall tadi,joy
+ngakak guling-guling denger cerita si udin,joy
+asik akhirnya bisa jalan-akhir pekan ini,joy
+seru abis acaranya pecah bgt sumpah,joy
+gokil parah emang ide lu mantul,joy
+mantap bener dah makanan di sini,joy
+keren bgt pemandangan pas sunset,joy
+wah gila sih ini mah juara bgt,joy
+anjrit kaget gua dapet giveaway,joy
+anjir lah kok bisa gitu wkwk lucu,joy
+wkwk kocak amat sih lu jadi orang,joy
+ngakak banget denger jokes lu,joy
+lucu parah sih ini mah asli,joy
+kocak bgt sumpah demi apa kaget gua,joy
+asik dapet makan gratis dari kantor wkwk,joy
+seru abis main game sampe pagi,joy
+gokil parah emang temen gua satu itu,joy
+mantap bener dah hoki gua hari ini gokil,joy

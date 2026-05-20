@@ -161,9 +161,11 @@ def _format_care_intelligence(
     pathway_steps = coping_pathway.get("steps") or []
     step_text = "\n".join(f"- {step}" for step in pathway_steps) or "- Respons natural sesuai konteks."
     ml_prediction = emotion_profile.get("ml_prediction") or {}
+    supervised_prediction = emotion_profile.get("supervised_prediction") or {}
 
     return f"""Emotion profile: primary={emotion_profile.get("primary_emotion", "neutral")}, intensity={emotion_profile.get("intensity", "neutral")}, secondary={emotion_profile.get("secondary_emotions", [])}
 ML emotion classifier: predicted={ml_prediction.get("predicted_emotion", "N/A")}, confidence={ml_prediction.get("confidence", "N/A")}
+Supervised emotion classifier: predicted={supervised_prediction.get("predicted_emotion", "N/A")}, confidence={supervised_prediction.get("confidence", "N/A")}, accepted={supervised_prediction.get("accepted", "N/A")}
 Cognitive distortion hints: {distortion_text}
 Reframe targets: {reframe_text}
 Coping pathway: {coping_pathway.get("pathway", "reflective_companionship")}
@@ -413,6 +415,8 @@ GAYA SERELUNA:
 - Jawaban terasa seperti obrolan AI companion yang pintar: nyambung, spesifik ke cerita user, tidak kaku, dan tidak menggurui.
 - Prioritaskan jawaban panjang yang enak dibaca: ikuti target paragraf dan target kata dari planner. Jangan menjawab satu paragraf pendek kecuali user cuma menyapa sangat singkat.
 - Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
+- Kalau user sedang cerita panjang/curhat, respons harus terasa hadir dan mengikuti alur: pantulkan detail, uraikan makna, beri opsi langkah kecil, lalu ajak lanjut.
+- Kalau user baru memberi potongan cerita singkat, boleh lebih sederhana seperti teman yang mendengarkan, misalnya mengundang lanjut cerita tanpa memaksa.
 - Makin panjang room chat, makin santai dan makin kontekstual. Jangan bersikap seperti baru kenal kalau riwayat chat sudah ada.
 - Ikuti register user. Kalau user biasa pakai "gua/lu", boleh balas lebih santai; kalau user pakai "aku/kamu", gunakan aku-kamu hangat.
 - Context timing itu penting. Jangan membawa konflik, mood buruk, atau diary lama ke sapaan netral seperti "halo guys" kecuali user sendiri mengaitkannya.

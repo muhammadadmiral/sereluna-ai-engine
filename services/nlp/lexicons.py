@@ -36,6 +36,7 @@ RISK_PATTERN_ENTRIES = _read_csv("risk_patterns.csv")
 COGNITIVE_DISTORTION_ENTRIES = _read_csv("cognitive_distortion_patterns.csv")
 CHAT_CUE_ENTRIES = _read_csv("chat_cues.csv")
 MOOD_EMOTION_ENTRIES = _read_csv("mood_emotion_map.csv")
+FILTER_TERM_ENTRIES = _read_csv("filter_terms.csv")
 
 NEGATIVE_WORDS = {
     row["term"]
