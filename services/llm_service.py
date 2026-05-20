@@ -140,6 +140,35 @@ Support moves:
 Hindari pembuka ini: {avoid_text}."""
 
 
+def _format_care_intelligence(
+    emotion_profile: Optional[Dict[str, Any]],
+    cognitive_distortions: Optional[Dict[str, Any]],
+    coping_pathway: Optional[Dict[str, Any]],
+) -> str:
+    emotion_profile = emotion_profile or {}
+    cognitive_distortions = cognitive_distortions or {}
+    coping_pathway = coping_pathway or {}
+
+    distortions = cognitive_distortions.get("detected") or []
+    distortion_text = (
+        "; ".join(item.get("label", item.get("type", "")) for item in distortions if item)
+        if distortions
+        else "tidak ada pola distorsi kognitif kuat"
+    )
+    reframe_targets = cognitive_distortions.get("reframe_targets") or []
+    reframe_text = "; ".join(reframe_targets) if reframe_targets else "N/A"
+    pathway_steps = coping_pathway.get("steps") or []
+    step_text = "\n".join(f"- {step}" for step in pathway_steps) or "- Respons natural sesuai konteks."
+
+    return f"""Emotion profile: primary={emotion_profile.get("primary_emotion", "neutral")}, intensity={emotion_profile.get("intensity", "neutral")}, secondary={emotion_profile.get("secondary_emotions", [])}
+Cognitive distortion hints: {distortion_text}
+Reframe targets: {reframe_text}
+Coping pathway: {coping_pathway.get("pathway", "reflective_companionship")}
+Coping steps:
+{step_text}
+Instruksi: pakai sinyal ini diam-diam untuk membentuk respons. Jangan menyebut nama algoritma ke user kecuali user bertanya cara kerja sistem."""
+
+
 def _strip_repetitive_openers(reply: str, user_name: str) -> str:
     text = (reply or "").strip()
     if not text:
@@ -325,6 +354,9 @@ def generate_dialog(
     keywords: List[str],
     relevant_diary: Optional[str] = None,
     style_plan: Optional[Dict[str, Any]] = None,
+    emotion_profile: Optional[Dict[str, Any]] = None,
+    cognitive_distortions: Optional[Dict[str, Any]] = None,
+    coping_pathway: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     symptoms = analysis_data.get("detected_symptoms", [])
     category = analysis_data.get("dominant_category", "None")
@@ -352,6 +384,11 @@ def generate_dialog(
     keywords_str = ", ".join(keywords) if keywords else "N/A"
     symptoms_str = ", ".join(symptoms) if symptoms else "Tidak terdeteksi"
     style_plan_text = _format_style_plan(style_plan, safe_user_name)
+    care_intelligence_text = _format_care_intelligence(
+        emotion_profile=emotion_profile,
+        cognitive_distortions=cognitive_distortions,
+        coping_pathway=coping_pathway,
+    )
 
     fallback_reply = (
         "Aku dengerin, ya. Ceritamu nggak harus rapi dulu buat bisa mulai dibahas di sini. "
@@ -395,6 +432,9 @@ DATA USER & KONTEKS:
 
 RESPONSE PLANNER:
 {style_plan_text}
+
+SERELUNA CARE INTELLIGENCE:
+{care_intelligence_text}
 
 ATURAN:
 1. {greeting_guideline}

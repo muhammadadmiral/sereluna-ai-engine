@@ -149,6 +149,9 @@ async def chat_endpoint(
         keywords=keywords,
         relevant_diary=relevant_diary,
         style_plan=style_plan,
+        emotion_profile=algorithm_result.get("emotion_profile"),
+        cognitive_distortions=algorithm_result.get("cognitive_distortions"),
+        coping_pathway=algorithm_result.get("coping_pathway"),
     )
 
     reply = bot_result.get("reply") or "Aku dengerin, ya. Bisa ceritain sedikit lagi?"

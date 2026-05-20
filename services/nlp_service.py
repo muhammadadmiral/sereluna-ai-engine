@@ -51,6 +51,81 @@ POSITIVE_WORDS = {
     "senang", "lega", "tenang", "bahagia", "semangat", "baik", "aman",
     "bersyukur", "nyaman", "membaik", "kuat", "terbantu",
 }
+EMOTION_LEXICON = {
+    "sadness": [
+        "sedih", "nangis", "menangis", "hampa", "kosong", "patah", "kecewa",
+        "duka", "murung", "down", "hilang arah",
+    ],
+    "anxiety": [
+        "cemas", "takut", "panik", "khawatir", "deg degan", "overthinking",
+        "gelisah", "tegang", "gugup", "was was", "dibantai",
+    ],
+    "anger": [
+        "marah", "kesal", "emosi", "jengkel", "muak", "sebel", "benci",
+        "frustrasi", "dongkol",
+    ],
+    "fatigue": [
+        "capek", "lelah", "letih", "burnout", "tumbang", "mampus", "kuras",
+        "nggak kuat", "ga kuat", "gakuat", "pusing",
+    ],
+    "loneliness": [
+        "sendiri", "kesepian", "ditinggal", "nggak ada yang", "ga ada yang",
+        "sendirian", "terasing",
+    ],
+    "shame": [
+        "malu", "gagal", "bodoh", "payah", "nggak berguna", "ga berguna",
+        "rendah", "hina",
+    ],
+    "relief": [
+        "lega", "tenang", "aman", "membaik", "terbantu", "bersyukur",
+        "lebih baik",
+    ],
+    "joy": [
+        "senang", "bahagia", "bangga", "semangat", "berhasil", "menang",
+        "diterima", "lulus",
+    ],
+}
+MOOD_TO_EMOTION = {
+    "sad": "sadness",
+    "anxious": "anxiety",
+    "angry": "anger",
+    "stress": "fatigue",
+    "stressed": "fatigue",
+    "happy": "joy",
+    "positive": "joy",
+    "calm": "relief",
+    "good": "relief",
+}
+COGNITIVE_DISTORTION_PATTERNS = {
+    "catastrophizing": [
+        r"\b(mampus|dibantai|hancur|ancur|fatal|kiamat|berakhir)\b",
+        r"\bpasti\b.{0,30}\b(gagal|dibantai|ditolak|dimarahin|kacau)\b",
+        r"\bngg?a?k\s+bakal\s+bisa\b",
+    ],
+    "all_or_nothing": [
+        r"\b(selalu|ngg?a?k\s+pernah|cuma|doang|total|semuanya|sepenuhnya)\b",
+    ],
+    "mind_reading": [
+        r"\b(pasti\s+(dia|mereka)|dia\s+bakal|mereka\s+bakal|dosen\s+(pasti|bakal))\b",
+    ],
+    "fortune_telling": [
+        r"\b(bakal|akan)\s+(gagal|kacau|dibantai|ditolak|dihancurin)\b",
+    ],
+    "self_labeling": [
+        r"\b(aku|gua|gue|gw|saya)\s+(bodoh|gagal|payah|lemah|tolol|ngg?a?k\s+berguna)\b",
+    ],
+    "should_statement": [
+        r"\b(harus|mestinya|seharusnya|wajib)\b.{0,35}\b(sempurna|bisa|kuat|selesai|berhasil)\b",
+    ],
+}
+DISTORTION_LABELS = {
+    "catastrophizing": "catastrophizing / membayangkan skenario terburuk",
+    "all_or_nothing": "all-or-nothing thinking / melihat situasi terlalu hitam-putih",
+    "mind_reading": "mind reading / menebak penilaian orang lain",
+    "fortune_telling": "fortune telling / menganggap masa depan sudah pasti buruk",
+    "self_labeling": "self-labeling / memberi label keras ke diri sendiri",
+    "should_statement": "should statement / tekanan harus-sempurna",
+}
 QUESTION_CUES = {
     "apa", "gimana", "bagaimana", "kenapa", "mengapa", "harus", "boleh",
     "bisa", "cara", "saran", "solusi", "menurutmu", "menurut lu",
@@ -211,6 +286,193 @@ def estimate_emotional_intensity(text: str, mood_signal: str, sentiment_score: i
     if sentiment_score >= 4:
         return "light"
     return "neutral"
+
+
+def _phrase_score(normalized_text: str, phrase: str) -> int:
+    if phrase not in normalized_text:
+        return 0
+    return 2 if " " in phrase else 1
+
+
+def build_emotion_profile(text: str, mood_signal: str, sentiment_score: int, risk_level: str) -> Dict[str, Any]:
+    normalized = _normalize_text(text)
+    scores: Dict[str, int] = {emotion: 0 for emotion in EMOTION_LEXICON}
+    evidence: Dict[str, List[str]] = {emotion: [] for emotion in EMOTION_LEXICON}
+
+    for emotion, words in EMOTION_LEXICON.items():
+        for word in words:
+            score = _phrase_score(normalized, word)
+            if score:
+                scores[emotion] += score
+                evidence[emotion].append(word)
+
+    mood_emotion = MOOD_TO_EMOTION.get((mood_signal or "").strip().lower())
+    if mood_emotion:
+        scores[mood_emotion] += 2
+        evidence[mood_emotion].append(f"mood_signal:{mood_signal}")
+
+    ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+    primary_emotion, primary_score = ranked[0] if ranked else ("neutral", 0)
+    if primary_score == 0:
+        primary_emotion = "distress" if sentiment_score <= 2 else "neutral"
+
+    raw_intensity = primary_score
+    if sentiment_score <= 2:
+        raw_intensity += 1
+    if risk_level == "medium":
+        raw_intensity += 2
+    if risk_level == "high":
+        raw_intensity += 4
+
+    if raw_intensity >= 6:
+        intensity = "high"
+    elif raw_intensity >= 3:
+        intensity = "medium"
+    elif raw_intensity >= 1:
+        intensity = "low"
+    else:
+        intensity = "neutral"
+
+    secondary = [
+        {"emotion": emotion, "score": score, "evidence": evidence[emotion][:4]}
+        for emotion, score in ranked[1:4]
+        if score > 0
+    ]
+
+    return {
+        "primary_emotion": primary_emotion,
+        "intensity": intensity,
+        "scores": scores,
+        "evidence": {emotion: hits for emotion, hits in evidence.items() if hits},
+        "secondary_emotions": secondary,
+        "algorithm": {
+            "name": "Sereluna Emotion Lexicon Profiler",
+            "version": "1.0",
+            "method": "weighted Indonesian emotion lexicon plus client mood signal",
+        },
+    }
+
+
+def detect_cognitive_distortions(text: str) -> Dict[str, Any]:
+    normalized = _normalize_text(text)
+    distortions: List[Dict[str, Any]] = []
+
+    for distortion, patterns in COGNITIVE_DISTORTION_PATTERNS.items():
+        matched_patterns = [pattern for pattern in patterns if re.search(pattern, normalized, flags=re.IGNORECASE)]
+        if matched_patterns:
+            distortions.append(
+                {
+                    "type": distortion,
+                    "label": DISTORTION_LABELS.get(distortion, distortion),
+                    "evidence_patterns": matched_patterns,
+                }
+            )
+
+    reframe_targets: List[str] = []
+    distortion_types = {item["type"] for item in distortions}
+    if "catastrophizing" in distortion_types or "fortune_telling" in distortion_types:
+        reframe_targets.append("pisahkan skenario terburuk dari bukti yang benar-benar ada")
+    if "mind_reading" in distortion_types:
+        reframe_targets.append("ubah tebakan tentang penilaian orang lain menjadi pertanyaan yang bisa diverifikasi")
+    if "all_or_nothing" in distortion_types:
+        reframe_targets.append("cari posisi tengah: bagian mana yang sudah bekerja dan bagian mana yang masih perlu diperkuat")
+    if "self_labeling" in distortion_types:
+        reframe_targets.append("ganti label diri dengan deskripsi perilaku atau situasi yang lebih spesifik")
+    if "should_statement" in distortion_types:
+        reframe_targets.append("turunkan tekanan 'harus' menjadi langkah realistis berikutnya")
+
+    return {
+        "detected": distortions,
+        "count": len(distortions),
+        "reframe_targets": reframe_targets,
+        "algorithm": {
+            "name": "CBT-Inspired Cognitive Distortion Pattern Miner",
+            "version": "1.0",
+            "method": "regular-expression pattern matching over normalized Indonesian chat text",
+        },
+    }
+
+
+def select_coping_pathway(
+    text: str,
+    risk_level: str,
+    sentiment_score: int,
+    emotion_profile: Dict[str, Any],
+    distortion_profile: Dict[str, Any],
+) -> Dict[str, Any]:
+    primary_emotion = emotion_profile.get("primary_emotion", "neutral")
+    intensity = emotion_profile.get("intensity", "neutral")
+    distortion_count = int(distortion_profile.get("count", 0) or 0)
+    intent = classify_chat_intent(text, sentiment_score, risk_level)
+
+    if risk_level == "high":
+        pathway = "safety_triage"
+        steps = [
+            "validasi kondisi berat secara singkat",
+            "dorong user menghubungi orang tepercaya atau layanan darurat setempat",
+            "arahkan ke fitur Konselor",
+        ]
+    elif distortion_count:
+        pathway = "cbt_reframe_plus_problem_solving"
+        steps = [
+            "validasi emosi tanpa menguatkan pikiran katastrofik",
+            "ajak user membedakan fakta, asumsi, dan skenario terburuk",
+            "beri satu langkah problem-solving yang konkret",
+        ]
+    elif primary_emotion == "anxiety":
+        pathway = "grounding_then_plan"
+        steps = [
+            "turunkan arousal dengan grounding singkat",
+            "pecah kekhawatiran menjadi hal yang bisa dikontrol dan tidak bisa dikontrol",
+            "pilih satu aksi kecil berikutnya",
+        ]
+    elif primary_emotion in {"sadness", "loneliness"}:
+        pathway = "emotional_validation_and_connection"
+        steps = [
+            "validasi rasa sedih atau sendiri secara spesifik",
+            "ajak user menyebut kebutuhan emosional yang belum terpenuhi",
+            "sarankan dukungan ringan dari orang aman atau journaling",
+        ]
+    elif primary_emotion == "anger":
+        pathway = "deescalation_and_boundary"
+        steps = [
+            "akui rasa kesal tanpa memperbesar konflik",
+            "beri jeda regulasi emosi",
+            "bantu susun batasan atau kalimat respons yang lebih aman",
+        ]
+    elif primary_emotion == "fatigue":
+        pathway = "low_energy_next_step"
+        steps = [
+            "turunkan target menjadi langkah paling kecil",
+            "sarankan istirahat mikro atau prioritas satu tugas",
+            "hindari nasihat yang menambah beban",
+        ]
+    elif intent == "advice_or_problem_solving":
+        pathway = "structured_problem_solving"
+        steps = [
+            "jawab inti pertanyaan user",
+            "urai opsi dengan konsekuensi singkat",
+            "beri langkah praktis yang bisa dicoba hari ini",
+        ]
+    else:
+        pathway = "reflective_companionship"
+        steps = [
+            "lanjutkan obrolan dari konteks terakhir",
+            "pantulkan satu detail penting",
+            "beri ruang user memilih arah cerita berikutnya",
+        ]
+
+    return {
+        "pathway": pathway,
+        "intent": intent,
+        "intensity": intensity,
+        "steps": steps,
+        "algorithm": {
+            "name": "Sereluna Coping Pathway Decision Tree",
+            "version": "1.0",
+            "inputs": ["risk_level", "sentiment_score", "primary_emotion", "cognitive_distortion_count", "chat_intent"],
+        },
+    }
 
 
 def build_response_style_plan(
@@ -601,6 +863,15 @@ def build_context_algorithm_result(
     retrieval = find_relevant_diary_with_score(text, past_diaries)
     keywords = extract_keywords(text)
     sentiment_score = calculate_sentiment_score(text, mood_signal)
+    emotion_profile = build_emotion_profile(text, mood_signal, sentiment_score, risk["level"])
+    distortion_profile = detect_cognitive_distortions(text)
+    coping_pathway = select_coping_pathway(
+        text=text,
+        risk_level=risk["level"],
+        sentiment_score=sentiment_score,
+        emotion_profile=emotion_profile,
+        distortion_profile=distortion_profile,
+    )
 
     return {
         "risk_level": risk["level"],
@@ -609,11 +880,17 @@ def build_context_algorithm_result(
         "keywords": keywords,
         "relevant_diary": retrieval["diary"],
         "retrieval": retrieval,
+        "emotion_profile": emotion_profile,
+        "cognitive_distortions": distortion_profile,
+        "coping_pathway": coping_pathway,
         "algorithms": {
             "main": [
                 "weighted_rule_based_risk_classification",
                 "tfidf_cosine_similarity_diary_retrieval",
+                "emotion_lexicon_intensity_profile",
+                "cognitive_distortion_pattern_mining",
+                "coping_pathway_decision_tree",
             ],
-            "supporting": ["lexicon_based_sentiment_scoring"],
+            "supporting": ["lexicon_based_sentiment_scoring", "yake_keyword_extraction"],
         },
     }
