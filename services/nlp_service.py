@@ -1,12 +1,19 @@
+import csv
 import re
 from functools import lru_cache
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import numpy as np
 import yake
 from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.model_selection import train_test_split
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.preprocessing import normalize
 
 from services.nlp_lexicons import (
@@ -37,6 +44,8 @@ from services.nlp_lexicons import (
 )
 
 DIARY_RETRIEVAL_THRESHOLD = 0.1
+SUPERVISED_EMOTION_DATASET = Path(__file__).resolve().parent.parent / "data" / "training" / "emotion_dataset.csv"
+SUPERVISED_CONFIDENCE_THRESHOLD = 0.35
 
 
 def extract_keywords(text: str) -> List[str]:
@@ -232,6 +241,200 @@ def classify_emotion_ml(text: str) -> Dict[str, Any]:
             "training_source": "data/lexicons/emotion_lexicon.csv",
             "training_rows": model["training_rows"],
             "classes": model["classes"],
+        },
+    }
+
+
+def _read_supervised_emotion_dataset() -> List[Dict[str, str]]:
+    with SUPERVISED_EMOTION_DATASET.open("r", encoding="utf-8", newline="") as file:
+        rows = [
+            {"text": (row.get("text") or "").strip(), "label": (row.get("label") or "").strip()}
+            for row in csv.DictReader(file)
+        ]
+    return [row for row in rows if row["text"] and row["label"]]
+
+
+class EmotionLexiconFeatureExtractor(BaseEstimator, TransformerMixin):
+    def __init__(self) -> None:
+        self.emotions = sorted(EMOTION_LEXICON)
+
+    def fit(self, texts, y=None):
+        return self
+
+    def transform(self, texts):
+        rows: List[List[float]] = []
+        for text in texts:
+            normalized = _normalize_text(str(text))
+            features: List[float] = []
+            for emotion in self.emotions:
+                score = 0.0
+                for term in EMOTION_LEXICON.get(emotion, []):
+                    score += _phrase_score(normalized, term) * EMOTION_WEIGHTS.get(emotion, {}).get(term, 1)
+                features.append(score)
+            total = sum(features)
+            if total > 0:
+                features = [score / total for score in features]
+            rows.append(features)
+        return sparse.csr_matrix(np.asarray(rows, dtype=float))
+
+
+def _emotion_classification_pipeline() -> Pipeline:
+    return Pipeline(
+        steps=[
+            (
+                "features",
+                FeatureUnion(
+                    transformer_list=[
+                        (
+                            "word_tfidf",
+                            TfidfVectorizer(
+                                analyzer="word",
+                                ngram_range=(1, 2),
+                                lowercase=True,
+                                sublinear_tf=True,
+                            ),
+                        ),
+                        (
+                            "char_tfidf",
+                            TfidfVectorizer(
+                                analyzer="char_wb",
+                                ngram_range=(3, 5),
+                                lowercase=True,
+                                sublinear_tf=True,
+                            ),
+                        ),
+                        ("lexicon_scores", EmotionLexiconFeatureExtractor()),
+                    ]
+                ),
+            ),
+            (
+                "classifier",
+                LogisticRegression(
+                    max_iter=1000,
+                    class_weight="balanced",
+                    C=4.0,
+                    random_state=42,
+                ),
+            ),
+        ]
+    )
+
+
+@lru_cache(maxsize=1)
+def _supervised_emotion_model() -> Dict[str, Any]:
+    rows = _read_supervised_emotion_dataset()
+    texts = [row["text"] for row in rows]
+    labels = [row["label"] for row in rows]
+    classes = sorted(set(labels))
+
+    x_train, x_test, y_train, y_test = train_test_split(
+        texts,
+        labels,
+        test_size=0.25,
+        random_state=42,
+        stratify=labels,
+    )
+
+    evaluation_model = _emotion_classification_pipeline()
+    evaluation_model.fit(x_train, y_train)
+    y_pred = evaluation_model.predict(x_test)
+
+    report = classification_report(
+        y_test,
+        y_pred,
+        labels=classes,
+        output_dict=True,
+        zero_division=0,
+    )
+    matrix = confusion_matrix(y_test, y_pred, labels=classes)
+    evaluation = {
+        "dataset_path": str(SUPERVISED_EMOTION_DATASET.relative_to(Path(__file__).resolve().parent.parent)),
+        "dataset_size": len(rows),
+        "train_size": len(x_train),
+        "test_size": len(x_test),
+        "classes": classes,
+        "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
+        "macro_precision": round(float(report["macro avg"]["precision"]), 4),
+        "macro_recall": round(float(report["macro avg"]["recall"]), 4),
+        "macro_f1": round(float(report["macro avg"]["f1-score"]), 4),
+        "weighted_f1": round(float(report["weighted avg"]["f1-score"]), 4),
+        "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
+        "confusion_matrix": {
+            "labels": classes,
+            "matrix": matrix.astype(int).tolist(),
+        },
+        "per_class": {
+            label: {
+                "precision": round(float(report[label]["precision"]), 4),
+                "recall": round(float(report[label]["recall"]), 4),
+                "f1": round(float(report[label]["f1-score"]), 4),
+                "support": int(report[label]["support"]),
+            }
+            for label in classes
+        },
+    }
+
+    production_model = _emotion_classification_pipeline()
+    production_model.fit(texts, labels)
+    return {
+        "model": production_model,
+        "evaluation": evaluation,
+    }
+
+
+def evaluate_supervised_emotion_model() -> Dict[str, Any]:
+    return _supervised_emotion_model()["evaluation"]
+
+
+def classify_emotion_supervised(text: str) -> Dict[str, Any]:
+    normalized = _normalize_text(text)
+    if not normalized:
+        return {
+            "predicted_emotion": "neutral",
+            "confidence": 0.0,
+            "accepted": False,
+            "top_probabilities": [],
+            "algorithm": {
+                "name": "TF-IDF Logistic Regression Emotion Classifier",
+                "version": "1.0",
+                "training_source": "data/training/emotion_dataset.csv",
+                "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
+            },
+        }
+
+    model_bundle = _supervised_emotion_model()
+    model = model_bundle["model"]
+    probabilities = model.predict_proba([normalized])[0]
+    classes = list(model.classes_)
+    ranked = sorted(
+        (
+            {"emotion": emotion, "probability": round(float(probability), 4)}
+            for emotion, probability in zip(classes, probabilities)
+        ),
+        key=lambda item: item["probability"],
+        reverse=True,
+    )
+    top = ranked[0]
+    confidence = float(top["probability"])
+
+    return {
+        "predicted_emotion": top["emotion"],
+        "confidence": round(confidence, 4),
+        "accepted": confidence >= SUPERVISED_CONFIDENCE_THRESHOLD,
+        "top_probabilities": ranked[:3],
+        "evaluation_summary": {
+            "accuracy": model_bundle["evaluation"]["accuracy"],
+            "macro_f1": model_bundle["evaluation"]["macro_f1"],
+            "weighted_f1": model_bundle["evaluation"]["weighted_f1"],
+            "test_size": model_bundle["evaluation"]["test_size"],
+            "classes": model_bundle["evaluation"]["classes"],
+        },
+        "algorithm": {
+            "name": "TF-IDF Logistic Regression Emotion Classifier",
+            "version": "1.0",
+            "method": "train/test split on curated emotion dataset, TF-IDF word n-gram + character n-gram + lexicon-score features, Logistic Regression classifier",
+            "training_source": "data/training/emotion_dataset.csv",
+            "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
         },
     }
 
@@ -830,8 +1033,33 @@ def build_context_algorithm_result(
         if current_is_greeting
         else classify_emotion_ml(text)
     )
+    supervised_emotion = (
+        {
+            "predicted_emotion": "neutral",
+            "confidence": 0.0,
+            "accepted": False,
+            "top_probabilities": [],
+            "algorithm": {
+                "name": "TF-IDF Logistic Regression Emotion Classifier",
+                "version": "1.0",
+                "skipped": "neutral_greeting_current_room_only",
+                "training_source": "data/training/emotion_dataset.csv",
+                "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
+            },
+        }
+        if current_is_greeting
+        else classify_emotion_supervised(text)
+    )
     emotion_profile["ml_prediction"] = ml_emotion
-    if emotion_profile["primary_emotion"] in {"neutral", "distress"} and ml_emotion["predicted_emotion"] != "neutral":
+    emotion_profile["supervised_prediction"] = supervised_emotion
+    if (
+        emotion_profile["primary_emotion"] in {"neutral", "distress"}
+        and supervised_emotion["predicted_emotion"] != "neutral"
+        and supervised_emotion.get("accepted")
+    ):
+        emotion_profile["primary_emotion"] = supervised_emotion["predicted_emotion"]
+        emotion_profile["intensity"] = "low"
+    elif emotion_profile["primary_emotion"] in {"neutral", "distress"} and ml_emotion["predicted_emotion"] != "neutral":
         emotion_profile["primary_emotion"] = ml_emotion["predicted_emotion"]
         emotion_profile["intensity"] = "low"
     distortion_profile = detect_cognitive_distortions(text)
@@ -852,6 +1080,8 @@ def build_context_algorithm_result(
         "retrieval": retrieval,
         "emotion_profile": emotion_profile,
         "ml_emotion_classifier": ml_emotion,
+        "supervised_emotion_classifier": supervised_emotion,
+        "supervised_model_evaluation": evaluate_supervised_emotion_model(),
         "cognitive_distortions": distortion_profile,
         "coping_pathway": coping_pathway,
         "algorithms": {
@@ -860,6 +1090,7 @@ def build_context_algorithm_result(
                 "tfidf_cosine_similarity_diary_retrieval",
                 "emotion_lexicon_intensity_profile",
                 "tfidf_nearest_centroid_emotion_classifier",
+                "tfidf_logistic_regression_emotion_classifier",
                 "cognitive_distortion_pattern_mining",
                 "coping_pathway_decision_tree",
             ],

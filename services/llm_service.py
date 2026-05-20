@@ -161,9 +161,11 @@ def _format_care_intelligence(
     pathway_steps = coping_pathway.get("steps") or []
     step_text = "\n".join(f"- {step}" for step in pathway_steps) or "- Respons natural sesuai konteks."
     ml_prediction = emotion_profile.get("ml_prediction") or {}
+    supervised_prediction = emotion_profile.get("supervised_prediction") or {}
 
     return f"""Emotion profile: primary={emotion_profile.get("primary_emotion", "neutral")}, intensity={emotion_profile.get("intensity", "neutral")}, secondary={emotion_profile.get("secondary_emotions", [])}
 ML emotion classifier: predicted={ml_prediction.get("predicted_emotion", "N/A")}, confidence={ml_prediction.get("confidence", "N/A")}
+Supervised emotion classifier: predicted={supervised_prediction.get("predicted_emotion", "N/A")}, confidence={supervised_prediction.get("confidence", "N/A")}, accepted={supervised_prediction.get("accepted", "N/A")}
 Cognitive distortion hints: {distortion_text}
 Reframe targets: {reframe_text}
 Coping pathway: {coping_pathway.get("pathway", "reflective_companionship")}
