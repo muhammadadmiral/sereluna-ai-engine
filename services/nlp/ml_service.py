@@ -17,7 +17,7 @@ from sklearn.preprocessing import normalize
 from services.nlp.lexicons import EMOTION_LEXICON, EMOTION_LEXICON_ENTRIES, EMOTION_WEIGHTS
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 SUPERVISED_EMOTION_DATASET = PROJECT_ROOT / "data" / "training" / "emotion_dataset.csv"
 SUPERVISED_CONFIDENCE_THRESHOLD = 0.35
 
