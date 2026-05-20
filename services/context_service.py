@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
@@ -155,6 +156,24 @@ def format_messages(messages: List[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
+def _usable_personal_context(personal_context: str, latest_diary_summary: str) -> str:
+    cleaned_context = clean_diary_summary(personal_context or "")
+    cleaned_latest = clean_diary_summary(latest_diary_summary or "")
+    if not cleaned_context:
+        return ""
+    if cleaned_latest and cleaned_context == cleaned_latest:
+        return ""
+    session_summary_markers = (
+        r"\buser\s+menyampaikan\b",
+        r"\bsereluna\s+merespons\b",
+        r"\bkondisi\s+terakhir\b",
+        r"\bpercakapan\s+membahas\b",
+    )
+    if any(re.search(pattern, cleaned_context, flags=re.IGNORECASE) for pattern in session_summary_markers):
+        return ""
+    return cleaned_context
+
+
 def build_memory_context(
     profile_context: str,
     latest_screening_summary: str,
@@ -212,22 +231,24 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
     messages = get_session_messages(uid, diary_id, session_id)
     name = user_data.get("name") or "Teman"
     email = user_data.get("email") or ""
-    profile_context = f"Nama: {name}. Email: {email or 'N/A'}."
-    if user_data.get("personalContext"):
-        profile_context = f"{profile_context} Personal context: {user_data.get('personalContext')}"
-
     latest_screening_summary = user_data.get("latestScreeningSummary") or ""
     latest_diary_summary = clean_diary_summary(user_data.get("latestDiarySummary") or "")
+    personal_context = _usable_personal_context(user_data.get("personalContext") or "", latest_diary_summary)
+    profile_context = f"Nama: {name}. Email: {email or 'N/A'}."
+    if personal_context:
+        profile_context = f"{profile_context} Personal context: {personal_context}"
+
     past_diaries = get_recent_diary_summaries(uid, limit=3)
     recent_daily_context = build_recent_daily_context(uid, days=3)
     has_screening_today = bool(user_data.get("hasScreeningToday")) and user_data.get("lastScreeningDate") == today_id()
     recent_history_text = format_messages(messages[-20:])
+    current_session_summary = clean_diary_summary(session_data.get("summary") or "")
     memory_context = build_memory_context(
         profile_context=profile_context,
         latest_screening_summary=latest_screening_summary,
         recent_daily_context=recent_daily_context,
         latest_diary_summary=latest_diary_summary,
-        session_summary=clean_diary_summary(session_data.get("summary") or latest_diary_summary),
+        session_summary=current_session_summary,
         history_text=recent_history_text,
         past_diaries=past_diaries,
     )
@@ -238,7 +259,7 @@ def get_chat_context(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]
         "profile_context": profile_context,
         "latest_screening_summary": latest_screening_summary,
         "latest_diary_summary": latest_diary_summary,
-        "session_summary": clean_diary_summary(session_data.get("summary") or latest_diary_summary),
+        "session_summary": current_session_summary,
         "session_history": recent_history_text,
         "recent_daily_context": recent_daily_context,
         "memory_context": memory_context,
@@ -258,7 +279,6 @@ def update_chat_summaries(uid: str, diary_id: str, session_id: str, summary: str
     user_ref.set(
         {
             "latestDiarySummary": cleaned_summary,
-            "personalContext": cleaned_summary,
             "updatedAt": _server_timestamp(),
         },
         merge=True,
@@ -284,7 +304,6 @@ def finish_session(uid: str, diary_id: str, session_id: str, final_summary: str)
     user_ref.set(
         {
             "latestDiarySummary": cleaned_summary,
-            "personalContext": cleaned_summary,
             "updatedAt": _server_timestamp(),
         },
         merge=True,
@@ -335,7 +354,8 @@ def get_user_context(uid: str) -> Dict[str, Any]:
     user_data = user_snapshot.to_dict() or {}
     name = user_data.get("name") or "Teman"
     email = user_data.get("email") or ""
-    personal_context = user_data.get("personalContext") or ""
+    latest_diary_summary = clean_diary_summary(user_data.get("latestDiarySummary") or "")
+    personal_context = _usable_personal_context(user_data.get("personalContext") or "", latest_diary_summary)
     profile_context = f"Nama: {name}. Email: {email or 'N/A'}."
     if personal_context:
         profile_context = f"{profile_context} Personal context: {personal_context}"
@@ -343,7 +363,7 @@ def get_user_context(uid: str) -> Dict[str, Any]:
     return {
         "profile_context": profile_context,
         "latest_screening_summary": user_data.get("latestScreeningSummary") or "",
-        "latest_diary_summary": clean_diary_summary(user_data.get("latestDiarySummary") or ""),
+        "latest_diary_summary": latest_diary_summary,
         "past_diaries": get_recent_diary_summaries(uid, limit=5),
         "has_screening_today": bool(user_data.get("hasScreeningToday"))
         and user_data.get("lastScreeningDate") == today_id(),

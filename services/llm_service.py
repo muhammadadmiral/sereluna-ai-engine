@@ -134,6 +134,7 @@ Continuity guidance: {style_plan.get("continuity_guidance", "lanjutkan konteks o
 Kebijakan nama: {name_policy.get("instruction", "Jangan menyebut nama user di pembuka")} Maksimal {name_policy.get("max_mentions", 0)} kali.
 Kebijakan emoji: {emoji_text}.
 Budget pertanyaan: maksimal {style_plan.get("question_budget", 1)} pertanyaan di akhir.
+Memory scope: {style_plan.get("memory_scope", "current_room_plus_relevant_memory")}
 Memory policy: {style_plan.get("memory_policy", "Pakai memori hanya jika relevan.")}
 Support moves:
 {support_text}
@@ -159,8 +160,10 @@ def _format_care_intelligence(
     reframe_text = "; ".join(reframe_targets) if reframe_targets else "N/A"
     pathway_steps = coping_pathway.get("steps") or []
     step_text = "\n".join(f"- {step}" for step in pathway_steps) or "- Respons natural sesuai konteks."
+    ml_prediction = emotion_profile.get("ml_prediction") or {}
 
     return f"""Emotion profile: primary={emotion_profile.get("primary_emotion", "neutral")}, intensity={emotion_profile.get("intensity", "neutral")}, secondary={emotion_profile.get("secondary_emotions", [])}
+ML emotion classifier: predicted={ml_prediction.get("predicted_emotion", "N/A")}, confidence={ml_prediction.get("confidence", "N/A")}
 Cognitive distortion hints: {distortion_text}
 Reframe targets: {reframe_text}
 Coping pathway: {coping_pathway.get("pathway", "reflective_companionship")}
@@ -371,7 +374,7 @@ def generate_dialog(
         )
     )
     greeting_guideline = (
-        "Ini adalah awal obrolan kalian. Sapa user dengan hangat dan tanyakan kabarnya hari ini."
+        "Ini adalah awal obrolan kalian. Kalau user hanya menyapa, balas sapaan dengan natural dan jangan menebak emosi dari riwayat lama."
         if is_new_user
         else "Kalian sedang melanjutkan obrolan di room yang sama. Jangan mengulang salam perkenalan; langsung lanjutkan topik dan emosi yang sedang berjalan."
     )
@@ -412,6 +415,7 @@ GAYA SERELUNA:
 - Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
 - Makin panjang room chat, makin santai dan makin kontekstual. Jangan bersikap seperti baru kenal kalau riwayat chat sudah ada.
 - Ikuti register user. Kalau user biasa pakai "gua/lu", boleh balas lebih santai; kalau user pakai "aku/kamu", gunakan aku-kamu hangat.
+- Context timing itu penting. Jangan membawa konflik, mood buruk, atau diary lama ke sapaan netral seperti "halo guys" kecuali user sendiri mengaitkannya.
 - Jangan membuka tiap balasan dengan "Aku paham", "Tentu", "Baiklah", atau menyebut nama user. Nama user maksimal sesuai planner.
 - Jangan pakai gaya "Wah, NAMA, saya sangat prihatin" karena terdengar kaku dan template.
 - Hindari template konseling yang berulang. Validasi harus spesifik ke detail pesan user.
@@ -470,7 +474,7 @@ Pesan user sekarang:
             ],
             response_format={"type": "json_object"},
             temperature=0.72,
-            max_completion_tokens=1200,
+            max_completion_tokens=1800,
         )
         parsed = _parse_json_object(content, {})
         reply = _polish_sereluna_reply((parsed.get("reply") or fallback_reply).strip(), safe_user_name, style_plan)

@@ -1,0 +1,9 @@
+type,label,pattern,reframe_target
+catastrophizing,catastrophizing / membayangkan skenario terburuk,\b(mampus|dibantai|hancur|ancur|fatal|kiamat|berakhir)\b,pisahkan skenario terburuk dari bukti yang benar-benar ada
+catastrophizing,catastrophizing / membayangkan skenario terburuk,\bpasti\b.{0,30}\b(gagal|dibantai|ditolak|dimarahin|kacau)\b,pisahkan skenario terburuk dari bukti yang benar-benar ada
+catastrophizing,catastrophizing / membayangkan skenario terburuk,\bngg?a?k\s+bakal\s+bisa\b,pisahkan skenario terburuk dari bukti yang benar-benar ada
+all_or_nothing,all-or-nothing thinking / melihat situasi terlalu hitam-putih,\b(selalu|ngg?a?k\s+pernah|cuma|doang|total|semuanya|sepenuhnya)\b,cari posisi tengah: bagian mana yang sudah bekerja dan bagian mana yang masih perlu diperkuat
+mind_reading,mind reading / menebak penilaian orang lain,\b(pasti\s+(dia|mereka)|dia\s+bakal|mereka\s+bakal|dosen\s+(pasti|bakal))\b,ubah tebakan tentang penilaian orang lain menjadi pertanyaan yang bisa diverifikasi
+fortune_telling,fortune telling / menganggap masa depan sudah pasti buruk,\b(bakal|akan)\s+(gagal|kacau|dibantai|ditolak|dihancurin)\b,pisahkan skenario terburuk dari bukti yang benar-benar ada
+self_labeling,self-labeling / memberi label keras ke diri sendiri,\b(aku|gua|gue|gw|saya)\s+(bodoh|gagal|payah|lemah|tolol|ngg?a?k\s+berguna)\b,ganti label diri dengan deskripsi perilaku atau situasi yang lebih spesifik
+should_statement,should statement / tekanan harus-sempurna,\b(harus|mestinya|seharusnya|wajib)\b.{0,35}\b(sempurna|bisa|kuat|selesai|berhasil)\b,turunkan tekanan 'harus' menjadi langkah realistis berikutnya

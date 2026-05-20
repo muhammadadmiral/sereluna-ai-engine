@@ -1,0 +1,73 @@
+term,emotion,weight
+sedih,sadness,1
+nangis,sadness,1
+menangis,sadness,1
+hampa,sadness,1
+kosong,sadness,1
+patah,sadness,1
+kecewa,sadness,1
+duka,sadness,1
+murung,sadness,1
+down,sadness,1
+hilang arah,sadness,2
+cemas,anxiety,1
+takut,anxiety,1
+panik,anxiety,1
+khawatir,anxiety,1
+deg degan,anxiety,2
+overthinking,anxiety,1
+gelisah,anxiety,1
+tegang,anxiety,1
+gugup,anxiety,1
+was was,anxiety,2
+dibantai,anxiety,1
+marah,anger,1
+kesal,anger,1
+emosi,anger,1
+jengkel,anger,1
+muak,anger,1
+sebel,anger,1
+benci,anger,1
+frustrasi,anger,1
+dongkol,anger,1
+capek,fatigue,1
+lelah,fatigue,1
+letih,fatigue,1
+burnout,fatigue,1
+tumbang,fatigue,1
+mampus,fatigue,1
+kuras,fatigue,1
+nggak kuat,fatigue,2
+ga kuat,fatigue,2
+gakuat,fatigue,1
+pusing,fatigue,1
+sendiri,loneliness,1
+kesepian,loneliness,1
+ditinggal,loneliness,1
+nggak ada yang,loneliness,2
+ga ada yang,loneliness,2
+sendirian,loneliness,1
+terasing,loneliness,1
+malu,shame,1
+gagal,shame,1
+bodoh,shame,1
+payah,shame,1
+nggak berguna,shame,2
+ga berguna,shame,2
+rendah,shame,1
+hina,shame,1
+lega,relief,1
+tenang,relief,1
+aman,relief,1
+membaik,relief,1
+terbantu,relief,1
+bersyukur,relief,1
+lebih baik,relief,2
+senang,joy,1
+bahagia,joy,1
+bangga,joy,1
+semangat,joy,1
+berhasil,joy,1
+menang,joy,1
+diterima,joy,1
+lulus,joy,1

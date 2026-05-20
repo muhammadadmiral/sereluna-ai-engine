@@ -1,7 +1,9 @@
 fastapi
 firebase-admin
 groq
+numpy
 python-dotenv
+scipy
 scikit-learn
 uvicorn[standard]
 yake

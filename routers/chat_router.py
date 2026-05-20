@@ -87,10 +87,17 @@ async def chat_endpoint(
     )
     algorithm_result["style_plan"] = style_plan
     algorithm_result.setdefault("algorithms", {}).setdefault("supporting", []).append("sereluna_response_planner")
+    memory_scope = style_plan.get("memory_scope")
+    effective_screening_context = screening_context
+    effective_memory_context = memory_context
+    effective_recent_daily_context = recent_daily_context
+    if memory_scope == "current_room_only":
+        effective_screening_context = ""
+        effective_memory_context = history_text
+        effective_recent_daily_context = ""
     risk_trace = algorithm_result.get("risk", {})
     route_to_safety = risk_trace.get("reason") in {
         "current_crisis_signal",
-        "screening_crisis_signal",
     }
     sentiment_score = algorithm_result["sentiment_score"]
 
@@ -137,11 +144,11 @@ async def chat_endpoint(
     bot_result = generate_dialog(
         user_message=user_text,
         analysis_data=analysis_result,
-        screening_context=screening_context,
+        screening_context=effective_screening_context,
         session_summary=session_summary,
         profile_context=profile_context,
-        memory_context=memory_context,
-        recent_daily_context=recent_daily_context,
+        memory_context=effective_memory_context,
+        recent_daily_context=effective_recent_daily_context,
         risk_level=risk_level,
         mood_signal=request.mood_signal or "",
         user_name=context["name"],

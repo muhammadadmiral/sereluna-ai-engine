@@ -1,175 +1,42 @@
 import re
+from functools import lru_cache
 from typing import Any, Dict, List, Optional
 
+import numpy as np
 import yake
+from scipy import sparse
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import normalize
 
+from services.nlp_lexicons import (
+    ACHIEVEMENT_WORDS,
+    ADVICE_CUES,
+    AMBIGUOUS_VIOLENCE_PATTERNS,
+    BANNED_CHAT_OPENERS,
+    COGNITIVE_DISTORTION_PATTERNS,
+    CRISIS_PATTERNS,
+    DASS21_INDEXES,
+    DASS21_THRESHOLDS,
+    DISTORTION_LABELS,
+    DISTORTION_REFRAME_TARGETS,
+    EMOJI_ROTATION,
+    EMOTION_LEXICON,
+    EMOTION_LEXICON_ENTRIES,
+    EMOTION_WEIGHTS,
+    GREETING_PATTERNS,
+    MOOD_TO_EMOTION,
+    NEGATIVE_WORDS,
+    PII_PATTERNS,
+    POSITIVE_WORDS,
+    QUESTION_CUES,
+    RISK_THRESHOLDS,
+    RISK_WEIGHTS,
+    SEXUAL_PATTERNS,
+    VIOLENCE_PATTERNS,
+)
 
-RISK_KEYWORDS = {
-    "crisis": ["bunuh diri", "mengakhiri hidup", "self harm", "menyakiti diri", "mati saja"],
-    "violence": ["bunuh", "bacok", "tusuk", "ledak", "hajar", "serang"],
-    "sexual": ["seks", "porno", "mesum"],
-    "pii": ["nik", "ktp", "alamat lengkap", "nomor kartu"],
-}
-RISK_WEIGHTS = {"crisis": 3, "violence": 2, "sexual": 1, "pii": 1}
-RISK_THRESHOLDS = {"medium": 2, "high": 3}
 DIARY_RETRIEVAL_THRESHOLD = 0.1
-
-CRISIS_PATTERNS = [
-    r"\bbunuh\s*diri\b",
-    r"\bmengakhiri\s+hidup\b",
-    r"\bmenyakiti\s+diri\b",
-    r"\bself\s*harm\b",
-    r"\bmati\s+saja\b",
-]
-VIOLENCE_PATTERNS = [
-    r"\bbacok\b",
-    r"\btusuk\b",
-    r"\bledak\b",
-    r"\bhajar\b",
-    r"\bserang\b",
-]
-AMBIGUOUS_VIOLENCE_PATTERNS = [
-    r"\bpukul\s+berapa\b",
-    r"\bpukul\s+\d{1,2}(\.\d{2})?\b",
-    r"\bpukul\s+jam\b",
-]
-PII_PATTERNS = [
-    r"\bnik\b",
-    r"\bktp\b",
-    r"\balamat\s+lengkap\b",
-    r"\bnomor\s+kartu\b",
-]
-
-NEGATIVE_WORDS = {
-    "sedih", "capek", "lelah", "takut", "cemas", "khawatir", "panik",
-    "hancur", "gagal", "sendiri", "kesepian", "marah", "stress", "stres",
-    "tertekan", "putus asa", "menangis", "buruk", "sakit",
-}
-POSITIVE_WORDS = {
-    "senang", "lega", "tenang", "bahagia", "semangat", "baik", "aman",
-    "bersyukur", "nyaman", "membaik", "kuat", "terbantu",
-}
-EMOTION_LEXICON = {
-    "sadness": [
-        "sedih", "nangis", "menangis", "hampa", "kosong", "patah", "kecewa",
-        "duka", "murung", "down", "hilang arah",
-    ],
-    "anxiety": [
-        "cemas", "takut", "panik", "khawatir", "deg degan", "overthinking",
-        "gelisah", "tegang", "gugup", "was was", "dibantai",
-    ],
-    "anger": [
-        "marah", "kesal", "emosi", "jengkel", "muak", "sebel", "benci",
-        "frustrasi", "dongkol",
-    ],
-    "fatigue": [
-        "capek", "lelah", "letih", "burnout", "tumbang", "mampus", "kuras",
-        "nggak kuat", "ga kuat", "gakuat", "pusing",
-    ],
-    "loneliness": [
-        "sendiri", "kesepian", "ditinggal", "nggak ada yang", "ga ada yang",
-        "sendirian", "terasing",
-    ],
-    "shame": [
-        "malu", "gagal", "bodoh", "payah", "nggak berguna", "ga berguna",
-        "rendah", "hina",
-    ],
-    "relief": [
-        "lega", "tenang", "aman", "membaik", "terbantu", "bersyukur",
-        "lebih baik",
-    ],
-    "joy": [
-        "senang", "bahagia", "bangga", "semangat", "berhasil", "menang",
-        "diterima", "lulus",
-    ],
-}
-MOOD_TO_EMOTION = {
-    "sad": "sadness",
-    "anxious": "anxiety",
-    "angry": "anger",
-    "stress": "fatigue",
-    "stressed": "fatigue",
-    "happy": "joy",
-    "positive": "joy",
-    "calm": "relief",
-    "good": "relief",
-}
-COGNITIVE_DISTORTION_PATTERNS = {
-    "catastrophizing": [
-        r"\b(mampus|dibantai|hancur|ancur|fatal|kiamat|berakhir)\b",
-        r"\bpasti\b.{0,30}\b(gagal|dibantai|ditolak|dimarahin|kacau)\b",
-        r"\bngg?a?k\s+bakal\s+bisa\b",
-    ],
-    "all_or_nothing": [
-        r"\b(selalu|ngg?a?k\s+pernah|cuma|doang|total|semuanya|sepenuhnya)\b",
-    ],
-    "mind_reading": [
-        r"\b(pasti\s+(dia|mereka)|dia\s+bakal|mereka\s+bakal|dosen\s+(pasti|bakal))\b",
-    ],
-    "fortune_telling": [
-        r"\b(bakal|akan)\s+(gagal|kacau|dibantai|ditolak|dihancurin)\b",
-    ],
-    "self_labeling": [
-        r"\b(aku|gua|gue|gw|saya)\s+(bodoh|gagal|payah|lemah|tolol|ngg?a?k\s+berguna)\b",
-    ],
-    "should_statement": [
-        r"\b(harus|mestinya|seharusnya|wajib)\b.{0,35}\b(sempurna|bisa|kuat|selesai|berhasil)\b",
-    ],
-}
-DISTORTION_LABELS = {
-    "catastrophizing": "catastrophizing / membayangkan skenario terburuk",
-    "all_or_nothing": "all-or-nothing thinking / melihat situasi terlalu hitam-putih",
-    "mind_reading": "mind reading / menebak penilaian orang lain",
-    "fortune_telling": "fortune telling / menganggap masa depan sudah pasti buruk",
-    "self_labeling": "self-labeling / memberi label keras ke diri sendiri",
-    "should_statement": "should statement / tekanan harus-sempurna",
-}
-QUESTION_CUES = {
-    "apa", "gimana", "bagaimana", "kenapa", "mengapa", "harus", "boleh",
-    "bisa", "cara", "saran", "solusi", "menurutmu", "menurut lu",
-}
-ADVICE_CUES = {
-    "saran", "solusi", "cara", "gimana caranya", "harus apa", "aku harus",
-    "tolong bantu", "bantu aku", "kasih tips", "kasih advice",
-}
-GREETING_PATTERNS = [
-    r"^(hai|halo|hello|hi|pagi|siang|sore|malam)(\s+(sereluna|luna))?$",
-    r"^(hai|halo|hello|hi)\s+(semua|guys)$",
-]
-ACHIEVEMENT_WORDS = {
-    "berhasil", "akhirnya", "senang", "lega", "bangga", "lulus", "selesai",
-    "membaik", "diterima", "menang",
-}
-EMOJI_ROTATION = [
-    "\U0001f331",
-    "\U0001f319",
-    "\U0001f642",
-    "\U0001f90d",
-    "\u2728",
-]
-BANNED_CHAT_OPENERS = [
-    "Aku paham, {name}.",
-    "{name}, aku merasa khawatir...",
-    "Tentu, {name}!",
-    "Baiklah, {name}.",
-    "Aku mengerti, {name}.",
-    "Wah, {name}, saya sangat prihatin.",
-    "Halo lagi, {name}.",
-]
-
-DASS21_INDEXES = {
-    "depression": [2, 4, 9, 12, 15, 16, 20],
-    "anxiety": [1, 3, 6, 8, 14, 18, 19],
-    "stress": [0, 5, 7, 10, 11, 13, 17],
-}
-
-DASS21_THRESHOLDS = {
-    "depression": [(9, "normal"), (13, "mild"), (20, "moderate"), (27, "severe")],
-    "anxiety": [(7, "normal"), (9, "mild"), (14, "moderate"), (19, "severe")],
-    "stress": [(14, "normal"), (18, "mild"), (25, "moderate"), (33, "severe")],
-}
 
 
 def extract_keywords(text: str) -> List[str]:
@@ -294,6 +161,81 @@ def _phrase_score(normalized_text: str, phrase: str) -> int:
     return 2 if " " in phrase else 1
 
 
+@lru_cache(maxsize=1)
+def _emotion_centroid_model() -> Dict[str, Any]:
+    training_rows = [
+        {
+            "term": row["term"],
+            "emotion": row["emotion"],
+            "weight": int(row.get("weight") or 1),
+        }
+        for row in EMOTION_LEXICON_ENTRIES
+        if row.get("term") and row.get("emotion")
+    ]
+    terms = [row["term"] for row in training_rows]
+    labels = [row["emotion"] for row in training_rows]
+    weights = np.array([max(1, row["weight"]) for row in training_rows], dtype=float)
+
+    vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5), lowercase=True)
+    vectors = normalize(vectorizer.fit_transform(terms))
+
+    centroids: Dict[str, Any] = {}
+    for emotion in sorted(set(labels)):
+        indexes = [index for index, label in enumerate(labels) if label == emotion]
+        if not indexes:
+            continue
+        class_weights = weights[indexes]
+        class_vectors = vectors[indexes].multiply(class_weights[:, None])
+        centroid = sparse.csr_matrix(class_vectors.sum(axis=0)) / class_weights.sum()
+        centroids[emotion] = normalize(centroid)
+
+    return {
+        "vectorizer": vectorizer,
+        "centroids": centroids,
+        "training_rows": len(training_rows),
+        "classes": sorted(centroids),
+    }
+
+
+def classify_emotion_ml(text: str) -> Dict[str, Any]:
+    normalized = _normalize_text(text)
+    if not normalized:
+        return {
+            "predicted_emotion": "neutral",
+            "confidence": 0.0,
+            "scores": {},
+            "algorithm": {
+                "name": "TF-IDF Nearest-Centroid Emotion Classifier",
+                "version": "1.0",
+                "training_source": "data/lexicons/emotion_lexicon.csv",
+            },
+        }
+
+    model = _emotion_centroid_model()
+    query_vector = normalize(model["vectorizer"].transform([normalized]))
+    scores = {
+        emotion: float(cosine_similarity(query_vector, centroid)[0][0])
+        for emotion, centroid in model["centroids"].items()
+    }
+    predicted_emotion, confidence = max(scores.items(), key=lambda item: item[1])
+    if confidence < 0.02:
+        predicted_emotion = "neutral"
+
+    return {
+        "predicted_emotion": predicted_emotion,
+        "confidence": round(float(confidence), 4),
+        "scores": {emotion: round(score, 4) for emotion, score in sorted(scores.items())},
+        "algorithm": {
+            "name": "TF-IDF Nearest-Centroid Emotion Classifier",
+            "version": "1.0",
+            "method": "fit TF-IDF character n-gram vectors from curated emotion lexicon, then classify by cosine distance to class centroids",
+            "training_source": "data/lexicons/emotion_lexicon.csv",
+            "training_rows": model["training_rows"],
+            "classes": model["classes"],
+        },
+    }
+
+
 def build_emotion_profile(text: str, mood_signal: str, sentiment_score: int, risk_level: str) -> Dict[str, Any]:
     normalized = _normalize_text(text)
     scores: Dict[str, int] = {emotion: 0 for emotion in EMOTION_LEXICON}
@@ -303,6 +245,7 @@ def build_emotion_profile(text: str, mood_signal: str, sentiment_score: int, ris
         for word in words:
             score = _phrase_score(normalized, word)
             if score:
+                score *= EMOTION_WEIGHTS.get(emotion, {}).get(word, 1)
                 scores[emotion] += score
                 evidence[emotion].append(word)
 
@@ -368,18 +311,12 @@ def detect_cognitive_distortions(text: str) -> Dict[str, Any]:
                 }
             )
 
-    reframe_targets: List[str] = []
     distortion_types = {item["type"] for item in distortions}
-    if "catastrophizing" in distortion_types or "fortune_telling" in distortion_types:
-        reframe_targets.append("pisahkan skenario terburuk dari bukti yang benar-benar ada")
-    if "mind_reading" in distortion_types:
-        reframe_targets.append("ubah tebakan tentang penilaian orang lain menjadi pertanyaan yang bisa diverifikasi")
-    if "all_or_nothing" in distortion_types:
-        reframe_targets.append("cari posisi tengah: bagian mana yang sudah bekerja dan bagian mana yang masih perlu diperkuat")
-    if "self_labeling" in distortion_types:
-        reframe_targets.append("ganti label diri dengan deskripsi perilaku atau situasi yang lebih spesifik")
-    if "should_statement" in distortion_types:
-        reframe_targets.append("turunkan tekanan 'harus' menjadi langkah realistis berikutnya")
+    reframe_targets = []
+    for distortion_type in distortion_types:
+        target = DISTORTION_REFRAME_TARGETS.get(distortion_type)
+        if target and target not in reframe_targets:
+            reframe_targets.append(target)
 
     return {
         "detected": distortions,
@@ -500,6 +437,15 @@ def build_response_style_plan(
     else:
         desired_paragraphs = 4 if stage == "deep_room" else 3
 
+    if stage == "new_room" and intent == "check_in":
+        memory_scope = "current_room_only"
+    elif stage == "new_room":
+        memory_scope = "current_room_plus_relevant_diary_only"
+    elif stage == "warming_up":
+        memory_scope = "current_room_first"
+    else:
+        memory_scope = "current_room_plus_relevant_memory"
+
     opening_variants = {
         "check_in": [
             "sapa balik singkat lalu ajak user cerita kondisi hari ini",
@@ -588,8 +534,8 @@ def build_response_style_plan(
         "user_register": user_register,
         "desired_paragraphs": desired_paragraphs,
         "target_words": {
-            "minimum": 120 if desired_paragraphs == 3 else 160 if desired_paragraphs == 4 else 80,
-            "maximum": 260 if desired_paragraphs <= 3 else 360,
+            "minimum": 180 if desired_paragraphs == 3 else 260 if desired_paragraphs == 4 else 90,
+            "maximum": 220 if desired_paragraphs == 2 else 360 if desired_paragraphs == 3 else 520,
         },
         "opening_strategy": opening_strategy,
         "support_moves": support_moves,
@@ -608,7 +554,8 @@ def build_response_style_plan(
         },
         "avoid_openers": BANNED_CHAT_OPENERS,
         "question_budget": 1,
-        "memory_policy": "Sebut pola dari diary/screening hanya kalau relevan dengan pesan terbaru.",
+        "memory_scope": memory_scope,
+        "memory_policy": "Pakai memori lama hanya saat relevan dengan pesan terbaru. Untuk sapaan netral di room baru, abaikan diary/screening lama dan jawab seperti fresh greeting.",
         "algorithm": {
             "name": "Sereluna Response Planner",
             "version": "1.0",
@@ -619,6 +566,7 @@ def build_response_style_plan(
                 "word_count": word_count,
                 "sentiment_score": sentiment_score,
                 "risk_level": risk_level,
+                "memory_scope": memory_scope,
                 "has_session_summary": bool(session_summary and session_summary.strip()),
             },
         },
@@ -696,18 +644,16 @@ def classify_risk(
     crisis_screening = _match_patterns(screening_text, CRISIS_PATTERNS)
     crisis_summary = _match_patterns(summary_text, CRISIS_PATTERNS)
     violence_current = _match_patterns(current_text, VIOLENCE_PATTERNS)
-    sexual_current = _match_patterns(current_text, [r"\bseks\b", r"\bporno\b", r"\bmesum\b"])
+    sexual_current = _match_patterns(current_text, SEXUAL_PATTERNS)
     pii_current = _match_patterns(current_text, PII_PATTERNS)
 
     if crisis_current:
         score += RISK_WEIGHTS["crisis"]
         matches.extend({"category": "crisis", "keyword": pattern, "weight": RISK_WEIGHTS["crisis"], "source": "current_text"} for pattern in crisis_current)
     if crisis_screening:
-        score += RISK_WEIGHTS["crisis"]
-        matches.extend({"category": "crisis", "keyword": pattern, "weight": RISK_WEIGHTS["crisis"], "source": "screening_context"} for pattern in crisis_screening)
+        matches.extend({"category": "crisis", "keyword": pattern, "weight": 0, "source": "screening_context"} for pattern in crisis_screening)
     if crisis_summary and not crisis_current:
-        score += RISK_WEIGHTS["crisis"]
-        matches.extend({"category": "crisis", "keyword": pattern, "weight": RISK_WEIGHTS["crisis"], "source": "session_summary"} for pattern in crisis_summary)
+        matches.extend({"category": "crisis", "keyword": pattern, "weight": 1, "source": "session_summary"} for pattern in crisis_summary)
 
     if violence_current:
         if _has_ambiguous_violence_context(current_text):
@@ -730,15 +676,15 @@ def classify_risk(
     if crisis_current:
         level = "high"
         reason = "current_crisis_signal"
-    elif crisis_screening:
-        level = "high"
-        reason = "screening_crisis_signal"
     elif score >= RISK_THRESHOLDS["high"]:
         level = "high"
         reason = "weighted_signal_score"
     elif severe_pattern.search(screening_context or ""):
-        level = "high"
+        level = "medium"
         reason = "severe_screening_context"
+    elif crisis_screening or crisis_summary:
+        level = "medium"
+        reason = "historical_crisis_context"
     elif score >= RISK_THRESHOLDS["medium"]:
         level = "medium"
         reason = "weighted_signal_score"
@@ -855,15 +801,39 @@ def build_context_algorithm_result(
     session_summary: str,
     past_diaries: List[str],
 ) -> Dict[str, Any]:
+    current_is_greeting = _is_greeting_only(_normalize_text(text))
     risk = classify_risk(
         text=text,
-        screening_context=screening_context,
-        session_summary=session_summary,
+        screening_context="" if current_is_greeting else screening_context,
+        session_summary="" if current_is_greeting else session_summary,
     )
-    retrieval = find_relevant_diary_with_score(text, past_diaries)
+    retrieval = (
+        {"diary": None, "similarity": 0.0, "index": None, "threshold": DIARY_RETRIEVAL_THRESHOLD}
+        if current_is_greeting
+        else find_relevant_diary_with_score(text, past_diaries)
+    )
     keywords = extract_keywords(text)
     sentiment_score = calculate_sentiment_score(text, mood_signal)
     emotion_profile = build_emotion_profile(text, mood_signal, sentiment_score, risk["level"])
+    ml_emotion = (
+        {
+            "predicted_emotion": "neutral",
+            "confidence": 0.0,
+            "scores": {},
+            "algorithm": {
+                "name": "TF-IDF Nearest-Centroid Emotion Classifier",
+                "version": "1.0",
+                "skipped": "neutral_greeting_current_room_only",
+                "training_source": "data/lexicons/emotion_lexicon.csv",
+            },
+        }
+        if current_is_greeting
+        else classify_emotion_ml(text)
+    )
+    emotion_profile["ml_prediction"] = ml_emotion
+    if emotion_profile["primary_emotion"] in {"neutral", "distress"} and ml_emotion["predicted_emotion"] != "neutral":
+        emotion_profile["primary_emotion"] = ml_emotion["predicted_emotion"]
+        emotion_profile["intensity"] = "low"
     distortion_profile = detect_cognitive_distortions(text)
     coping_pathway = select_coping_pathway(
         text=text,
@@ -881,6 +851,7 @@ def build_context_algorithm_result(
         "relevant_diary": retrieval["diary"],
         "retrieval": retrieval,
         "emotion_profile": emotion_profile,
+        "ml_emotion_classifier": ml_emotion,
         "cognitive_distortions": distortion_profile,
         "coping_pathway": coping_pathway,
         "algorithms": {
@@ -888,6 +859,7 @@ def build_context_algorithm_result(
                 "weighted_rule_based_risk_classification",
                 "tfidf_cosine_similarity_diary_retrieval",
                 "emotion_lexicon_intensity_profile",
+                "tfidf_nearest_centroid_emotion_classifier",
                 "cognitive_distortion_pattern_mining",
                 "coping_pathway_decision_tree",
             ],

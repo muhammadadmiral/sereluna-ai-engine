@@ -1,0 +1,43 @@
+term,type
+apa,question
+gimana,question
+bagaimana,question
+kenapa,question
+mengapa,question
+harus,question
+boleh,question
+bisa,question
+cara,question
+saran,question
+solusi,question
+menurutmu,question
+menurut lu,question
+saran,advice
+solusi,advice
+cara,advice
+gimana caranya,advice
+harus apa,advice
+aku harus,advice
+tolong bantu,advice
+bantu aku,advice
+kasih tips,advice
+kasih advice,advice
+berhasil,achievement
+akhirnya,achievement
+senang,achievement
+lega,achievement
+bangga,achievement
+lulus,achievement
+selesai,achievement
+membaik,achievement
+diterima,achievement
+menang,achievement
+^(hai|halo|hello|hi|pagi|siang|sore|malam)(\s+(sereluna|luna))?$,greeting_pattern
+^(hai|halo|hello|hi)\s+(semua|guys)$,greeting_pattern
+"Aku paham, {name}.",banned_opener
+"{name}, aku merasa khawatir...",banned_opener
+"Tentu, {name}!",banned_opener
+"Baiklah, {name}.",banned_opener
+"Aku mengerti, {name}.",banned_opener
+"Wah, {name}, saya sangat prihatin.",banned_opener
+"Halo lagi, {name}.",banned_opener
