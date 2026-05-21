@@ -13,6 +13,7 @@ from routers import (
     profile_router,
     screening_router,
     sleep_router,
+    stats_router,
 )
 
 app = FastAPI(title="Sereluna AI Engine", version="1.0.0")
@@ -39,6 +40,7 @@ app.include_router(device_router.router, prefix="/api/v1")
 app.include_router(sleep_router.router, prefix="/api/v1")
 app.include_router(mood_router.router, prefix="/api/v1")
 app.include_router(calendar_router.router, prefix="/api/v1")
+app.include_router(stats_router.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
