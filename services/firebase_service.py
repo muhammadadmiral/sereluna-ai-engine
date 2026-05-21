@@ -1,4 +1,5 @@
 import json
+import math
 import os
 from datetime import date, datetime
 from typing import Any, Dict, Optional
@@ -80,16 +81,75 @@ def user_document(uid: str):
     return get_firestore_client().collection("users").document(uid)
 
 
+def _is_firestore_sentinel(value: Any) -> bool:
+    try:
+        # Check if it's a known Firestore sentinel/transform object
+        module = type(value).__module__
+        name = type(value).__name__
+        if "google.cloud.firestore" in module:
+            if any(s in name for s in ("Sentinel", "Transform", "ServerTimestamp")):
+                return True
+    except Exception:
+        pass
+    return False
+
+
 def serialize_firestore_value(value: Any) -> Any:
     if value is None:
         return None
+
+    # 1. Handle Firestore sentinels (like server_timestamp) and return as-is
+    if _is_firestore_sentinel(value):
+        return value
+
+    # 2. Handle dictionaries (recursive)
+    if isinstance(value, dict):
+        return {
+            (str(k).replace(".", "_").replace("/", "_") or "empty_key"): serialize_firestore_value(v)
+            for k, v in value.items()
+        }
+
+    # 3. Handle lists/iterables (recursive)
+    if isinstance(value, (list, tuple, set)):
+        return [serialize_firestore_value(v) for v in value]
+
+    # 4. Handle basic primitives
+    if isinstance(value, str):
+        return value
+    if isinstance(value, (int, bool)):
+        return value
+    if isinstance(value, float):
+        if math.isnan(value) or math.isinf(value):
+            return 0.0
+        return value
+
+    # 5. Handle known serializable objects
     if isinstance(value, (datetime, date)):
         return value.isoformat()
-    if isinstance(value, dict):
-        return {key: serialize_firestore_value(item) for key, item in value.items()}
-    if isinstance(value, list):
-        return [serialize_firestore_value(item) for item in value]
-    return value
+
+    # 6. Handle numpy types
+    if hasattr(value, "item") and callable(value.item):
+        try:
+            return serialize_firestore_value(value.item())
+        except Exception:
+            pass
+    if hasattr(value, "tolist") and callable(value.tolist):
+        try:
+            return serialize_firestore_value(value.tolist())
+        except Exception:
+            pass
+
+    try:
+        if "numpy" in type(value).__module__:
+            return serialize_firestore_value(float(value))
+    except Exception:
+        pass
+
+    # 7. Final resort: convert to string
+    try:
+        return str(value)
+    except Exception:
+        return f"unserializable:{type(value).__name__}"
 
 
 def verify_id_token(id_token: str) -> Dict[str, Any]:

@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from datetime import datetime
@@ -8,7 +9,7 @@ from firebase_admin import firestore
 from google.cloud.firestore_v1 import FieldFilter
 
 from services.daily_dashboard_service import build_recent_daily_context
-from services.firebase_service import get_firestore_client
+from services.firebase_service import get_firestore_client, serialize_firestore_value
 from services.summary_service import clean_diary_summary
 
 
@@ -41,7 +42,7 @@ def ensure_user_document(uid: str, firebase_user: Dict[str, Any]) -> Dict[str, A
     if not snapshot.exists:
         profile_data["createdAt"] = _server_timestamp()
 
-    user_ref.set(profile_data, merge=True)
+    user_ref.set(serialize_firestore_value(profile_data), merge=True)
     existing.update(profile_data)
     return existing
 
@@ -52,12 +53,14 @@ def get_or_create_today_diary(uid: str, room_id: Optional[str] = None) -> Tuple[
     snapshot = diary_ref.get()
     if not snapshot.exists:
         diary_ref.set(
-            {
-                "date": diary_id,
-                "chatSummary": "",
-                "createdAt": _server_timestamp(),
-                "updatedAt": _server_timestamp(),
-            },
+            serialize_firestore_value(
+                {
+                    "date": diary_id,
+                    "chatSummary": "",
+                    "createdAt": _server_timestamp(),
+                    "updatedAt": _server_timestamp(),
+                }
+            ),
             merge=True,
         )
         return diary_id, {"date": diary_id, "chatSummary": ""}
@@ -73,12 +76,14 @@ def get_or_create_session(uid: str, diary_id: str, session_id: Optional[str] = N
         snapshot = session_ref.get()
         if not snapshot.exists:
             session_ref.set(
-                {
-                    "summary": "",
-                    "status": "active",
-                    "createdAt": _server_timestamp(),
-                    "updatedAt": _server_timestamp(),
-                },
+                serialize_firestore_value(
+                    {
+                        "summary": "",
+                        "status": "active",
+                        "createdAt": _server_timestamp(),
+                        "updatedAt": _server_timestamp(),
+                    }
+                ),
                 merge=True,
             )
             return session_id, {"summary": "", "status": "active"}
@@ -90,16 +95,35 @@ def get_or_create_session(uid: str, diary_id: str, session_id: Optional[str] = N
 
     session_ref = sessions_ref.document()
     session_ref.set(
-        {
-            "summary": "",
-            "status": "active",
-            "createdAt": _server_timestamp(),
-            "updatedAt": _server_timestamp(),
-        },
+        serialize_firestore_value(
+            {
+                "summary": "",
+                "status": "active",
+                "createdAt": _server_timestamp(),
+                "updatedAt": _server_timestamp(),
+            }
+        ),
         merge=True,
     )
     return session_ref.id, {"summary": "", "status": "active"}
 
+
+# Add this near the top with other imports if needed, or just use it locally
+def _safe_json_dumps(obj: Any) -> str:
+    def default(o: Any) -> Any:
+        if hasattr(o, "item") and callable(o.item):
+            return o.item()
+        if hasattr(o, "tolist") and callable(o.tolist):
+            return o.tolist()
+        try:
+            return str(o)
+        except Exception:
+            return "unserializable"
+
+    try:
+        return json.dumps(obj, default=default)
+    except Exception:
+        return "{}"
 
 def save_message(
     uid: str,
@@ -107,7 +131,7 @@ def save_message(
     session_id: str,
     role: str,
     text: str,
-    metadata: Optional[Dict[str, Any]] = None,
+    analysis_results: Optional[Dict[str, Any]] = None,
 ) -> str:
     messages_ref = (
         _user_ref(uid)
@@ -117,14 +141,20 @@ def save_message(
         .document(session_id)
         .collection("messages")
     )
+    
+    # Nuclear option: Store complex ML trace as a string to bypass Firestore strictness
+    safe_analysis_results = _safe_json_dumps(analysis_results or {})
+
     _update_time, message_ref = messages_ref.add(
-        {
-            "role": role,
-            "text": text,
-            "content": text,
-            "metadata": metadata or {},
-            "createdAt": _server_timestamp(),
-        }
+        serialize_firestore_value(
+            {
+                "role": role,
+                "text": text,
+                "content": text,
+                "analysis_results": safe_analysis_results,
+                "createdAt": _server_timestamp(),
+            }
+        )
     )
     return message_ref.id
 
@@ -274,13 +304,21 @@ def update_chat_summaries(uid: str, diary_id: str, session_id: str, summary: str
     session_ref = diary_ref.collection("sessions").document(session_id)
     cleaned_summary = clean_diary_summary(summary)
 
-    session_ref.set({"summary": cleaned_summary, "updatedAt": _server_timestamp()}, merge=True)
-    diary_ref.set({"chatSummary": cleaned_summary, "updatedAt": _server_timestamp()}, merge=True)
+    session_ref.set(
+        serialize_firestore_value({"summary": cleaned_summary, "updatedAt": _server_timestamp()}),
+        merge=True,
+    )
+    diary_ref.set(
+        serialize_firestore_value({"chatSummary": cleaned_summary, "updatedAt": _server_timestamp()}),
+        merge=True,
+    )
     user_ref.set(
-        {
-            "latestDiarySummary": cleaned_summary,
-            "updatedAt": _server_timestamp(),
-        },
+        serialize_firestore_value(
+            {
+                "latestDiarySummary": cleaned_summary,
+                "updatedAt": _server_timestamp(),
+            }
+        ),
         merge=True,
     )
 
@@ -292,31 +330,40 @@ def finish_session(uid: str, diary_id: str, session_id: str, final_summary: str)
     cleaned_summary = clean_diary_summary(final_summary)
 
     session_ref.set(
-        {
-            "summary": cleaned_summary,
-            "status": "finished",
-            "endTime": _server_timestamp(),
-            "updatedAt": _server_timestamp(),
-        },
+        serialize_firestore_value(
+            {
+                "summary": cleaned_summary,
+                "status": "finished",
+                "endTime": _server_timestamp(),
+                "updatedAt": _server_timestamp(),
+            }
+        ),
         merge=True,
     )
-    diary_ref.set({"chatSummary": cleaned_summary, "updatedAt": _server_timestamp()}, merge=True)
+    diary_ref.set(
+        serialize_firestore_value({"chatSummary": cleaned_summary, "updatedAt": _server_timestamp()}),
+        merge=True,
+    )
     user_ref.set(
-        {
-            "latestDiarySummary": cleaned_summary,
-            "updatedAt": _server_timestamp(),
-        },
+        serialize_firestore_value(
+            {
+                "latestDiarySummary": cleaned_summary,
+                "updatedAt": _server_timestamp(),
+            }
+        ),
         merge=True,
     )
     user_ref.collection("personalContexts").add(
-        {
-            "type": "diary_summary",
-            "source": "chat_finish",
-            "diaryId": diary_id,
-            "sessionId": session_id,
-            "summary": cleaned_summary,
-            "createdAt": _server_timestamp(),
-        }
+        serialize_firestore_value(
+            {
+                "type": "diary_summary",
+                "source": "chat_finish",
+                "diaryId": diary_id,
+                "sessionId": session_id,
+                "summary": cleaned_summary,
+                "createdAt": _server_timestamp(),
+            }
+        )
     )
 
 
@@ -335,15 +382,18 @@ def save_screening(uid: str, result: Dict[str, Any], note: str = "") -> Dict[str
         "updatedAt": _server_timestamp(),
     }
 
-    user_ref.collection("screenings").document(date_id).set(payload, merge=True)
-    user_ref.collection("medicalRecords").document(date_id).set(payload, merge=True)
+    serialized_payload = serialize_firestore_value(payload)
+    user_ref.collection("screenings").document(date_id).set(serialized_payload, merge=True)
+    user_ref.collection("medicalRecords").document(date_id).set(serialized_payload, merge=True)
     user_ref.set(
-        {
-            "latestScreeningSummary": result["summary"],
-            "hasScreeningToday": True,
-            "lastScreeningDate": date_id,
-            "updatedAt": _server_timestamp(),
-        },
+        serialize_firestore_value(
+            {
+                "latestScreeningSummary": result["summary"],
+                "hasScreeningToday": True,
+                "lastScreeningDate": date_id,
+                "updatedAt": _server_timestamp(),
+            }
+        ),
         merge=True,
     )
     return payload

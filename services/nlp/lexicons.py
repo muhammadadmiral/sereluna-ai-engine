@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List
 
 
-LEXICON_DIR = Path(__file__).resolve().parent.parent / "data" / "lexicons"
+LEXICON_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "lexicons"
 
 
 def _read_csv(filename: str) -> List[Dict[str, str]]:

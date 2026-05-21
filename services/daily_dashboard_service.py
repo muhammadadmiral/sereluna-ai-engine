@@ -299,11 +299,13 @@ def _summary_item(
 
 def save_daily_mood(uid: str, date: str, mood: str) -> None:
     _daily_metrics_collection(uid).document(date).set(
-        {
-            "date": date,
-            "mood": mood,
-            "updatedAt": server_timestamp(),
-        },
+        serialize_firestore_value(
+            {
+                "date": date,
+                "mood": mood,
+                "updatedAt": server_timestamp(),
+            }
+        ),
         merge=True,
     )
 
