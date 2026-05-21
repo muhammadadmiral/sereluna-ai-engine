@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from schemas.notification_schema import NotificationListResponse, SuccessResponse
 from services.firebase_service import get_current_user
-from services.notification_service import list_notifications, mark_notification_read
+from services.notification_service import list_notifications, mark_all_notifications_read, mark_notification_read
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
@@ -17,7 +17,15 @@ async def read_notifications(
     return NotificationListResponse(items=list_notifications(current_user["uid"], limit))
 
 
-@router.patch("/{notification_id}/read/", response_model=SuccessResponse)
+@router.patch("/read-all", response_model=SuccessResponse)
+@router.patch("/read-all/", response_model=SuccessResponse, include_in_schema=False)
+async def mark_all_read(current_user: Dict[str, Any] = Depends(get_current_user)):
+    mark_all_notifications_read(current_user["uid"])
+    return SuccessResponse(success=True)
+
+
+@router.patch("/{notification_id}/read", response_model=SuccessResponse)
+@router.patch("/{notification_id}/read/", response_model=SuccessResponse, include_in_schema=False)
 async def mark_read(
     notification_id: str,
     current_user: Dict[str, Any] = Depends(get_current_user),

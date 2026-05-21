@@ -1,5 +1,7 @@
 import json
 import os
+import urllib.error
+import urllib.request
 from typing import Optional
 
 import firebase_admin
@@ -77,3 +79,63 @@ def generate_password_reset_link(email: str, continue_url: Optional[str] = None)
         action_code_settings=action_code_settings,
         app=app,
     )
+
+
+class PasswordChangeError(Exception):
+    pass
+
+
+class InvalidOldPasswordError(PasswordChangeError):
+    pass
+
+
+class PasswordAuthConfigError(PasswordChangeError):
+    pass
+
+
+def _firebase_web_api_key() -> str:
+    return (os.getenv("FIREBASE_WEB_API_KEY") or os.getenv("FIREBASE_API_KEY") or "").strip()
+
+
+def _verify_email_password(email: str, password: str) -> None:
+    api_key = _firebase_web_api_key()
+    if not api_key:
+        raise PasswordAuthConfigError("FIREBASE_WEB_API_KEY or FIREBASE_API_KEY is required")
+
+    payload = json.dumps(
+        {
+            "email": email.strip().lower(),
+            "password": password,
+            "returnSecureToken": True,
+        }
+    ).encode("utf-8")
+    request = urllib.request.Request(
+        f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            response.read()
+    except urllib.error.HTTPError as exc:
+        if exc.code in {400, 401}:
+            raise InvalidOldPasswordError("Old password is invalid") from exc
+        raise PasswordChangeError("Firebase password verification failed") from exc
+    except urllib.error.URLError as exc:
+        raise PasswordChangeError("Firebase password verification unavailable") from exc
+
+
+def change_password(uid: str, email: str, old_password: str, new_password: str) -> None:
+    clean_email = (email or "").strip().lower()
+    if not clean_email:
+        raise PasswordChangeError("Authenticated user email is required")
+    if not old_password:
+        raise InvalidOldPasswordError("Old password is required")
+    if len(new_password or "") < 8:
+        raise PasswordChangeError("New password must be at least 8 characters")
+
+    _verify_email_password(clean_email, old_password)
+    app = _get_password_reset_app()
+    auth.update_user(uid, password=new_password, app=app)

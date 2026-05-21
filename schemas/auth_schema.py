@@ -11,3 +11,12 @@ class ForgotPasswordRequest(BaseModel):
 class ForgotPasswordResponse(BaseModel):
     message: str
     reset_link: Optional[str] = None
+
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+
+
+class MessageResponse(BaseModel):
+    message: str
