@@ -87,6 +87,10 @@ def is_short_listener_turn(text: str) -> bool:
     if any(term in normalized for term in casual_profanity):
         return True
 
+    heavy_cues = NEGATIVE_WORDS | ADVICE_CUES | {"stress", "stres", "capek", "takut", "cemas", "sedih", "sendiri"}
+    if any(cue in normalized for cue in heavy_cues):
+        return False
+
     return len(words) <= 4
 
 def estimate_emotional_intensity(text: str, mood_signal: str, sentiment_score: int, risk_level: str) -> str:
