@@ -25,6 +25,7 @@ $username = "YOUR_HF_USERNAME_HERE"
 $spaceName = "YOUR_SPACE_NAME_HERE"
 $hfToken = "YOUR_HF_TOKEN_HERE"
 $groqKey = "YOUR_GROQ_API_KEY_HERE"
+$guardianKey = "YOUR_GUARDIAN_API_KEY_HERE"
 $firebasePath = "google-service.json" # Atur path jika berbeda
 # ==========================================
 
@@ -43,6 +44,7 @@ if ([string]::IsNullOrWhiteSpace($firebaseProjectId)) {
 $tempSecretsFile = Join-Path $env:TEMP "sereluna-hf-secrets-$([guid]::NewGuid().ToString('N')).env"
 $tempSecretsContent = @(
     "GROQ_API_KEY=$groqKey"
+    "GUARDIAN_API_KEY=$guardianKey"
     "FIREBASE_SERVICE_ACCOUNT_JSON=$firebaseJson"
 ) -join "`n"
 

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from schemas.sleep_schema import SleepDailyListResponse, SleepDailyRequest, SleepDailyResponse
 from services.firebase_service import get_current_user
+from services.notification_service import create_notification
 from services.sleep_service import list_daily_sleep_metrics, save_daily_sleep_metric
 
 router = APIRouter(prefix="/sleep", tags=["sleep"])
@@ -69,6 +70,17 @@ async def save_sleep_daily(
         sleep_quality=request.sleep_quality.strip(),
         total_sleep_hours=request.total_sleep_hours,
     )
+    if request.total_sleep_hours < 6 or request.sleep_quality.strip().lower() in {"poor", "bad", "buruk", "very bad"}:
+        create_notification(
+            uid=current_user["uid"],
+            title="Tidur perlu dipulihkan",
+            body="Durasi atau kualitas tidurmu terlihat kurang mendukung. Coba siapkan rutinitas tidur yang lebih tenang malam ini.",
+            notification_type="reminder",
+            priority="medium",
+            category_label="Tidur",
+            action_link="/sleep",
+            notification_key=f"sleep_reminder:{date_value}",
+        )
     return SleepDailyResponse(success=True)
 
 

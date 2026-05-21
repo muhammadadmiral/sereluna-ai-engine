@@ -9,6 +9,7 @@ from firebase_admin import firestore
 
 from services.daily_dashboard_service import APP_TIMEZONE
 from services.firebase_service import user_document
+from services.notification_service import create_notification
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -83,6 +84,17 @@ def get_screening_status(uid: str) -> Dict[str, Any]:
     next_date = last_date + timedelta(days=DASS21_RECOMMENDED_INTERVAL_DAYS) if last_date else None
     is_due = next_date is None or today >= next_date
     next_in_days = max(0, (next_date - today).days) if next_date else 0
+    if is_due and latest:
+        create_notification(
+            uid=uid,
+            title="Skrining tersedia lagi",
+            body="DASS-21 bisa diisi lagi untuk memperbarui baseline wellbeing mingguanmu.",
+            notification_type="screening",
+            priority="medium",
+            category_label="Skrining",
+            action_link="/screening/dass21",
+            notification_key=f"screening_due:{next_date.isoformat() if next_date else 'initial'}",
+        )
 
     return {
         "instrument": "DASS-21",

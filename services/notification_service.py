@@ -13,6 +13,7 @@ PRIORITY_BY_TYPE = {
     "risk": "high",
     "system": "low",
     "reminder": "low",
+    "article": "low",
 }
 
 CATEGORY_LABEL_BY_TYPE = {
@@ -21,6 +22,7 @@ CATEGORY_LABEL_BY_TYPE = {
     "risk": "Perlu perhatian",
     "system": "Sistem",
     "reminder": "Pengingat",
+    "article": "Artikel",
 }
 
 
@@ -39,18 +41,50 @@ def create_notification(
     body: str,
     notification_type: str = "system",
     action_link: Optional[str] = None,
+    priority: Optional[str] = None,
+    category_label: Optional[str] = None,
+    notification_key: Optional[str] = None,
 ) -> str:
+    notifications_ref = user_document(uid).collection("notifications")
+    if notification_key:
+        for snapshot in notifications_ref.where(filter=FieldFilter("notificationKey", "==", notification_key)).limit(1).stream():
+            return snapshot.id
+
+    safe_priority = priority or PRIORITY_BY_TYPE.get(notification_type, "low")
+    safe_category_label = category_label or CATEGORY_LABEL_BY_TYPE.get(notification_type, "Sistem")
     _update_time, notification_ref = user_document(uid).collection("notifications").add(
         {
             "title": title,
             "body": body,
             "type": notification_type,
+            "priority": safe_priority,
+            "categoryLabel": safe_category_label,
+            "notificationKey": notification_key,
             "isRead": False,
             "actionLink": action_link,
             "createdAt": server_timestamp(),
         }
     )
     return notification_ref.id
+
+
+def create_article_recommendation_notification(
+    uid: str,
+    title: str,
+    body: str,
+    action_link: Optional[str] = None,
+    article_id: Optional[str] = None,
+) -> str:
+    return create_notification(
+        uid=uid,
+        title=title,
+        body=body,
+        notification_type="article",
+        priority="low",
+        category_label="Artikel",
+        action_link=action_link,
+        notification_key=f"article:{article_id}" if article_id else None,
+    )
 
 
 def list_notifications(uid: str, limit: int = 30) -> List[Dict[str, Any]]:

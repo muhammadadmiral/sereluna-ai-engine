@@ -21,6 +21,7 @@ from services.context_service import (
 from services.firebase_service import get_current_user
 from services.llm_service import build_fallback_session_summary, generate_dialog, generate_summary
 from services.nlp_service import build_context_algorithm_result, build_response_style_plan
+from services.notification_service import create_notification
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 logger = logging.getLogger("sereluna.chat")
@@ -350,6 +351,16 @@ async def finish_chat_endpoint(
         user_name=context["name"],
     )
     finish_session(uid, request.room_id, request.session_id, final_summary)
+    create_notification(
+        uid=uid,
+        title="Diary baru tersimpan",
+        body="Sesi chat kamu sudah dirangkum menjadi diary. Kamu bisa membukanya dari kalender atau halaman diary.",
+        notification_type="wellbeing",
+        priority="low",
+        category_label="Diary",
+        action_link=f"/diary/{request.room_id}",
+        notification_key=f"chat_finished:{request.room_id}:{request.session_id}",
+    )
 
     return ChatResponse(
         reply=final_summary,
