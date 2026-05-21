@@ -153,7 +153,7 @@ Thumbs.db
 # Firebase & Integrations
 google-service.json
 docs/ANDROID_INTEGRATION.md
-docs/FRONTEND_SCREENING_CALENDAR_INTEGRATION_GUIDE.md
+docs/FRONTEND_SCREENING_CALENDAR_STATS_GUIDE.md
 
 # Deployment Scripts
 deploy.ps1
