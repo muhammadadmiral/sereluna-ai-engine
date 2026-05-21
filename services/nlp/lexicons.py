@@ -107,21 +107,23 @@ for row in COGNITIVE_DISTORTION_ENTRIES:
     if row.get("reframe_target"):
         DISTORTION_REFRAME_TARGETS[distortion_type] = row["reframe_target"]
 
-QUESTION_CUES = {
-    row["term"]
-    for row in CHAT_CUE_ENTRIES
-    if row.get("type") == "question" and row.get("term")
-}
-ADVICE_CUES = {
-    row["term"]
-    for row in CHAT_CUE_ENTRIES
-    if row.get("type") == "advice" and row.get("term")
-}
-ACHIEVEMENT_WORDS = {
-    row["term"]
-    for row in CHAT_CUE_ENTRIES
-    if row.get("type") == "achievement" and row.get("term")
-}
+def _cue_set(cue_type: str) -> set[str]:
+    return {
+        row["term"]
+        for row in CHAT_CUE_ENTRIES
+        if row.get("type") == cue_type and row.get("term")
+    }
+
+
+QUESTION_CUES = _cue_set("question")
+ADVICE_CUES = _cue_set("advice")
+ACHIEVEMENT_WORDS = _cue_set("achievement")
+RESPONSE_FEEDBACK_CUES = _cue_set("response_feedback")
+FACTUAL_PRODUCT_CUES = _cue_set("factual_product")
+CASUAL_REFERENCE_CUES = _cue_set("casual_reference")
+SHORT_LISTENER_CUES = _cue_set("short_listener")
+CASUAL_PROFANITY_CUES = _cue_set("casual_profanity")
+HEAVY_SHORT_BLOCKER_CUES = _cue_set("heavy_short_blocker")
 GREETING_PATTERNS = [
     row["term"]
     for row in CHAT_CUE_ENTRIES

@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 from groq import Groq
 
+from services.nlp.response_policy import cap_reply_length, completion_token_budget, word_count
 from services.summary_service import clean_diary_summary
 
 load_dotenv()
@@ -212,7 +213,7 @@ def _shape_paragraphs(reply: str, desired_paragraphs: int) -> str:
 
 
 def _word_count(text: str) -> int:
-    return len(re.findall(r"\b[\w']+\b", text or ""))
+    return word_count(text)
 
 
 def _paragraph_count(text: str) -> int:
@@ -328,21 +329,6 @@ def _soften_formal_register(reply: str, style_plan: Optional[Dict[str, Any]]) ->
     return text
 
 
-def _completion_token_budget(style_plan: Optional[Dict[str, Any]]) -> int:
-    if not style_plan:
-        return 900
-    desired = int(style_plan.get("desired_paragraphs", 2) or 2)
-    target_words = style_plan.get("target_words") or {}
-    maximum_words = int(target_words.get("maximum", 0) or 0)
-    if desired <= 1:
-        return 220
-    if desired == 2:
-        return 650
-    if desired == 3:
-        return 1100
-    return min(1800, max(1200, maximum_words * 3))
-
-
 def _polish_sereluna_reply(reply: str, user_name: str, style_plan: Optional[Dict[str, Any]]) -> str:
     text = _strip_repetitive_openers(reply, user_name)
     text = _soften_formal_register(text, style_plan)
@@ -350,6 +336,7 @@ def _polish_sereluna_reply(reply: str, user_name: str, style_plan: Optional[Dict
     text = _limit_name_mentions(text, user_name, int(name_policy.get("max_mentions", 0) or 0))
     text = _shape_paragraphs(text, int((style_plan or {}).get("desired_paragraphs", 2) or 2))
     text = _maybe_add_planned_emoji(text, style_plan)
+    text = cap_reply_length(text, style_plan)
     text = re.sub(r"[ \t]+\n", "\n", text)
     text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip() or reply.strip()
@@ -481,6 +468,7 @@ GAYA SERELUNA:
 - Kalau RESPONSE PLANNER menulis "Mode pendengar singkat: YA", balas 1 kalimat pendek saja seperti teman yang lagi ngikutin cerita, misalnya "oalah, terus gimana?", "anjir, serius lu?", atau "wah gila sih itu, lanjutannya gimana?"
 - Kalau RESPONSE PLANNER meminta 3-4 paragraf, itu wajib. Jangan menjawab satu paragraf pendek. Ikuti target kata dari planner.
 - Kalau RESPONSE PLANNER meminta 1-2 paragraf, jangan dipanjang-panjangkan. Jawab inti pesan saja, tetap enak dibaca.
+- Kalau user cuma melempar referensi lagu, meme, quote, atau kalimat random, jangan langsung anggap curhat berat. Balas santai dulu dan boleh tanya ringan apakah dia lagi relate beneran.
 - Prioritaskan jawaban panjang yang enak dibaca untuk curhat, pertanyaan berat, atau minta saran: minimal ada validasi natural, pembacaan konteks, insight, dan langkah kecil yang realistis.
 - Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
 - Kalau user sedang cerita panjang/curhat, respons harus terasa hadir dan mengikuti alur: pantulkan detail, uraikan makna, beri opsi langkah kecil, lalu ajak lanjut.
@@ -548,7 +536,7 @@ Pesan user sekarang:
             ],
             response_format={"type": "json_object"},
             temperature=0.72,
-            max_completion_tokens=_completion_token_budget(style_plan),
+            max_completion_tokens=completion_token_budget(style_plan),
         )
         parsed = _parse_json_object(content, {})
         raw_reply = (parsed.get("reply") or fallback_reply).strip()

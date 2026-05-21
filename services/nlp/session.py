@@ -3,7 +3,9 @@ from typing import Any, Dict, List
 from services.nlp.lexicons import (
     ADVICE_CUES, NEGATIVE_WORDS, ACHIEVEMENT_WORDS, QUESTION_CUES,
     CRISIS_PATTERNS, VIOLENCE_PATTERNS, SEXUAL_PATTERNS, PII_PATTERNS,
-    RISK_WEIGHTS, RISK_THRESHOLDS, POSITIVE_WORDS
+    RISK_WEIGHTS, RISK_THRESHOLDS, POSITIVE_WORDS,
+    RESPONSE_FEEDBACK_CUES, FACTUAL_PRODUCT_CUES, CASUAL_REFERENCE_CUES,
+    SHORT_LISTENER_CUES, CASUAL_PROFANITY_CUES, HEAVY_SHORT_BLOCKER_CUES,
 )
 from services.nlp.utils import normalize_text, match_patterns, has_ambiguous_violence_context, is_greeting_only, contains_any
 
@@ -69,20 +71,14 @@ def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> st
     if is_greeting_only(normalized):
         return "check_in"
 
-    feedback_cues = {
-        "singkat", "pendek", "panjang", "kepanjangan", "kependekan", "dry",
-        "dryb", "robot", "kaku", "natural", "respon", "respons", "bales",
-        "balas", "jawaban", "jawabannya", "text", "teks",
-    }
-    if contains_any(normalized, feedback_cues):
+    if contains_any(normalized, RESPONSE_FEEDBACK_CUES):
         return "response_feedback"
 
-    factual_product_cues = {
-        "berapa", "jumlah", "user", "pengguna", "fitur", "sereluna",
-        "aplikasi", "data", "privasi", "boleh tahu", "apa iya", "banyak orang",
-    }
-    if ("?" in (text or "") or contains_any(normalized, QUESTION_CUES)) and contains_any(normalized, factual_product_cues):
+    if ("?" in (text or "") or contains_any(normalized, QUESTION_CUES)) and contains_any(normalized, FACTUAL_PRODUCT_CUES):
         return "factual_or_product_question"
+
+    if contains_any(normalized, CASUAL_REFERENCE_CUES):
+        return "casual_reference"
 
     if "?" in (text or "") or contains_any(normalized, ADVICE_CUES):
         return "advice_or_problem_solving"
@@ -106,22 +102,16 @@ def is_short_listener_turn(text: str) -> bool:
     if "?" in (text or ""):
         return False
 
-    feedback_cues = {"singkat", "pendek", "panjang", "dry", "dryb", "robot", "kaku", "respon", "respons", "bales", "balas"}
-    if any(cue in normalized for cue in feedback_cues):
+    if contains_any(normalized, RESPONSE_FEEDBACK_CUES):
         return False
 
-    starter_cues = {
-        "jadi", "terus", "abis", "habis", "trs", "trus", "lalu", "nah",
-        "eh", "btw", "anjir", "jir", "wkwk", "wkwkwk", "haha", "hahaha",
-    }
-    casual_profanity = {"bangsat", "anjing", "kontol", "tai", "tolol", "goblok"}
-    if any(cue in normalized for cue in starter_cues):
+    if contains_any(normalized, SHORT_LISTENER_CUES):
         return True
-    if any(term in normalized for term in casual_profanity):
+    if contains_any(normalized, CASUAL_PROFANITY_CUES):
         return True
 
-    heavy_cues = NEGATIVE_WORDS | ADVICE_CUES | {"stress", "stres", "capek", "takut", "cemas", "sedih", "sendiri"}
-    if any(cue in normalized for cue in heavy_cues):
+    heavy_cues = NEGATIVE_WORDS | ADVICE_CUES | HEAVY_SHORT_BLOCKER_CUES
+    if contains_any(normalized, heavy_cues):
         return False
 
     return len(words) <= 4
@@ -131,7 +121,7 @@ def estimate_emotional_intensity(text: str, mood_signal: str, sentiment_score: i
     negative_hits = sum(1 for word in NEGATIVE_WORDS if word in normalized)
     if risk_level == "high":
         return "crisis"
-    if risk_level == "medium" or negative_hits >= 3 or sentiment_score == 1:
+    if negative_hits >= 3 or sentiment_score == 1:
         return "heavy"
     if negative_hits >= 1 or sentiment_score == 2 or (mood_signal or "").lower() in {"sad", "angry", "anxious"}:
         return "tender"

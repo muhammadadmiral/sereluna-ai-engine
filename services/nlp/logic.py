@@ -8,6 +8,7 @@ from services.nlp.session import (
     tone_guidance, continuity_guidance, classify_chat_intent, 
     estimate_emotional_intensity, is_short_listener_turn
 )
+from services.nlp.response_policy import choose_desired_paragraphs, target_words_for_paragraphs
 
 DIARY_RETRIEVAL_THRESHOLD = 0.1
 
@@ -109,18 +110,12 @@ def build_response_style_plan(
     user_register = detect_user_register(text, history_text)
     short_listener_turn = is_short_listener_turn(text)
 
-    if short_listener_turn and intent not in {"safety_support", "advice_or_problem_solving"}:
-        desired_paragraphs = 1
-    elif intent in {"response_feedback", "factual_or_product_question"}:
-        desired_paragraphs = 2
-    elif intent == "check_in":
-        desired_paragraphs = 2 if stage == "new_room" else 3
-    elif intent in {"advice_or_problem_solving", "emotional_support"} or intensity in {"heavy", "tender"}:
-        desired_paragraphs = 4
-    elif intent == "safety_support":
-        desired_paragraphs = 2
-    else:
-        desired_paragraphs = 4 if stage == "deep_room" else 3
+    desired_paragraphs = choose_desired_paragraphs(
+        intent=intent,
+        intensity=intensity,
+        word_count=word_count,
+        short_listener_turn=short_listener_turn,
+    )
 
     if stage == "new_room" and intent == "check_in":
         memory_scope = "current_room_only"
@@ -163,6 +158,10 @@ def build_response_style_plan(
         "factual_or_product_question": [
             "jawab fakta yang ditanya dulu secara jujur dan ringkas",
             "kalau tidak punya data pasti, bilang tidak punya akses angka pastinya",
+        ],
+        "casual_reference": [
+            "tangkap referensi user secara santai",
+            "jangan langsung mengubah referensi lagu/film menjadi sesi dukungan emosional berat",
         ],
         "reflective_companion": [
             "lanjutkan topik tanpa sapaan ulang",
@@ -213,6 +212,12 @@ def build_response_style_plan(
             "hindari paragraf motivasi kesehatan mental yang tidak ditanya",
             "boleh sebut privasi secara singkat kalau relevan",
         ])
+    elif intent == "casual_reference":
+        support_moves.extend([
+            "balas seperti teman yang nangkep referensi",
+            "boleh tanya ringan apakah user cuma quote lagu atau lagi relate beneran",
+            "jangan membuat asumsi sedih/kehilangan kalau user belum bilang",
+        ])
     else:
         support_moves.extend([
             "respons seperti teman sebaya yang nyambung",
@@ -238,10 +243,7 @@ def build_response_style_plan(
         "assistant_turns": assistant_turns,
         "user_register": user_register,
         "desired_paragraphs": desired_paragraphs,
-        "target_words": {
-            "minimum": 12 if desired_paragraphs == 1 else 70 if desired_paragraphs == 2 else 240 if desired_paragraphs == 3 else 360,
-            "maximum": 28 if desired_paragraphs == 1 else 190 if desired_paragraphs == 2 else 460 if desired_paragraphs == 3 else 680,
-        },
+        "target_words": target_words_for_paragraphs(desired_paragraphs),
         "opening_strategy": opening_strategy,
         "support_moves": support_moves,
         "tone_guidance": tone_guidance(stage, user_register),

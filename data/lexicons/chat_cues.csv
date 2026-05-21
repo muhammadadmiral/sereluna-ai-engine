@@ -41,3 +41,76 @@ menang,achievement
 "Aku mengerti, {name}.",banned_opener
 "Wah, {name}, saya sangat prihatin.",banned_opener
 "Halo lagi, {name}.",banned_opener
+singkat,response_feedback
+pendek,response_feedback
+panjang,response_feedback
+kepanjangan,response_feedback
+kependekan,response_feedback
+dry,response_feedback
+dryb,response_feedback
+robot,response_feedback
+kaku,response_feedback
+natural,response_feedback
+respon,response_feedback
+respons,response_feedback
+bales,response_feedback
+balas,response_feedback
+jawaban,response_feedback
+jawabannya,response_feedback
+text,response_feedback
+teks,response_feedback
+berapa,factual_product
+jumlah,factual_product
+user,factual_product
+pengguna,factual_product
+fitur,factual_product
+sereluna,factual_product
+aplikasi,factual_product
+data,factual_product
+privasi,factual_product
+boleh tahu,factual_product
+apa iya,factual_product
+banyak orang,factual_product
+lagu,casual_reference
+song,casual_reference
+music,casual_reference
+musik,casual_reference
+lirik,casual_reference
+lyric,casual_reference
+lyrics,casual_reference
+movie,casual_reference
+film,casual_reference
+anime,casual_reference
+meme,casual_reference
+quote,casual_reference
+quotes,casual_reference
+september,casual_reference
+jadi,short_listener
+terus,short_listener
+abis,short_listener
+habis,short_listener
+trs,short_listener
+trus,short_listener
+lalu,short_listener
+nah,short_listener
+eh,short_listener
+btw,short_listener
+anjir,short_listener
+jir,short_listener
+wkwk,short_listener
+wkwkwk,short_listener
+haha,short_listener
+hahaha,short_listener
+bangsat,casual_profanity
+anjing,casual_profanity
+kontol,casual_profanity
+tai,casual_profanity
+tolol,casual_profanity
+goblok,casual_profanity
+stress,heavy_short_blocker
+stres,heavy_short_blocker
+capek,heavy_short_blocker
+takut,heavy_short_blocker
+cemas,heavy_short_blocker
+sedih,heavy_short_blocker
+sendiri,heavy_short_blocker
