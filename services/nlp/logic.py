@@ -6,7 +6,7 @@ from services.nlp.utils import normalize_text
 from services.nlp.session import (
     assistant_turn_count, relationship_stage, detect_user_register, 
     tone_guidance, continuity_guidance, classify_chat_intent, 
-    estimate_emotional_intensity
+    estimate_emotional_intensity, is_short_listener_turn
 )
 
 DIARY_RETRIEVAL_THRESHOLD = 0.1
@@ -107,8 +107,11 @@ def build_response_style_plan(
     intensity = estimate_emotional_intensity(text, mood_signal, sentiment_score, risk_level)
     stage = relationship_stage(assistant_turns)
     user_register = detect_user_register(text, history_text)
+    short_listener_turn = is_short_listener_turn(text)
 
-    if intent == "check_in":
+    if short_listener_turn and intent not in {"safety_support", "advice_or_problem_solving"}:
+        desired_paragraphs = 1
+    elif intent == "check_in":
         desired_paragraphs = 2 if stage == "new_room" else 3
     elif intent in {"advice_or_problem_solving", "emotional_support"} or intensity in {"heavy", "tender"}:
         desired_paragraphs = 4 if stage in {"familiar", "deep_room"} or word_count >= 45 else 3
@@ -214,8 +217,8 @@ def build_response_style_plan(
         "user_register": user_register,
         "desired_paragraphs": desired_paragraphs,
         "target_words": {
-            "minimum": 220 if desired_paragraphs == 3 else 320 if desired_paragraphs == 4 else 90,
-            "maximum": 240 if desired_paragraphs == 2 else 460 if desired_paragraphs == 3 else 700,
+            "minimum": 12 if desired_paragraphs == 1 else 90 if desired_paragraphs == 2 else 260 if desired_paragraphs == 3 else 420,
+            "maximum": 28 if desired_paragraphs == 1 else 240 if desired_paragraphs == 2 else 560 if desired_paragraphs == 3 else 850,
         },
         "opening_strategy": opening_strategy,
         "support_moves": support_moves,
@@ -234,6 +237,7 @@ def build_response_style_plan(
         },
         "avoid_openers": BANNED_CHAT_OPENERS,
         "question_budget": 1,
+        "short_listener_turn": short_listener_turn,
         "memory_scope": memory_scope,
         "memory_policy": "Pakai memori lama hanya saat relevan dengan pesan terbaru. Untuk sapaan netral di room baru, abaikan diary/screening lama dan jawab seperti fresh greeting.",
     }

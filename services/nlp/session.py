@@ -65,6 +65,30 @@ def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> st
         return "curious_question"
     return "reflective_companion"
 
+def is_short_listener_turn(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+
+    words = normalized.split()
+    if len(words) > 9:
+        return False
+
+    if "?" in (text or ""):
+        return False
+
+    starter_cues = {
+        "jadi", "terus", "abis", "habis", "trs", "trus", "lalu", "nah",
+        "eh", "btw", "anjir", "jir", "wkwk", "wkwkwk", "haha", "hahaha",
+    }
+    casual_profanity = {"bangsat", "anjing", "kontol", "tai", "tolol", "goblok"}
+    if any(cue in normalized for cue in starter_cues):
+        return True
+    if any(term in normalized for term in casual_profanity):
+        return True
+
+    return len(words) <= 4
+
 def estimate_emotional_intensity(text: str, mood_signal: str, sentiment_score: int, risk_level: str) -> str:
     normalized = normalize_text(text)
     negative_hits = sum(1 for word in NEGATIVE_WORDS if word in normalized)
