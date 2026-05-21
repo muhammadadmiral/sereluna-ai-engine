@@ -35,6 +35,51 @@ def _log_chat_pipeline(trace_id: str, event: str, payload: Dict[str, Any]) -> No
     )
 
 
+def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, Any]) -> None:
+    try:
+        eval_data = algorithm_result.get("supervised_model_evaluation", {})
+        accuracy = eval_data.get("accuracy", "N/A")
+        train_size = eval_data.get("train_size", "N/A")
+        dataset_path = eval_data.get("dataset_path", "N/A")
+        
+        filter_data = algorithm_result.get("preprocessing_filter", {})
+        filter_algo = filter_data.get("algorithm", {})
+        filter_method = filter_algo.get("method", "N/A")
+        normalized = filter_data.get("normalized_text", "N/A")
+        
+        emotion_data = algorithm_result.get("supervised_emotion_classifier", {})
+        predicted_emotion = emotion_data.get("predicted_emotion", "N/A")
+        confidence = emotion_data.get("confidence", "N/A")
+        
+        risk_data = algorithm_result.get("risk", {})
+        risk_level = risk_data.get("level", "N/A")
+        
+        log_msg = "\n" + "="*70 + "\n"
+        log_msg += f"🤖 [SERELUNA AI - DEMO DOSEN - BACKEND PROCESS] 🤖\n"
+        log_msg += "="*70 + "\n"
+        log_msg += f"1. DATA MINING & PREPROCESSING\n"
+        log_msg += f"   - Input Teks     : {user_text}\n"
+        log_msg += f"   - Metode Filter  : {filter_method}\n"
+        log_msg += f"   - Hasil Normalisasi: {normalized}\n"
+        log_msg += "-"*70 + "\n"
+        log_msg += f"2. MACHINE LEARNING (EMOTION CLASSIFICATION)\n"
+        log_msg += f"   - Model Dataset  : {dataset_path} ({train_size} baris training)\n"
+        log_msg += f"   - Akurasi Model  : {accuracy}\n"
+        log_msg += f"   - Prediksi Emosi : {predicted_emotion.upper()} (Confidence: {confidence})\n"
+        log_msg += "-"*70 + "\n"
+        log_msg += f"3. LOGIC BERAT & RISK ASSESSMENT\n"
+        log_msg += f"   - Klasifikasi Risiko: {risk_level.upper()}\n"
+        log_msg += f"   - Coping Pathway : {(algorithm_result.get('coping_pathway', {})).get('pathway', 'N/A')}\n"
+        log_msg += "-"*70 + "\n"
+        log_msg += f"4. LLM GENERATION RESULT\n"
+        log_msg += f"   - Output Bot     : {reply}\n"
+        log_msg += "="*70 + "\n"
+        
+        logger.info(log_msg)
+    except Exception as e:
+        logger.error(f"Failed to print professor log: %s", e)
+
+
 def _debug_metadata(algorithm_result: Dict[str, Any], routed_to: str, elapsed_ms: int) -> Dict[str, Any]:
     supervised = algorithm_result.get("supervised_emotion_classifier") or {}
     evaluation = algorithm_result.get("supervised_model_evaluation") or {}
@@ -310,6 +355,7 @@ async def chat_endpoint(
         next_summary,
     )
 
+    _log_professor_demo(user_text, reply, algorithm_result)
     return ChatResponse(
         reply=reply,
         ui_metadata=UIMetadata(
@@ -370,3 +416,4 @@ async def finish_chat_endpoint(
         room_id=request.room_id,
         session_id=request.session_id,
     )
+ )

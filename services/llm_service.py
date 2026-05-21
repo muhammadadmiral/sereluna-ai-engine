@@ -1,6 +1,9 @@
 import json
+import logging
 import os
 import re
+import urllib.error
+import urllib.request
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
@@ -11,22 +14,10 @@ from services.summary_service import clean_diary_summary
 
 load_dotenv()
 
-MODEL_NAME = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
-
-
-def _completion(
-    messages: List[Dict[str, str]],
-    response_format: Optional[Dict[str, str]] = None,
-    temperature: float = 0.4,
-    max_completion_tokens: Optional[int] = None,
-) -> str:
-    api_key = (os.getenv("GROQ_API_KEY") or "").strip()
-    if not api_key:
-        raise RuntimeError("GROQ_API_KEY is missing")
-
+def _call_groq(model_name: str, api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
     client = Groq(api_key=api_key)
-    kwargs: Dict[str, Any] = {
-        "model": MODEL_NAME,
+    kwargs = {
+        "model": model_name,
         "messages": messages,
         "temperature": temperature,
     }
@@ -34,9 +25,104 @@ def _completion(
         kwargs["max_completion_tokens"] = max_completion_tokens
     if response_format:
         kwargs["response_format"] = response_format
-
+    
     response = client.chat.completions.create(**kwargs)
     return response.choices[0].message.content or ""
+
+def _call_openrouter(api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://sereluna.com",
+        "X-Title": "Sereluna AI"
+    }
+    data = {
+        "model": os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct"),
+        "messages": messages,
+        "temperature": temperature
+    }
+    if max_completion_tokens is not None:
+        data["max_tokens"] = max_completion_tokens
+    if response_format:
+        data["response_format"] = response_format
+        
+    req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
+    with urllib.request.urlopen(req) as response:
+        result = json.loads(response.read().decode("utf-8"))
+        return result["choices"][0]["message"]["content"] or ""
+
+def _call_gemini(api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
+    model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    
+    gemini_contents = []
+    system_instruction = None
+    for msg in messages:
+        if msg["role"] == "system":
+            system_instruction = {"parts": [{"text": msg["content"]}]}
+        else:
+            role = "user" if msg["role"] == "user" else "model"
+            gemini_contents.append({"role": role, "parts": [{"text": msg["content"]}]})
+            
+    generation_config = {"temperature": temperature}
+    if max_completion_tokens:
+        generation_config["maxOutputTokens"] = max_completion_tokens
+    if response_format and response_format.get("type") == "json_object":
+        generation_config["responseMimeType"] = "application/json"
+        
+    data = {
+        "contents": gemini_contents,
+        "generationConfig": generation_config
+    }
+    if system_instruction:
+        data["systemInstruction"] = system_instruction
+        
+    headers = {"Content-Type": "application/json"}
+    req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
+    with urllib.request.urlopen(req) as response:
+        result = json.loads(response.read().decode("utf-8"))
+        return result["candidates"][0]["content"]["parts"][0]["text"] or ""
+
+def _completion(
+    messages: List[Dict[str, str]],
+    response_format: Optional[Dict[str, str]] = None,
+    temperature: float = 0.4,
+    max_completion_tokens: Optional[int] = None,
+) -> str:
+    logger = logging.getLogger("sereluna.llm")
+
+    # Tier 1: Groq Versatile
+    groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
+    if groq_api_key:
+        try:
+            return _call_groq("llama-3.3-70b-versatile", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+        except Exception as e:
+            logger.warning("Groq Versatile failed: %s", e)
+            
+        # Tier 2: Groq Instant
+        try:
+            return _call_groq("llama-3.1-8b-instant", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+        except Exception as e:
+            logger.warning("Groq Instant failed: %s", e)
+            
+    # Tier 3: OpenRouter
+    openrouter_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
+    if openrouter_key:
+        try:
+            return _call_openrouter(openrouter_key, messages, response_format, temperature, max_completion_tokens)
+        except Exception as e:
+            logger.warning("OpenRouter failed: %s", e)
+            
+    # Tier 4: Gemini
+    gemini_key = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
+    if gemini_key:
+        try:
+            return _call_gemini(gemini_key, messages, response_format, temperature, max_completion_tokens)
+        except Exception as e:
+            logger.warning("Gemini failed: %s", e)
+            
+    raise RuntimeError("All LLM fallback tiers failed or no API keys configured.")
 
 
 def _parse_json_object(raw: str, fallback: Dict[str, Any]) -> Dict[str, Any]:
@@ -485,6 +571,8 @@ def generate_dialog(
     )
 
     fallback_reply = (
+        "Halo! Aku Sereluna, teman cerita kamu. Ada yang mau dibagi hari ini?"
+        if is_new_user else
         "Aku dengerin, ya. Ceritamu nggak harus rapi dulu buat bisa mulai dibahas di sini. "
         "Kalau sekarang rasanya penuh, kita bisa ambil satu bagian yang paling kerasa berat dan pelan-pelan urai bareng."
     )
@@ -606,7 +694,9 @@ Pesan user sekarang:
             "detected_symptoms": parsed.get("detected_symptoms", []),
             "dominant_category": parsed.get("dominant_category", "None"),
         }
-    except Exception:
+    except Exception as e:
+        import logging
+        logging.getLogger("sereluna.llm").error("LLM Generation Error: %s", e, exc_info=True)
         return {
             "reply": fallback_reply,
             "session_summary": fallback_summary,

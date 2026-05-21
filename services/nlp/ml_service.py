@@ -227,19 +227,6 @@ def _supervised_emotion_model() -> Dict[str, Any]:
         "macro_f1": round(float(report["macro avg"]["f1-score"]), 4),
         "weighted_f1": round(float(report["weighted avg"]["f1-score"]), 4),
         "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
-        "confusion_matrix": {
-            "labels": classes,
-            "matrix": matrix.astype(int).tolist(),
-        },
-        "per_class": {
-            label: {
-                "precision": round(float(report[label]["precision"]), 4),
-                "recall": round(float(report[label]["recall"]), 4),
-                "f1": round(float(report[label]["f1-score"]), 4),
-                "support": int(report[label]["support"]),
-            }
-            for label in classes
-        },
     }
 
     production_model = _emotion_classification_pipeline()
