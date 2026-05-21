@@ -56,7 +56,7 @@ Invoke-Hf repos create $repoId `
     --private `
     --exist-ok `
     --token $hfToken `
-    --env "GROQ_MODEL=llama-3.1-8b-instant" `
+    --env "GROQ_MODEL=llama-3.3-70b-versatile" `
     --env "APP_TIMEZONE=Asia/Jakarta"
 
 Write-Host "Setting Space secrets..."
