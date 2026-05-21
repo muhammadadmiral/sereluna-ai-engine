@@ -11,6 +11,11 @@ class CalendarSummaryItem(BaseModel):
     wellbeing_score: Optional[int] = None
     wellbeing_level: str = "no_data"
     indicator: str = "empty"
+    summary: Optional[str] = None
+    recommendation: Optional[str] = None
+    risk_level: str = "low"
+    model_version: str = ""
+    screening_context: Optional[Dict[str, Any]] = None
 
 
 class CalendarSummaryResponse(BaseModel):
@@ -36,6 +41,8 @@ class CalendarWellbeingInsight(BaseModel):
     level: str = "no_data"
     signals: List[str] = Field(default_factory=list)
     recommendation: Optional[str] = None
+    risk_level: str = "low"
+    model_version: str = ""
     components: List[CalendarWellbeingComponent] = Field(default_factory=list)
     algorithm: Dict[str, Any] = Field(default_factory=dict)
 
@@ -45,4 +52,7 @@ class CalendarDetailResponse(BaseModel):
     mood: Optional[str] = None
     sleep: Optional[CalendarSleepDetail] = None
     diary_snippet: Optional[str] = None
+    summary: Optional[str] = None
+    indicator: str = "empty"
+    screening_context: Optional[Dict[str, Any]] = None
     wellbeing: CalendarWellbeingInsight = Field(default_factory=CalendarWellbeingInsight)

@@ -18,6 +18,7 @@ MOOD_SCORE = {"happy": 95, "neutral": 72, "anxious": 46, "sad": 38, "angry": 42}
 DIARY_SNIPPET_LENGTH = 50
 CONTEXT_SNIPPET_LENGTH = 90
 WELLBEING_WEIGHTS = {"mood": 0.40, "sleep": 0.35, "diary": 0.25}
+DAILY_WELLBEING_MODEL_VERSION = "daily_wellbeing_v1.0"
 
 
 def _daily_metrics_collection(uid: str):
@@ -26,6 +27,10 @@ def _daily_metrics_collection(uid: str):
 
 def _diaries_collection(uid: str):
     return user_document(uid).collection("diaries")
+
+
+def _screenings_collection(uid: str):
+    return user_document(uid).collection("screenings")
 
 
 def _normalize_text(value: str) -> str:
@@ -99,6 +104,28 @@ def _diary_summary_for_date(uid: str, date_value: str) -> str:
             return summary
 
     return ""
+
+
+def get_latest_screening_context(uid: str) -> Optional[Dict[str, Any]]:
+    for snapshot in _screenings_collection(uid).order_by("date", direction=firestore.Query.DESCENDING).limit(1).stream():
+        data = snapshot.to_dict() or {}
+        severity = data.get("severity") or {}
+        scores = data.get("scores") or {}
+        date_value = str(data.get("date") or snapshot.id)
+        return {
+            "latest_date": date_value,
+            "stress": str(severity.get("stress") or "unknown"),
+            "anxiety": str(severity.get("anxiety") or "unknown"),
+            "depression": str(severity.get("depression") or "unknown"),
+            "scores": {
+                "stress": int(scores.get("stress") or 0),
+                "anxiety": int(scores.get("anxiety") or 0),
+                "depression": int(scores.get("depression") or 0),
+            },
+            "label": "Baseline DASS-21 terakhir",
+            "disclaimer": "Bukan diagnosis medis.",
+        }
+    return None
 
 
 def _month_bounds(year: int, month: int) -> tuple[str, str]:
@@ -208,6 +235,44 @@ def _recommendation_for(level: str, components: List[Dict[str, Any]]) -> Optiona
     return None
 
 
+def _risk_level_for_components(components: List[Dict[str, Any]]) -> str:
+    diary = next((component for component in components if component["name"] == "diary"), None)
+    if diary and diary["score"] <= 30:
+        return "medium"
+    if any(component["score"] <= 35 for component in components):
+        return "medium"
+    return "low"
+
+
+def _human_summary_for(mood: Optional[str], sleep: Optional[Dict[str, Any]], insight: Dict[str, Any]) -> str:
+    if insight["score"] is None:
+        return "Belum ada cukup data harian untuk membaca pola wellbeing."
+
+    parts: List[str] = []
+    if mood:
+        mood_text = {
+            "happy": "Mood terlihat positif",
+            "neutral": "Mood cenderung netral",
+            "anxious": "Mood cenderung tegang",
+            "sad": "Mood cenderung turun",
+            "angry": "Mood menunjukkan emosi intens",
+        }.get(mood, f"Mood tercatat {mood}")
+        parts.append(mood_text)
+
+    if sleep:
+        hours = float(sleep.get("total_sleep_hours") or 0)
+        if hours < 6:
+            parts.append("tidur kurang mendukung pemulihan")
+        elif 7 <= hours <= 9:
+            parts.append("tidur cukup mendukung pemulihan")
+        else:
+            parts.append("pola tidur perlu tetap dipantau")
+
+    if not parts:
+        return "Ada sinyal harian yang bisa dipantau dari diary atau data wellbeing."
+    return ", ".join(parts).rstrip(".") + "."
+
+
 def _signals_for(level: str, components: List[Dict[str, Any]]) -> List[str]:
     if not components:
         return ["Belum ada data harian yang cukup untuk dianalisis."]
@@ -250,6 +315,8 @@ def build_daily_wellbeing_insight(
         "level": level,
         "signals": _signals_for(level, components),
         "recommendation": _recommendation_for(level, components),
+        "risk_level": _risk_level_for_components(components),
+        "model_version": DAILY_WELLBEING_MODEL_VERSION,
         "components": components,
         "algorithm": {
             "name": "Sereluna Daily Wellbeing Index",
@@ -294,6 +361,10 @@ def _summary_item(
         "wellbeing_score": insight["score"],
         "wellbeing_level": insight["level"],
         "indicator": _indicator_for_level(insight["level"]),
+        "summary": _human_summary_for(mood, sleep_payload, insight),
+        "recommendation": insight["recommendation"],
+        "risk_level": insight["risk_level"],
+        "model_version": insight["model_version"],
     }
 
 
@@ -346,7 +417,12 @@ def list_calendar_summary(uid: str, year: int, month: int) -> List[Dict[str, Any
             has_diary=True,
         )
 
-    return [items_by_date[date_value] for date_value in sorted(items_by_date)]
+    screening_context = get_latest_screening_context(uid)
+    items = [items_by_date[date_value] for date_value in sorted(items_by_date)]
+    if screening_context:
+        for item in items:
+            item["screening_context"] = screening_context
+    return items
 
 
 def get_calendar_detail(uid: str, date: str) -> Dict[str, Any]:
@@ -363,6 +439,9 @@ def get_calendar_detail(uid: str, date: str) -> Dict[str, Any]:
         "mood": mood,
         "sleep": sleep_payload,
         "diary_snippet": _snippet(diary_summary, DIARY_SNIPPET_LENGTH) if diary_summary else None,
+        "summary": _human_summary_for(mood, sleep_payload, insight),
+        "indicator": _indicator_for_level(insight["level"]),
+        "screening_context": get_latest_screening_context(uid),
         "wellbeing": insight,
     }
 

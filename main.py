@@ -14,6 +14,7 @@ from routers import (
     profile_router,
     screening_router,
     sleep_router,
+    statistics_router,
     stats_router,
 )
 
@@ -43,6 +44,7 @@ app.include_router(mood_router.router, prefix="/api/v1")
 app.include_router(model_router.router)
 app.include_router(calendar_router.router, prefix="/api/v1")
 app.include_router(stats_router.router, prefix="/api/v1")
+app.include_router(statistics_router.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():
