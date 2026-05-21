@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class MoodDistributionItem(BaseModel):
@@ -40,9 +40,12 @@ class WellbeingStatisticsResponse(BaseModel):
     overall_mood: str
     average_wellbeing_score: Optional[float] = None
     mood_distribution: Dict[str, int]
+    mood_distribution_detail: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
     dominant_mood: Optional[str] = None
     screening_context: Optional[Dict[str, Any]] = None
     insights: List[str]
     daily_items: List[WellbeingDailyItem]
     model_version: str
+    updated_at: Optional[str] = None
+    updated_statistics_version: Optional[str] = None
     disclaimer: str = "Insight ini bukan diagnosis medis."

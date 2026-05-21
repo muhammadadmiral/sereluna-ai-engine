@@ -1,5 +1,5 @@
 from collections import Counter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from statistics import pstdev
 from typing import Any, Dict, List, Optional
 from zoneinfo import ZoneInfo
@@ -18,6 +18,13 @@ from services.summary_service import clean_diary_summary
 
 
 MOOD_ORDER = ["happy", "neutral", "sad", "anxious", "angry"]
+MOOD_LABELS = {
+    "happy": "Senang",
+    "neutral": "Netral",
+    "sad": "Sedih",
+    "anxious": "Cemas",
+    "angry": "Marah",
+}
 
 
 def _daily_metrics_collection(uid: str):
@@ -38,6 +45,10 @@ def _date_bounds(days: int) -> tuple[str, str]:
 def days_from_range(range_value: str) -> int:
     normalized = (range_value or "30d").strip().lower()
     return {"7d": 7, "30d": 30, "90d": 90}.get(normalized, 30)
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _metric_rows(uid: str, days: int) -> List[Dict[str, Any]]:
@@ -221,6 +232,53 @@ def _wellbeing_insights(
     return insights
 
 
+def _diary_signal(summary: str) -> Optional[str]:
+    text = (summary or "").lower()
+    if any(term in text for term in ("cemas", "takut", "panik", "khawatir", "gelisah", "overthinking")):
+        return "diary bernada cemas"
+    if any(term in text for term in ("sedih", "nangis", "hampa", "kecewa", "kosong")):
+        return "diary bernada sedih"
+    if any(term in text for term in ("capek", "lelah", "burnout", "letih")):
+        return "diary menunjukkan kelelahan"
+    return None
+
+
+def _mood_detail_summary(mood: str, signals: List[str]) -> str:
+    label = MOOD_LABELS.get(mood, mood)
+    if "tidur pendek" in signals:
+        return f"Mood {label.lower()} sering muncul saat durasi tidur rendah."
+    diary_signal = next((signal for signal in signals if signal.startswith("diary")), None)
+    if diary_signal:
+        return f"Mood {label.lower()} muncul bersama {diary_signal}."
+    return f"Mood {label.lower()} muncul dalam periode ini."
+
+
+def _build_mood_distribution_detail(
+    mood_dates: Dict[str, List[str]],
+    mood_signals: Dict[str, Counter[str]],
+    total_mood_entries: int,
+) -> Dict[str, Dict[str, Any]]:
+    details: Dict[str, Dict[str, Any]] = {}
+    if total_mood_entries <= 0:
+        return details
+
+    for mood in MOOD_ORDER:
+        dates = mood_dates.get(mood, [])
+        count = len(dates)
+        if count <= 0:
+            continue
+        signals = [signal for signal, _count in mood_signals.get(mood, Counter()).most_common(3)]
+        details[mood] = {
+            "label": MOOD_LABELS.get(mood, mood),
+            "count": count,
+            "percent": round((count / total_mood_entries) * 100, 1),
+            "dates": dates,
+            "top_signals": signals,
+            "summary": _mood_detail_summary(mood, signals),
+        }
+    return details
+
+
 def get_wellbeing_statistics(uid: str, range_value: str) -> Dict[str, Any]:
     days = days_from_range(range_value)
     normalized_range = f"{days}d"
@@ -230,6 +288,8 @@ def get_wellbeing_statistics(uid: str, range_value: str) -> Dict[str, Any]:
     date_values = sorted(set(metrics_by_date) | set(diary_by_date))
 
     mood_counter: Counter[str] = Counter()
+    mood_dates: Dict[str, List[str]] = {mood: [] for mood in MOOD_ORDER}
+    mood_signals: Dict[str, Counter[str]] = {mood: Counter() for mood in MOOD_ORDER}
     wellbeing_scores: List[int] = []
     sleep_values: List[float] = []
     daily_items: List[Dict[str, Any]] = []
@@ -239,11 +299,18 @@ def get_wellbeing_statistics(uid: str, range_value: str) -> Dict[str, Any]:
         mood = str(metric.get("mood") or "").strip().lower()
         if mood in MOOD_VALUES:
             mood_counter[mood] += 1
+            mood_dates[mood].append(date_value)
         sleep = _sleep_payload(metric)
         if sleep:
             hours = _sleep_hours(metric)
             if hours is not None:
                 sleep_values.append(hours)
+                if mood in MOOD_VALUES and hours < 6:
+                    mood_signals[mood]["tidur pendek"] += 1
+
+        diary_signal = _diary_signal(diary_by_date.get(date_value, ""))
+        if mood in MOOD_VALUES and diary_signal:
+            mood_signals[mood][diary_signal] += 1
 
         insight = build_daily_wellbeing_insight(
             mood=mood if mood in MOOD_VALUES else None,
@@ -264,17 +331,26 @@ def get_wellbeing_statistics(uid: str, range_value: str) -> Dict[str, Any]:
 
     average_score = round(sum(wellbeing_scores) / len(wellbeing_scores), 1) if wellbeing_scores else None
     dominant_mood = max(MOOD_ORDER, key=lambda item: mood_counter[item]) if mood_counter else None
+    total_mood_entries = sum(mood_counter.values())
+    updated_at = _utc_now_iso()
 
     return {
         "range": normalized_range,
         "period_days": days,
         "overall_mood": _overall_mood_label(average_score, dominant_mood),
         "average_wellbeing_score": average_score,
-        "mood_distribution": {mood: mood_counter[mood] for mood in MOOD_ORDER},
+        "mood_distribution": {mood: mood_counter[mood] for mood in MOOD_ORDER if mood_counter[mood] > 0},
+        "mood_distribution_detail": _build_mood_distribution_detail(
+            mood_dates=mood_dates,
+            mood_signals=mood_signals,
+            total_mood_entries=total_mood_entries,
+        ),
         "dominant_mood": dominant_mood,
         "screening_context": get_latest_screening_context(uid),
         "insights": _wellbeing_insights(average_score, mood_counter, sleep_values, len(diary_by_date)),
         "daily_items": daily_items,
         "model_version": "wellbeing_statistics_v1.0",
+        "updated_at": updated_at,
+        "updated_statistics_version": updated_at,
         "disclaimer": "Insight ini bukan diagnosis medis.",
     }
