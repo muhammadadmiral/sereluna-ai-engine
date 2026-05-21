@@ -113,7 +113,7 @@ def save_message(
     session_id: str,
     role: str,
     text: str,
-    metadata: Optional[Dict[str, Any]] = None,
+    analysis_results: Optional[Dict[str, Any]] = None,
 ) -> str:
     messages_ref = (
         _user_ref(uid)
@@ -129,7 +129,7 @@ def save_message(
                 "role": role,
                 "text": text,
                 "content": text,
-                "metadata": metadata or {},
+                "analysis_results": analysis_results or {},
                 "createdAt": _server_timestamp(),
             }
         )

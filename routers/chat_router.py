@@ -56,7 +56,7 @@ async def chat_endpoint(
         session_id=session_id,
         role="user",
         text=user_text,
-        metadata={"mood_signal": request.mood_signal or ""},
+        analysis_results={"mood_signal": request.mood_signal or ""},
     )
 
     context = get_chat_context(uid, room_id, session_id)
@@ -117,7 +117,7 @@ async def chat_endpoint(
             session_id=session_id,
             role="assistant",
             text=reply,
-            metadata={
+            analysis_results={
                 "risk_level": risk_level,
                 "safety_response": True,
                 "algorithm_result": algorithm_result,
@@ -177,7 +177,7 @@ async def chat_endpoint(
         session_id=session_id,
         role="assistant",
         text=reply,
-        metadata={
+        analysis_results={
             "risk_level": risk_level,
             "sentiment_score": sentiment_score,
             "llm_sentiment_score": bot_result.get("sentiment_score"),
