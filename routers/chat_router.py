@@ -1,4 +1,8 @@
+import json
+import logging
+import time
 from typing import Any, Dict
+from uuid import uuid4
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
@@ -19,6 +23,46 @@ from services.llm_service import build_fallback_session_summary, generate_dialog
 from services.nlp_service import build_context_algorithm_result, build_response_style_plan
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
+logger = logging.getLogger("sereluna.chat")
+logger.setLevel(logging.INFO)
+
+
+def _log_chat_pipeline(trace_id: str, event: str, payload: Dict[str, Any]) -> None:
+    logger.info(
+        "sereluna_chat_pipeline %s",
+        json.dumps({"trace_id": trace_id, "event": event, **payload}, ensure_ascii=False, default=str),
+    )
+
+
+def _debug_metadata(algorithm_result: Dict[str, Any], routed_to: str, elapsed_ms: int) -> Dict[str, Any]:
+    supervised = algorithm_result.get("supervised_emotion_classifier") or {}
+    evaluation = algorithm_result.get("supervised_model_evaluation") or {}
+    emotion_profile = algorithm_result.get("emotion_profile") or {}
+    return {
+        "processed_by_backend_first": True,
+        "routed_to": routed_to,
+        "elapsed_ms": elapsed_ms,
+        "steps": [
+            "save_user_message",
+            "load_chat_context",
+            "preprocessing_filter",
+            "risk_classification",
+            "sentiment_scoring",
+            "emotion_classification",
+            "cognitive_distortion_detection",
+            "coping_pathway_planning",
+            "response_style_planning",
+            routed_to,
+        ],
+        "risk_level": algorithm_result.get("risk_level"),
+        "sentiment_score": algorithm_result.get("sentiment_score"),
+        "primary_emotion": emotion_profile.get("primary_emotion"),
+        "supervised_emotion": supervised.get("predicted_emotion"),
+        "supervised_confidence": supervised.get("confidence"),
+        "model_accuracy": evaluation.get("accuracy"),
+        "model_macro_f1": evaluation.get("macro_f1"),
+        "dataset_size": evaluation.get("dataset_size"),
+    }
 
 
 def _safety_reply() -> str:
@@ -54,6 +98,8 @@ async def chat_endpoint(
     background_tasks: BackgroundTasks,
     current_user: Dict[str, Any] = Depends(get_current_user),
 ):
+    trace_id = uuid4().hex[:12]
+    started_at = time.perf_counter()
     user_text = (request.text or "").strip()
     if not user_text:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="text is required")
@@ -66,6 +112,17 @@ async def chat_endpoint(
         )
 
     uid = current_user["uid"]
+    _log_chat_pipeline(
+        trace_id,
+        "request_received",
+        {
+            "uid": uid,
+            "room_id": request.room_id,
+            "session_id": request.session_id,
+            "message_length": len(user_text),
+            "mood_signal": request.mood_signal or "",
+        },
+    )
     ensure_user_document(uid, current_user)
     room_id, _diary = get_or_create_today_diary(uid, request.room_id)
     session_id, _session = get_or_create_session(uid, room_id, request.session_id)
@@ -97,6 +154,20 @@ async def chat_endpoint(
     )
     algorithm_result["recent_daily_context"] = recent_daily_context
     risk_level = algorithm_result["risk_level"]
+    _log_chat_pipeline(
+        trace_id,
+        "backend_algorithm_completed",
+        {
+            "room_id": room_id,
+            "session_id": session_id,
+            "risk_level": risk_level,
+            "sentiment_score": algorithm_result.get("sentiment_score"),
+            "primary_emotion": (algorithm_result.get("emotion_profile") or {}).get("primary_emotion"),
+            "supervised_emotion": (algorithm_result.get("supervised_emotion_classifier") or {}).get("predicted_emotion"),
+            "supervised_confidence": (algorithm_result.get("supervised_emotion_classifier") or {}).get("confidence"),
+            "model_accuracy": (algorithm_result.get("supervised_model_evaluation") or {}).get("accuracy"),
+        },
+    )
     style_plan = build_response_style_plan(
         text=user_text,
         mood_signal=request.mood_signal or "",
@@ -123,6 +194,11 @@ async def chat_endpoint(
     sentiment_score = algorithm_result["sentiment_score"]
 
     if route_to_safety:
+        _log_chat_pipeline(
+            trace_id,
+            "safety_route_selected",
+            {"risk_level": risk_level, "risk_reason": risk_trace.get("reason")},
+        )
         reply = _safety_reply()
         next_summary = build_fallback_session_summary(
             previous_summary=session_summary,
@@ -159,11 +235,27 @@ async def chat_endpoint(
             room_id=room_id,
             session_id=session_id,
             algorithm_trace=algorithm_result,
+            debug_metadata=_debug_metadata(
+                algorithm_result,
+                routed_to="safety_reply_without_llm",
+                elapsed_ms=int((time.perf_counter() - started_at) * 1000),
+            ),
         )
 
     keywords = algorithm_result["keywords"]
     relevant_diary = algorithm_result["relevant_diary"]
-    
+
+    _log_chat_pipeline(
+        trace_id,
+        "llm_call_started",
+        {
+            "room_id": room_id,
+            "session_id": session_id,
+            "risk_level": risk_level,
+            "style_target_paragraphs": style_plan.get("desired_paragraphs"),
+            "memory_scope": style_plan.get("memory_scope"),
+        },
+    )
     bot_result = generate_dialog(
         user_message=user_text,
         screening_context=effective_screening_context,
@@ -181,6 +273,15 @@ async def chat_endpoint(
         emotion_profile=algorithm_result.get("emotion_profile"),
         cognitive_distortions=algorithm_result.get("cognitive_distortions"),
         coping_pathway=algorithm_result.get("coping_pathway"),
+    )
+    _log_chat_pipeline(
+        trace_id,
+        "llm_call_completed",
+        {
+            "reply_length": len(bot_result.get("reply") or ""),
+            "llm_sentiment_score": bot_result.get("sentiment_score"),
+            "suggested_action": bot_result.get("suggested_action"),
+        },
     )
 
     reply = bot_result.get("reply") or "Aku dengerin, ya. Bisa ceritain sedikit lagi?"
@@ -224,6 +325,11 @@ async def chat_endpoint(
         room_id=room_id,
         session_id=session_id,
         algorithm_trace=algorithm_result,
+        debug_metadata=_debug_metadata(
+            algorithm_result,
+            routed_to="llm_after_backend_processing",
+            elapsed_ms=int((time.perf_counter() - started_at) * 1000),
+        ),
     )
 
 

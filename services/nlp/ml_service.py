@@ -1,4 +1,5 @@
 import csv
+import json
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List
@@ -253,6 +254,11 @@ def evaluate_supervised_emotion_model() -> Dict[str, Any]:
     return _supervised_emotion_model()["evaluation"]
 
 
+def reload_supervised_emotion_model() -> Dict[str, Any]:
+    _supervised_emotion_model.cache_clear()
+    return evaluate_supervised_emotion_model()
+
+
 def classify_emotion_supervised(text: str) -> Dict[str, Any]:
     normalized = _normalize_text(text)
     if not normalized:
@@ -304,3 +310,7 @@ def classify_emotion_supervised(text: str) -> Dict[str, Any]:
             "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
         },
     }
+
+
+if __name__ == "__main__":
+    print(json.dumps(evaluate_supervised_emotion_model(), indent=2, ensure_ascii=False))

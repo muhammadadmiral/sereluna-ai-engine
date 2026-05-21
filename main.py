@@ -9,6 +9,7 @@ from routers import (
     device_router,
     diary_router,
     mood_router,
+    model_router,
     notification_router,
     profile_router,
     screening_router,
@@ -39,6 +40,7 @@ app.include_router(notification_router.router, prefix="/api/v1")
 app.include_router(device_router.router, prefix="/api/v1")
 app.include_router(sleep_router.router, prefix="/api/v1")
 app.include_router(mood_router.router, prefix="/api/v1")
+app.include_router(model_router.router)
 app.include_router(calendar_router.router, prefix="/api/v1")
 app.include_router(stats_router.router, prefix="/api/v1")
 

@@ -36,6 +36,7 @@ class ChatResponse(BaseModel):
     room_id: Optional[str] = None
     session_id: Optional[str] = None
     algorithm_trace: Optional[Dict[str, Any]] = None
+    debug_metadata: Optional[Dict[str, Any]] = None
 
 
 class UserContextResponse(BaseModel):
