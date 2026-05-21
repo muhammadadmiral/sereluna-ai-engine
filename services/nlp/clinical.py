@@ -137,6 +137,8 @@ def score_dass21(answers: List[int]) -> Dict[str, Any]:
         "algorithm": {
             "name": "DASS-21 scoring",
             "description": "Sum selected item groups and multiply by 2, then map scores to severity bands.",
+            "questionnaire_source": "data/screening/dass21_questions.csv",
+            "recommended_interval_days": 7,
             "item_indexes": DASS21_INDEXES,
             "thresholds": {
                 category: [
