@@ -253,6 +253,31 @@ def _mood_detail_summary(mood: str, signals: List[str]) -> str:
     return f"Mood {label.lower()} muncul dalam periode ini."
 
 
+def _mood_detail_description(mood: str, count: int, percent: float, dates: List[str], signals: List[str]) -> str:
+    label = MOOD_LABELS.get(mood, mood)
+    date_text = ", ".join(dates[:3])
+    if len(dates) > 3:
+        date_text += f", dan {len(dates) - 3} hari lainnya"
+
+    signal_text = ""
+    if signals:
+        signal_text = f" Sinyal yang paling sering menyertai mood ini: {', '.join(signals)}."
+
+    interpretation = {
+        "happy": "Ini bisa menjadi tanda ada faktor protektif atau rutinitas yang sedang membantu.",
+        "neutral": "Ini biasanya menunjukkan kondisi cukup stabil, tetapi tetap perlu dilihat bersama pola tidur dan diary.",
+        "sad": "Ini bisa menjadi area yang perlu diperhatikan, terutama jika muncul berulang atau disertai energi rendah.",
+        "anxious": "Ini bisa berkaitan dengan tekanan, kekhawatiran, atau pola tidur yang kurang mendukung.",
+        "angry": "Ini bisa muncul saat ada pemicu stres, kelelahan, atau situasi yang terasa tidak terkendali.",
+    }.get(mood, "Pola ini perlu dilihat bersama data harian lain.")
+
+    return (
+        f"{label} muncul {count} kali ({percent:g}%) dalam periode ini"
+        f"{f', terutama pada {date_text}' if date_text else ''}."
+        f"{signal_text} {interpretation}"
+    ).strip()
+
+
 def _build_mood_distribution_detail(
     mood_dates: Dict[str, List[str]],
     mood_signals: Dict[str, Counter[str]],
@@ -268,13 +293,16 @@ def _build_mood_distribution_detail(
         if count <= 0:
             continue
         signals = [signal for signal, _count in mood_signals.get(mood, Counter()).most_common(3)]
+        percent = round((count / total_mood_entries) * 100, 1)
         details[mood] = {
             "label": MOOD_LABELS.get(mood, mood),
             "count": count,
-            "percent": round((count / total_mood_entries) * 100, 1),
+            "percent": percent,
             "dates": dates,
             "top_signals": signals,
             "summary": _mood_detail_summary(mood, signals),
+            "detail_title": f"Detail mood {MOOD_LABELS.get(mood, mood)}",
+            "detail_description": _mood_detail_description(mood, count, percent, dates, signals),
         }
     return details
 
