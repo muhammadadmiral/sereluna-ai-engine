@@ -114,7 +114,7 @@ def build_response_style_plan(
     elif intent == "check_in":
         desired_paragraphs = 2 if stage == "new_room" else 3
     elif intent in {"advice_or_problem_solving", "emotional_support"} or intensity in {"heavy", "tender"}:
-        desired_paragraphs = 4 if stage in {"familiar", "deep_room"} or word_count >= 45 else 3
+        desired_paragraphs = 4
     elif intent == "safety_support":
         desired_paragraphs = 2
     else:
