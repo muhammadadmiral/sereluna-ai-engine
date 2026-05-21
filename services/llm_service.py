@@ -103,8 +103,14 @@ def _format_style_plan(style_plan: Optional[Dict[str, Any]], user_name: str) -> 
 
     support_moves = style_plan.get("support_moves") or []
     moves_text = ", ".join(support_moves[:2]) if support_moves else "respons natural"
+    target_words = style_plan.get("target_words") or {}
+    minimum_words = int(target_words.get("minimum", 0) or 0)
+    maximum_words = int(target_words.get("maximum", 0) or 0)
+    short_listener = "YA" if style_plan.get("short_listener_turn") else "TIDAK"
     
     return f"""Target respons: {style_plan.get("desired_paragraphs", 2)} paragraf santai.
+Target panjang: minimal {minimum_words} kata, maksimal {maximum_words} kata.
+Mode pendengar singkat: {short_listener}.
 Tone: {style_plan.get("tone_guidance", "hangat dan kasual")}.
 Fokus strategi: {style_plan.get("opening_strategy", "langsung respons inti pesan")} ({moves_text})."""
 
@@ -203,6 +209,83 @@ def _shape_paragraphs(reply: str, desired_paragraphs: int) -> str:
         for index in range(0, len(sentences), group_size)
     ]
     return "\n\n".join(paragraph for paragraph in paragraphs if paragraph)
+
+
+def _word_count(text: str) -> int:
+    return len(re.findall(r"\b[\w']+\b", text or ""))
+
+
+def _paragraph_count(text: str) -> int:
+    paragraphs = [paragraph.strip() for paragraph in (text or "").split("\n\n") if paragraph.strip()]
+    return len(paragraphs)
+
+
+def _needs_expansion(reply: str, style_plan: Optional[Dict[str, Any]]) -> bool:
+    if not style_plan or style_plan.get("short_listener_turn"):
+        return False
+
+    desired = int(style_plan.get("desired_paragraphs", 2) or 2)
+    if desired < 3:
+        return False
+
+    target_words = style_plan.get("target_words") or {}
+    minimum_words = int(target_words.get("minimum", 0) or 0)
+    return _paragraph_count(reply) < desired or _word_count(reply) < minimum_words
+
+
+def _expand_reply_if_needed(
+    reply: str,
+    user_message: str,
+    style_plan: Optional[Dict[str, Any]],
+    care_intelligence_text: str,
+    history_text: str,
+) -> str:
+    if not _needs_expansion(reply, style_plan):
+        return reply
+
+    desired = int(style_plan.get("desired_paragraphs", 4) or 4)
+    target_words = style_plan.get("target_words") or {}
+    minimum_words = int(target_words.get("minimum", 420) or 420)
+    maximum_words = int(target_words.get("maximum", 850) or 850)
+    register = style_plan.get("user_register", "aku-kamu santai")
+
+    repair_prompt = f"""Tulis ulang balasan Sereluna supaya lebih kaya, natural, dan panjang.
+Wajib {desired} paragraf atau lebih, minimal {minimum_words} kata dan maksimal {maximum_words} kata.
+Pakai register: {register}.
+Jangan pakai pembuka template seperti "Aku paham", "Tentu", "Baiklah", atau memanggil nama user di awal.
+Jangan menggurui. Boleh terasa seperti teman sebaya, tapi tetap punya insight dan arah.
+Kalau ada konteks mental health, validasi secukupnya lalu bantu uraikan masalah dan langkah kecil yang realistis.
+
+Analisis backend:
+{care_intelligence_text}
+
+Riwayat singkat:
+{_truncate(history_text, 2500) or "N/A"}
+
+Pesan user:
+{user_message or ""}
+
+Balasan lama yang terlalu pendek:
+{reply}
+
+Kembalikan JSON valid:
+{{"reply": "balasan baru"}}"""
+
+    try:
+        content = _completion(
+            messages=[
+                {"role": "system", "content": "Kamu editor gaya Sereluna. Tugasmu hanya memperbaiki panjang dan kedalaman reply, tetap natural."},
+                {"role": "user", "content": repair_prompt},
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.78,
+            max_completion_tokens=2600,
+        )
+        parsed = _parse_json_object(content, {})
+        expanded = (parsed.get("reply") or "").strip()
+        return expanded or reply
+    except Exception:
+        return reply
 
 
 def _maybe_add_planned_emoji(reply: str, style_plan: Optional[Dict[str, Any]]) -> str:
@@ -360,13 +443,16 @@ Sereluna bukan sekadar chatbot umum: kamu memakai sinyal mood, ringkasan diary, 
 GAYA SERELUNA:
 - Bahasa Indonesia sehari-hari, hangat, luwes, dan boleh sedikit seperti teman sebaya, tapi tetap sensitif.
 - Jawaban terasa seperti obrolan AI companion yang pintar: nyambung, spesifik ke cerita user, tidak kaku, dan tidak menggurui.
-- Prioritaskan jawaban panjang yang enak dibaca: ikuti target paragraf dan target kata dari planner. Jangan menjawab satu paragraf pendek kecuali user cuma menyapa sangat singkat.
+- Kalau RESPONSE PLANNER menulis "Mode pendengar singkat: YA", balas 1 kalimat pendek saja seperti teman yang lagi ngikutin cerita, misalnya "oalah, terus gimana?", "anjir, serius lu?", atau "wah gila sih itu, lanjutannya gimana?"
+- Kalau RESPONSE PLANNER meminta 3-4 paragraf, itu wajib. Jangan menjawab satu paragraf pendek. Ikuti target kata dari planner.
+- Prioritaskan jawaban panjang yang enak dibaca untuk curhat, pertanyaan berat, atau minta saran: minimal ada validasi natural, pembacaan konteks, insight, dan langkah kecil yang realistis.
 - Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
 - Kalau user sedang cerita panjang/curhat, respons harus terasa hadir dan mengikuti alur: pantulkan detail, uraikan makna, beri opsi langkah kecil, lalu ajak lanjut.
 - Kalau user baru memberi potongan cerita singkat, boleh lebih sederhana seperti teman yang mendengarkan, misalnya mengundang lanjut cerita tanpa memaksa.
 - Makin panjang room chat, makin santai dan makin kontekstual. Jangan bersikap seperti baru kenal kalau riwayat chat sudah ada.
 - Ikuti register user. Kalau user biasa pakai "gua/lu", boleh balas lebih santai; kalau user pakai "aku/kamu", gunakan aku-kamu hangat.
 - Context timing itu penting. Jangan membawa konflik, mood buruk, atau diary lama ke sapaan netral seperti "halo guys" kecuali user sendiri mengaitkannya.
+- Kalau user ngomong kasar atau nge-gas, jangan otomatis anggap krisis atau marah berat. Baca konteksnya dulu. Kalau cuma banter, balas santai pendek. Kalau kasar tapi jelas sedang luka/kecewa, validasi tanpa sok suci.
 - Jangan membuka tiap balasan dengan "Aku paham", "Tentu", "Baiklah", atau menyebut nama user. Nama user maksimal sesuai planner.
 - Jangan pakai gaya "Wah, NAMA, saya sangat prihatin" karena terdengar kaku dan template.
 - Hindari template konseling yang berulang. Validasi harus spesifik ke detail pesan user.
@@ -398,7 +484,7 @@ ATURAN:
 
 Schema JSON:
 {{
-  "reply": "jawaban Sereluna",
+  "reply": "jawaban Sereluna yang mengikuti target paragraf dan target kata dari RESPONSE PLANNER",
   "session_summary": "catatan diary singkat yang langsung berisi inti percakapan; jangan mulai dengan 'Berikut adalah ringkasan', 'Ringkasan:', atau kalimat pembuka sejenis",
   "sentiment_score": 1,
   "suggested_action": "saran aksi nyata singkat atau null",
@@ -427,7 +513,15 @@ Pesan user sekarang:
             max_completion_tokens=1800,
         )
         parsed = _parse_json_object(content, {})
-        reply = _polish_sereluna_reply((parsed.get("reply") or fallback_reply).strip(), safe_user_name, style_plan)
+        raw_reply = (parsed.get("reply") or fallback_reply).strip()
+        expanded_reply = _expand_reply_if_needed(
+            reply=raw_reply,
+            user_message=user_message,
+            style_plan=style_plan,
+            care_intelligence_text=care_intelligence_text,
+            history_text=history_text,
+        )
+        reply = _polish_sereluna_reply(expanded_reply, safe_user_name, style_plan)
         raw_next_summary = (
             parsed.get("session_summary")
             or build_fallback_session_summary(
