@@ -329,9 +329,46 @@ def _soften_formal_register(reply: str, style_plan: Optional[Dict[str, Any]]) ->
     return text
 
 
+def _enforce_user_register(reply: str, style_plan: Optional[Dict[str, Any]]) -> str:
+    register = ((style_plan or {}).get("user_register") or "").lower()
+    if "gue-lu" not in register:
+        return reply
+
+    text = reply
+    replacements = [
+        (r"\bAku paham kalau\b", "Masuk akal kalau"),
+        (r"\bAku paham\b", "Gua nangkep"),
+        (r"\baku paham kalau\b", "masuk akal kalau"),
+        (r"\baku paham\b", "gua nangkep"),
+        (r"\bAku\b", "Gua"),
+        (r"\baku\b", "gua"),
+        (r"\bSaya\b", "Gua"),
+        (r"\bsaya\b", "gua"),
+        (r"\bAnda\b", "lu"),
+        (r"\banda\b", "lu"),
+        (r"\bKamu\b", "Lu"),
+        (r"\bkamu\b", "lu"),
+        (r"\brespon\s+ku\b", "respons gua"),
+        (r"\brespons\s+ku\b", "respons gua"),
+        (r"\bjawaban\s+ku\b", "jawaban gua"),
+        (r"\bbalasan\s+ku\b", "balasan gua"),
+        (r"\bpunya\s+ku\b", "punya gua"),
+        (r"\bmenurut\s+ku\b", "menurut gua"),
+        (r"\bku\s+", "gua "),
+    ]
+    for pattern, replacement in replacements:
+        text = re.sub(pattern, replacement, text)
+
+    text = re.sub(r"\b(\w+)ku\b", r"\1 gua", text)
+    text = re.sub(r"\s+([,.!?])", r"\1", text)
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    return text
+
+
 def _polish_sereluna_reply(reply: str, user_name: str, style_plan: Optional[Dict[str, Any]]) -> str:
     text = _strip_repetitive_openers(reply, user_name)
     text = _soften_formal_register(text, style_plan)
+    text = _enforce_user_register(text, style_plan)
     name_policy = (style_plan or {}).get("name_policy") or {}
     text = _limit_name_mentions(text, user_name, int(name_policy.get("max_mentions", 0) or 0))
     text = _shape_paragraphs(text, int((style_plan or {}).get("desired_paragraphs", 2) or 2))
@@ -474,7 +511,7 @@ GAYA SERELUNA:
 - Kalau user sedang cerita panjang/curhat, respons harus terasa hadir dan mengikuti alur: pantulkan detail, uraikan makna, beri opsi langkah kecil, lalu ajak lanjut.
 - Kalau user baru memberi potongan cerita singkat, boleh lebih sederhana seperti teman yang mendengarkan, misalnya mengundang lanjut cerita tanpa memaksa.
 - Makin panjang room chat, makin santai dan makin kontekstual. Jangan bersikap seperti baru kenal kalau riwayat chat sudah ada.
-- Ikuti register user. Kalau user biasa pakai "gua/lu", boleh balas lebih santai; kalau user pakai "aku/kamu", gunakan aku-kamu hangat.
+- Ikuti register user. Kalau user biasa pakai "gua/lu", wajib balas pakai "gua/lu". Jangan pakai "aku", "kamu", "Anda", "saya", atau bentuk "ku" seperti "respon ku".
 - Context timing itu penting. Jangan membawa konflik, mood buruk, atau diary lama ke sapaan netral seperti "halo guys" kecuali user sendiri mengaitkannya.
 - Kalau user ngomong kasar atau nge-gas, jangan otomatis anggap krisis atau marah berat. Baca konteksnya dulu. Kalau cuma banter, balas santai pendek. Kalau kasar tapi jelas sedang luka/kecewa, validasi tanpa sok suci.
 - Jangan membuka tiap balasan dengan "Aku paham", "Tentu", "Baiklah", atau menyebut nama user. Nama user maksimal sesuai planner.
