@@ -85,7 +85,30 @@ def serialize_firestore_value(value: Any) -> Any:
     if value is None:
         return None
 
-    # 1. Handle basic primitives
+    # 1. Handle Firestore sentinels FIRST and return them as-is
+    # These must NOT be modified or converted to strings
+    try:
+        module_name = getattr(getattr(value, "__class__", {}), "__module__", "")
+        class_name = getattr(getattr(value, "__class__", {}), "__name__", "")
+        if "google.cloud.firestore" in module_name:
+            if "Sentinel" in class_name or "Transform" in class_name or "ServerTimestamp" in class_name:
+                return value
+    except Exception:
+        pass
+
+    # 2. Handle numpy types early
+    if hasattr(value, "__module__") and "numpy" in value.__module__:
+        try:
+            if hasattr(value, "item") and callable(value.item):
+                value = value.item()
+            elif hasattr(value, "tolist") and callable(value.tolist):
+                value = value.tolist()
+            else:
+                value = float(value)
+        except Exception:
+            pass
+
+    # 3. Handle basic primitives
     if isinstance(value, str):
         return value
     if isinstance(value, (int, bool)):
@@ -95,26 +118,11 @@ def serialize_firestore_value(value: Any) -> Any:
             return 0.0
         return value
 
-    # 2. Handle known serializable objects
+    # 4. Handle known serializable objects
     if isinstance(value, (datetime, date)):
         return value.isoformat()
 
-    # 3. Handle numpy types specifically
-    # Check for item() method (numpy scalars)
-    if hasattr(value, "item") and callable(value.item):
-        try:
-            return serialize_firestore_value(value.item())
-        except Exception:
-            pass
-
-    # Check for tolist() method (numpy arrays)
-    if hasattr(value, "tolist") and callable(value.tolist):
-        try:
-            return [serialize_firestore_value(item) for item in value.tolist()]
-        except Exception:
-            pass
-
-    # 4. Handle containers (recursive)
+    # 5. Handle containers (recursive)
     if isinstance(value, dict):
         serialized_dict = {}
         for key, item in value.items():
@@ -130,22 +138,7 @@ def serialize_firestore_value(value: Any) -> Any:
     if isinstance(value, (list, tuple, set)):
         return [serialize_firestore_value(item) for item in value]
 
-    # 5. Handle special Firestore types (sentinels like SERVER_TIMESTAMP)
-    # These must NOT be modified
-    type_name = type(value).__name__
-    if type_name in ("Sentinel", "ServerTimestamp"):
-        return value
-
-    # 6. Fallback for other potential numpy types or objects
-    try:
-        if type(value).__module__ == "numpy":
-            if hasattr(value, "tolist"):
-                return serialize_firestore_value(value.tolist())
-            return float(value)
-    except Exception:
-        pass
-
-    # 7. Final resort: convert to string to avoid Firestore 'invalid nested entity' error
+    # 6. Final resort: convert to string to avoid Firestore 'invalid nested entity' error
     try:
         return str(value)
     except Exception:
