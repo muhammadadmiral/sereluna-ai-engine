@@ -16,7 +16,10 @@ class ScreeningResponse(BaseModel):
     algorithm: Dict[str, Any] = Field(default_factory=dict)
     has_screening_today: bool = True
     next_recommended_date: Optional[str] = None
+    next_recommended_in_days: Optional[int] = None
     recommended_interval_days: int = 7
+    updated_at: Optional[str] = None
+    updated_statistics_version: Optional[str] = None
     disclaimer: str = "DASS-21 adalah alat screening, bukan diagnosis medis."
 
 
@@ -50,4 +53,7 @@ class ScreeningStatusResponse(BaseModel):
     is_due: bool
     latest: Optional[Dict[str, Any]] = None
     next_recommended_date: Optional[str] = None
+    next_recommended_in_days: int = 0
+    server_time: str
+    updated_at: str
     disclaimer: str

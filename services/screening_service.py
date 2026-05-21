@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -53,6 +53,10 @@ def get_dass21_questionnaire() -> Dict[str, Any]:
 def _parse_date(value: Optional[str]):
     if not value:
         return None
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     try:
         return datetime.strptime(value, "%Y-%m-%d").date()
     except ValueError:
@@ -73,10 +77,12 @@ def get_screening_status(uid: str) -> Dict[str, Any]:
         }
         break
 
+    server_time = _utc_now_iso()
     today = datetime.now(ZoneInfo(APP_TIMEZONE)).date()
     last_date = _parse_date(latest["date"]) if latest else None
     next_date = last_date + timedelta(days=DASS21_RECOMMENDED_INTERVAL_DAYS) if last_date else None
     is_due = next_date is None or today >= next_date
+    next_in_days = max(0, (next_date - today).days) if next_date else 0
 
     return {
         "instrument": "DASS-21",
@@ -84,5 +90,8 @@ def get_screening_status(uid: str) -> Dict[str, Any]:
         "is_due": is_due,
         "latest": latest,
         "next_recommended_date": next_date.isoformat() if next_date else None,
+        "next_recommended_in_days": next_in_days,
+        "server_time": server_time,
+        "updated_at": server_time,
         "disclaimer": "DASS-21 adalah alat screening, bukan diagnosis medis.",
     }

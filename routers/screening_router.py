@@ -2,7 +2,7 @@ from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from schemas.screening_schema import (
     ScreeningQuestionnaireResponse,
@@ -20,6 +20,10 @@ from services.screening_service import (
 )
 
 router = APIRouter(prefix="/api/v1/screening", tags=["screening"])
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 @router.get("/dass21/", response_model=ScreeningQuestionnaireResponse)
@@ -51,6 +55,8 @@ async def create_screening(
     saved = save_screening(uid, result, request.note or "")
     date_value = saved.get("date") or today_id()
     next_date = datetime.strptime(date_value, "%Y-%m-%d").date() + timedelta(days=DASS21_RECOMMENDED_INTERVAL_DAYS)
+    today = datetime.now().astimezone().date()
+    updated_at = _utc_now_iso()
     return ScreeningResponse(
         date=date_value,
         scores=result["scores"],
@@ -59,5 +65,8 @@ async def create_screening(
         algorithm=result.get("algorithm", {}),
         has_screening_today=True,
         next_recommended_date=next_date.isoformat(),
+        next_recommended_in_days=max(0, (next_date - today).days),
         recommended_interval_days=DASS21_RECOMMENDED_INTERVAL_DAYS,
+        updated_at=updated_at,
+        updated_statistics_version=updated_at,
     )

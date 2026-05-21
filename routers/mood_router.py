@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timezone
 from typing import Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -9,6 +10,10 @@ from services.firebase_service import get_current_user
 
 router = APIRouter(prefix="/mood", tags=["mood"])
 DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 @router.post("/", response_model=MoodDailyResponse)
@@ -27,4 +32,9 @@ async def save_mood_daily(
         )
 
     save_daily_mood(uid=current_user["uid"], date=date_value, mood=mood)
-    return MoodDailyResponse(success=True)
+    updated_at = _utc_now_iso()
+    return MoodDailyResponse(
+        success=True,
+        updated_at=updated_at,
+        updated_statistics_version=updated_at,
+    )
