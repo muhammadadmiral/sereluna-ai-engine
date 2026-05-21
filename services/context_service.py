@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from datetime import datetime
@@ -107,6 +108,23 @@ def get_or_create_session(uid: str, diary_id: str, session_id: Optional[str] = N
     return session_ref.id, {"summary": "", "status": "active"}
 
 
+# Add this near the top with other imports if needed, or just use it locally
+def _safe_json_dumps(obj: Any) -> str:
+    def default(o: Any) -> Any:
+        if hasattr(o, "item") and callable(o.item):
+            return o.item()
+        if hasattr(o, "tolist") and callable(o.tolist):
+            return o.tolist()
+        try:
+            return str(o)
+        except Exception:
+            return "unserializable"
+
+    try:
+        return json.dumps(obj, default=default)
+    except Exception:
+        return "{}"
+
 def save_message(
     uid: str,
     diary_id: str,
@@ -123,13 +141,17 @@ def save_message(
         .document(session_id)
         .collection("messages")
     )
+    
+    # Nuclear option: Store complex ML trace as a string to bypass Firestore strictness
+    safe_analysis_results = _safe_json_dumps(analysis_results or {})
+
     _update_time, message_ref = messages_ref.add(
         serialize_firestore_value(
             {
                 "role": role,
                 "text": text,
                 "content": text,
-                "analysis_results": analysis_results or {},
+                "analysis_results": safe_analysis_results,
                 "createdAt": _server_timestamp(),
             }
         )
