@@ -10,6 +10,7 @@ class NotificationItem(BaseModel):
     type: str = ""
     is_read: bool = False
     created_at: Optional[str] = None
+    action_link: Optional[str] = None
 
 
 class NotificationListResponse(BaseModel):
