@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
 from schemas.chat_schema import ChatFinishRequest, ChatRequest, ChatResponse, ClinicalInsight, UIMetadata
 from services.context_service import (
@@ -15,7 +15,7 @@ from services.context_service import (
     update_chat_summaries,
 )
 from services.firebase_service import get_current_user
-from services.llm_service import analyze_symptoms_llm, build_fallback_session_summary, generate_dialog, generate_summary
+from services.llm_service import build_fallback_session_summary, generate_dialog, generate_summary
 from services.nlp_service import build_context_algorithm_result, build_response_style_plan
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
@@ -29,9 +29,29 @@ def _safety_reply() -> str:
     )
 
 
+def _background_save_and_update(
+    uid: str,
+    room_id: str,
+    session_id: str,
+    reply: str,
+    analysis_results: Dict[str, Any],
+    next_summary: str,
+):
+    save_message(
+        uid=uid,
+        diary_id=room_id,
+        session_id=session_id,
+        role="assistant",
+        text=reply,
+        analysis_results=analysis_results,
+    )
+    update_chat_summaries(uid, room_id, session_id, next_summary)
+
+
 @router.post("/", response_model=ChatResponse)
 async def chat_endpoint(
     request: ChatRequest,
+    background_tasks: BackgroundTasks,
     current_user: Dict[str, Any] = Depends(get_current_user),
 ):
     user_text = (request.text or "").strip()
@@ -111,20 +131,22 @@ async def chat_endpoint(
             mood_signal=request.mood_signal or "",
             risk_level=risk_level,
         )
-        save_message(
-            uid=uid,
-            diary_id=room_id,
-            session_id=session_id,
-            role="assistant",
-            text=reply,
-            analysis_results={
+        
+        background_tasks.add_task(
+            _background_save_and_update,
+            uid,
+            room_id,
+            session_id,
+            reply,
+            {
                 "risk_level": risk_level,
                 "safety_response": True,
                 "algorithm_result": algorithm_result,
                 "risk_reason": risk_trace.get("reason"),
             },
+            next_summary,
         )
-        update_chat_summaries(uid, room_id, session_id, next_summary)
+        
         return ChatResponse(
             reply=reply,
             ui_metadata=UIMetadata(
@@ -141,10 +163,9 @@ async def chat_endpoint(
 
     keywords = algorithm_result["keywords"]
     relevant_diary = algorithm_result["relevant_diary"]
-    analysis_result = analyze_symptoms_llm(user_text)
+    
     bot_result = generate_dialog(
         user_message=user_text,
-        analysis_data=analysis_result,
         screening_context=effective_screening_context,
         session_summary=session_summary,
         profile_context=profile_context,
@@ -171,21 +192,21 @@ async def chat_endpoint(
         risk_level=risk_level,
     )
 
-    save_message(
-        uid=uid,
-        diary_id=room_id,
-        session_id=session_id,
-        role="assistant",
-        text=reply,
-        analysis_results={
+    background_tasks.add_task(
+        _background_save_and_update,
+        uid,
+        room_id,
+        session_id,
+        reply,
+        {
             "risk_level": risk_level,
             "sentiment_score": sentiment_score,
             "llm_sentiment_score": bot_result.get("sentiment_score"),
             "suggested_action": bot_result.get("suggested_action"),
             "algorithm_result": algorithm_result,
         },
+        next_summary,
     )
-    update_chat_summaries(uid, room_id, session_id, next_summary)
 
     return ChatResponse(
         reply=reply,
@@ -195,8 +216,8 @@ async def chat_endpoint(
             is_risky=bot_result.get("risk_flag", False),
         ),
         clinical_insight=ClinicalInsight(
-            detected_symptoms=analysis_result.get("detected_symptoms", []),
-            dass_category=analysis_result.get("dominant_category", "None"),
+            detected_symptoms=bot_result.get("detected_symptoms", []),
+            dass_category=bot_result.get("dominant_category", "None"),
             risk_level=risk_level,
         ),
         session_summary=next_summary,

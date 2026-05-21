@@ -99,46 +99,14 @@ _EMOJI_PATTERN = re.compile("[\U0001F300-\U0001FAFF\u2600-\u27BF]")
 
 def _format_style_plan(style_plan: Optional[Dict[str, Any]], user_name: str) -> str:
     if not style_plan:
-        return (
-            "Tidak ada planner khusus. Gunakan gaya natural, tidak template, "
-            "nama user tidak perlu disebut di pembuka."
-        )
+        return "Gunakan gaya natural dan mengalir santai."
 
     support_moves = style_plan.get("support_moves") or []
-    avoid_openers = [
-        str(item).format(name=user_name)
-        for item in (style_plan.get("avoid_openers") or [])
-    ]
-    name_policy = style_plan.get("name_policy") or {}
-    emoji_policy = style_plan.get("emoji_policy") or {}
-
-    support_text = "\n".join(f"- {move}" for move in support_moves) or "- Respons natural dan relevan."
-    avoid_text = "; ".join(avoid_openers) or "pembuka generik dan repetitif"
-    emoji_text = (
-        f"boleh, maksimal {emoji_policy.get('max_count', 0)}, contoh {emoji_policy.get('suggested')}"
-        if emoji_policy.get("allowed")
-        else "jangan pakai emoji untuk respons ini"
-    )
-    target_words = style_plan.get("target_words") or {}
-
-    return f"""Intent: {style_plan.get("intent", "reflective_companion")}
-Intensitas emosi: {style_plan.get("emotional_intensity", "neutral")}
-Relationship stage room ini: {style_plan.get("relationship_stage", "new_room")} ({style_plan.get("assistant_turns", 0)} balasan Sereluna sebelumnya).
-Register user: {style_plan.get("user_register", "aku-kamu santai")}.
-Target panjang: {style_plan.get("desired_paragraphs", 2)} paragraf.
-Target kata: minimal {target_words.get("minimum", 100)}, maksimal {target_words.get("maximum", 280)}.
-Blueprint panjang: paragraf 1 respons langsung ke pesan user, paragraf 2 validasi/urai konteks, paragraf 3 beri insight atau langkah praktis, paragraf 4 lanjutkan obrolan dengan satu pertanyaan ringan jika target 4 paragraf.
-Strategi pembuka: {style_plan.get("opening_strategy", "langsung respons inti pesan user")}
-Tone guidance: {style_plan.get("tone_guidance", "natural dan hangat")}
-Continuity guidance: {style_plan.get("continuity_guidance", "lanjutkan konteks obrolan")}
-Kebijakan nama: {name_policy.get("instruction", "Jangan menyebut nama user di pembuka")} Maksimal {name_policy.get("max_mentions", 0)} kali.
-Kebijakan emoji: {emoji_text}.
-Budget pertanyaan: maksimal {style_plan.get("question_budget", 1)} pertanyaan di akhir.
-Memory scope: {style_plan.get("memory_scope", "current_room_plus_relevant_memory")}
-Memory policy: {style_plan.get("memory_policy", "Pakai memori hanya jika relevan.")}
-Support moves:
-{support_text}
-Hindari pembuka ini: {avoid_text}."""
+    moves_text = ", ".join(support_moves[:2]) if support_moves else "respons natural"
+    
+    return f"""Target respons: {style_plan.get("desired_paragraphs", 2)} paragraf santai.
+Tone: {style_plan.get("tone_guidance", "hangat dan kasual")}.
+Fokus strategi: {style_plan.get("opening_strategy", "langsung respons inti pesan")} ({moves_text})."""
 
 
 def _format_care_intelligence(
@@ -147,31 +115,14 @@ def _format_care_intelligence(
     coping_pathway: Optional[Dict[str, Any]],
 ) -> str:
     emotion_profile = emotion_profile or {}
-    cognitive_distortions = cognitive_distortions or {}
     coping_pathway = coping_pathway or {}
 
-    distortions = cognitive_distortions.get("detected") or []
-    distortion_text = (
-        "; ".join(item.get("label", item.get("type", "")) for item in distortions if item)
-        if distortions
-        else "tidak ada pola distorsi kognitif kuat"
-    )
-    reframe_targets = cognitive_distortions.get("reframe_targets") or []
-    reframe_text = "; ".join(reframe_targets) if reframe_targets else "N/A"
-    pathway_steps = coping_pathway.get("steps") or []
-    step_text = "\n".join(f"- {step}" for step in pathway_steps) or "- Respons natural sesuai konteks."
-    ml_prediction = emotion_profile.get("ml_prediction") or {}
-    supervised_prediction = emotion_profile.get("supervised_prediction") or {}
-
-    return f"""Emotion profile: primary={emotion_profile.get("primary_emotion", "neutral")}, intensity={emotion_profile.get("intensity", "neutral")}, secondary={emotion_profile.get("secondary_emotions", [])}
-ML emotion classifier: predicted={ml_prediction.get("predicted_emotion", "N/A")}, confidence={ml_prediction.get("confidence", "N/A")}
-Supervised emotion classifier: predicted={supervised_prediction.get("predicted_emotion", "N/A")}, confidence={supervised_prediction.get("confidence", "N/A")}, accepted={supervised_prediction.get("accepted", "N/A")}
-Cognitive distortion hints: {distortion_text}
-Reframe targets: {reframe_text}
-Coping pathway: {coping_pathway.get("pathway", "reflective_companionship")}
-Coping steps:
-{step_text}
-Instruksi: pakai sinyal ini diam-diam untuk membentuk respons. Jangan menyebut nama algoritma ke user kecuali user bertanya cara kerja sistem."""
+    primary_emotion = emotion_profile.get("primary_emotion", "neutral")
+    pathway_steps = coping_pathway.get("steps") or ["Respons natural sesuai konteks."]
+    step_text = ", ".join(pathway_steps[:2])
+    
+    return f"""Analisis Emosi Backend: {primary_emotion}.
+Saran Pendekatan: {step_text}."""
 
 
 def _strip_repetitive_openers(reply: str, user_name: str) -> str:
@@ -346,7 +297,6 @@ def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
 
 def generate_dialog(
     user_message: str,
-    analysis_data: Dict[str, Any],
     screening_context: str,
     session_summary: str,
     profile_context: str,
@@ -363,8 +313,6 @@ def generate_dialog(
     cognitive_distortions: Optional[Dict[str, Any]] = None,
     coping_pathway: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    symptoms = analysis_data.get("detected_symptoms", [])
-    category = analysis_data.get("dominant_category", "None")
     safe_user_name = (user_name or "Teman").strip() or "Teman"
     assistant_turns = int((style_plan or {}).get("assistant_turns", 0) or 0)
 
@@ -387,7 +335,6 @@ def generate_dialog(
         else "Tidak ada catatan diary masa lalu yang relevan."
     )
     keywords_str = ", ".join(keywords) if keywords else "N/A"
-    symptoms_str = ", ".join(symptoms) if symptoms else "Tidak terdeteksi"
     style_plan_text = _format_style_plan(style_plan, safe_user_name)
     care_intelligence_text = _format_care_intelligence(
         emotion_profile=emotion_profile,
@@ -407,58 +354,52 @@ def generate_dialog(
         risk_level=risk_level,
     )
 
-    system_prompt = f"""Kamu adalah Sereluna, teman bicara kesehatan mental untuk {safe_user_name}.
-Sereluna bukan sekadar chatbot umum: kamu memakai sinyal mood, ringkasan diary, screening DASS-21, risk classifier, dan planner respons untuk memberi dukungan yang terasa personal, kontekstual, dan aman. Kamu bukan pengganti psikolog, tetapi kamu bisa memberi dukungan emosional awal, bantu user mengurai pikiran, dan mengarahkan user ke fitur Konselor jika perlu.
+    system_prompt = f"""Kamu adalah Sereluna, teman ngobrol cerdas dan suportif untuk {safe_user_name}.
+Kamu BUKAN robot customer service, dan kamu BUKAN psikolog kaku. Kamu adalah teman bicara AI yang hangat, bisa diajak ngobrol santai, bercanda, tapi juga siap jadi pendengar yang baik kalau user sedang down.
 
-GAYA SERELUNA:
-- Bahasa Indonesia sehari-hari, hangat, luwes, dan boleh sedikit seperti teman sebaya, tapi tetap sensitif.
-- Jawaban terasa seperti obrolan AI companion yang pintar: nyambung, spesifik ke cerita user, tidak kaku, dan tidak menggurui.
-- Prioritaskan jawaban panjang yang enak dibaca: ikuti target paragraf dan target kata dari planner. Jangan menjawab satu paragraf pendek kecuali user cuma menyapa sangat singkat.
-- Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
-- Kalau user sedang cerita panjang/curhat, respons harus terasa hadir dan mengikuti alur: pantulkan detail, uraikan makna, beri opsi langkah kecil, lalu ajak lanjut.
-- Kalau user baru memberi potongan cerita singkat, boleh lebih sederhana seperti teman yang mendengarkan, misalnya mengundang lanjut cerita tanpa memaksa.
-- Makin panjang room chat, makin santai dan makin kontekstual. Jangan bersikap seperti baru kenal kalau riwayat chat sudah ada.
-- Ikuti register user. Kalau user biasa pakai "gua/lu", boleh balas lebih santai; kalau user pakai "aku/kamu", gunakan aku-kamu hangat.
-- Context timing itu penting. Jangan membawa konflik, mood buruk, atau diary lama ke sapaan netral seperti "halo guys" kecuali user sendiri mengaitkannya.
-- Jangan membuka tiap balasan dengan "Aku paham", "Tentu", "Baiklah", atau menyebut nama user. Nama user maksimal sesuai planner.
-- Jangan pakai gaya "Wah, NAMA, saya sangat prihatin" karena terdengar kaku dan template.
-- Hindari template konseling yang berulang. Validasi harus spesifik ke detail pesan user.
-- Emoji boleh sesekali sesuai planner, maksimal satu, dan jangan dipakai untuk situasi krisis.
-- Jangan kebanyakan pertanyaan. Maksimal satu pertanyaan yang paling membantu untuk lanjut ngobrol.
+TUGAS ANALISIS DASS-21 (DI BELAKANG LAYAR):
+Selain menjawab, deteksi gejala dari pesan user menggunakan referensi berikut:
+1. DEPRESSION: Hopelessness, devaluation of life, self-deprecation, lack of interest, anhedonia.
+2. ANXIETY: Autonomic arousal, skeletal muscle effects, situational anxiety, anxious affect.
+3. STRESS: Difficulty relaxing, nervous arousal, easily upset/agitated, irritable/over-reactive.
+Tentukan array 'detected_symptoms' dan string 'dominant_category' ("Depression", "Anxiety", "Stress", "Mixed", atau "None"). Jangan pernah sebut tugas ini ke user.
 
-DATA USER & KONTEKS:
+GAYA BICARA SERELUNA (SANGAT PENTING):
+- JANGAN pakai gaya bicara kaku atau psikologis seperti "Saya memahami perasaan frustrasi Anda" atau "Mari kita eksplorasi lebih dalam".
+- JANGAN membedah kalimat user secara klinis jika user hanya ngobrol santai.
+- JANGAN selalu menawarkan solusi atau mencari tahu "akar masalah". Terkadang user hanya ingin ngobrol biasa atau ditemani.
+- Kalau user bercanda atau ngobrol casual (misalnya membahas coding, game, atau hal sehari-hari), balaslah dengan santai, relevan, dan setara seperti teman tongkrongan.
+- Kalau user sedang sedih atau berat, baru gunakan nada empati yang dalam, tapi tetap hindari bahasa template konseling.
+- Ikuti register user. Kalau user pakai "gua/lu", balaslah dengan santai; kalau "aku/kamu", balas dengan hangat. Jangan mendadak formal.
+- Boleh pakai singkatan kasual yang wajar (kayak, bikin, banget, dll).
+- JANGAN mengulang-ulang kalimat pembuka. Langsung balas inti pesannya.
+
+DATA USER & KONTEKS (BACA TAPI JANGAN TERLALU KAKU):
 - Nama user: {safe_user_name}
-- Mood signal dari aplikasi: {mood_signal or "N/A"}
-- Screening context DASS-21: {screening_context or "N/A"}
-- Analisis pesan terbaru: {category} ({symptoms_str})
-- Risk level backend: {risk_level or "low"}
-- Profile context: {_truncate(profile_context, 1000) or "N/A"}
+- Mood signal: {mood_signal or "N/A"}
+- Risk level: {risk_level or "low"}
 - Konteks 3 hari terakhir: {_truncate(recent_daily_context, 1200) or "N/A"}
 - Kata kunci percakapan: {keywords_str}
 - {diary_context}
 - Memory context gabungan: {_truncate(memory_context, 2500) or "N/A"}
 
-RESPONSE PLANNER:
+RESPONSE PLANNER (JADIKAN PANDUAN FLEKSIBEL):
 {style_plan_text}
 
-SERELUNA CARE INTELLIGENCE:
-{care_intelligence_text}
-
-ATURAN:
+ATURAN LAIN:
 1. {greeting_guideline}
-2. Pakai konteks skrining, profil, dan ringkasan sesi hanya untuk menyesuaikan dukungan, bukan untuk memberi diagnosis.
-3. Jika user bertanya soal psikolog atau konsultasi, arahkan ke menu Konselor di aplikasi.
-4. Jika ada tanda bahaya, validasi perasaan user dan sarankan mencari bantuan orang tepercaya atau layanan darurat setempat.
-5. Jika risk level berasal dari screening lama tetapi pesan user sekarang bersifat normal atau santai, jangan pakai respons krisis. Balas percakapan normal dengan empati.
-6. Kembalikan JSON valid saja.
+2. Jika ada bahaya nyata, validasi perasaan user dan sarankan mencari bantuan orang tepercaya atau layanan darurat.
+3. Kembalikan JSON valid saja.
 
 Schema JSON:
 {{
-  "reply": "jawaban Sereluna",
-  "session_summary": "catatan diary singkat yang langsung berisi inti percakapan; jangan mulai dengan 'Berikut adalah ringkasan', 'Ringkasan:', atau kalimat pembuka sejenis",
+  "reply": "jawaban Sereluna yang hangat dan santai",
+  "session_summary": "catatan diary singkat (satu/dua kalimat) tentang apa yang dibahas; mulai langsung dari intinya, JANGAN pakai kata pengantar seperti 'Berikut ringkasan', 'Ringkasan:', dll.",
   "sentiment_score": 1,
-  "suggested_action": "saran singkat atau null",
-  "risk_flag": false
+  "suggested_action": "saran aksi nyata singkat atau null",
+  "risk_flag": false,
+  "detected_symptoms": ["gejala 1", "gejala 2"],
+  "dominant_category": "None"
 }}"""
 
     user_prompt = f"""Ringkasan sesi sebelumnya:
@@ -500,6 +441,8 @@ Pesan user sekarang:
             "sentiment_score": _coerce_score(parsed.get("sentiment_score"), 3),
             "suggested_action": _coerce_optional_text(parsed.get("suggested_action")),
             "risk_flag": _coerce_bool(parsed.get("risk_flag"), risk_level == "high"),
+            "detected_symptoms": parsed.get("detected_symptoms", []),
+            "dominant_category": parsed.get("dominant_category", "None"),
         }
     except Exception:
         return {
@@ -508,6 +451,8 @@ Pesan user sekarang:
             "sentiment_score": 3,
             "suggested_action": None,
             "risk_flag": risk_level == "high",
+            "detected_symptoms": [],
+            "dominant_category": "None",
         }
 
 
