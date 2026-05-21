@@ -89,18 +89,20 @@ def _completion(
     response_format: Optional[Dict[str, str]] = None,
     temperature: float = 0.4,
     max_completion_tokens: Optional[int] = None,
+    use_fast_model: bool = False,
 ) -> str:
     logger = logging.getLogger("sereluna.llm")
 
-    # Tier 1: Groq Versatile
+    # Tier 1: Groq Versatile (Skip if fast model requested)
     groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
-    if groq_api_key:
+    if groq_api_key and not use_fast_model:
         try:
             return _call_groq("llama-3.3-70b-versatile", groq_api_key, messages, response_format, temperature, max_completion_tokens)
         except Exception as e:
             logger.warning("Groq Versatile failed: %s", e)
             
-        # Tier 2: Groq Instant
+    # Tier 2: Groq Instant (Use this as primary for fast mode)
+    if groq_api_key:
         try:
             return _call_groq("llama-3.1-8b-instant", groq_api_key, messages, response_format, temperature, max_completion_tokens)
         except Exception as e:
@@ -513,6 +515,7 @@ def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
             ],
             response_format={"type": "json_object"},
             temperature=0.1,
+            use_fast_model=True,
         )
         parsed = _parse_json_object(content, fallback)
         return {
@@ -736,7 +739,6 @@ def generate_summary(
         f"Rolling summary terakhir: {session_summary or 'N/A'}\n\n"
         f"Teks percakapan lengkap sesi ini:\n{session_raw or 'N/A'}"
     )
-
     try:
         content = _completion(
             messages=[
@@ -745,6 +747,7 @@ def generate_summary(
             ],
             temperature=0.3,
             max_completion_tokens=500,
+            use_fast_model=True,
         )
         cleaned = clean_diary_summary(content)
         return cleaned or _fallback_final_summary(session_raw, session_summary, safe_user_name)

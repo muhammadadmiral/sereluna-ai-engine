@@ -20,6 +20,7 @@ class ScreeningResponse(BaseModel):
     recommended_interval_days: int = 7
     updated_at: Optional[str] = None
     updated_statistics_version: Optional[str] = None
+    gamification: Optional[Dict[str, Any]] = None
     disclaimer: str = "DASS-21 adalah alat screening, bukan diagnosis medis."
 
 

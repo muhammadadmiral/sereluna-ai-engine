@@ -35,6 +35,7 @@ class ChatResponse(BaseModel):
     session_summary: str
     room_id: Optional[str] = None
     session_id: Optional[str] = None
+    gamification: Optional[Dict[str, Any]] = None
     algorithm_trace: Optional[Dict[str, Any]] = None
     debug_metadata: Optional[Dict[str, Any]] = None
 

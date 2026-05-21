@@ -9,6 +9,7 @@ from routers import (
     context_router,
     device_router,
     diary_router,
+    gamification_router,
     mood_router,
     model_router,
     notification_router,
@@ -32,6 +33,7 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(chat_router.router)
+app.include_router(gamification_router.router)
 app.include_router(article_router.router, prefix="/api/v1")
 app.include_router(auth_router.router)
 app.include_router(account_router.router, prefix="/api/v1")

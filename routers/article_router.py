@@ -7,6 +7,7 @@ from schemas.article_schema import (
     ArticleNotificationResponse,
     ArticleRecommendationResponse,
     ArticleTopicResponse,
+    ArticleReadResponse,
 )
 from services.article_service import article_notification_body, get_article_topics, search_guardian_articles
 from services.firebase_service import get_current_user
@@ -51,3 +52,38 @@ async def create_article_notification(
         article_id=request.article_id,
     )
     return ArticleNotificationResponse(notification_id=notification_id)
+
+
+@router.post("/{article_id}/read", response_model=ArticleReadResponse)
+async def read_article_action(
+    article_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+):
+    from services.gamification_service import award_xp
+    from services.firebase_service import user_document
+    from datetime import datetime, timezone
+    
+    uid = current_user["uid"]
+    today_str = datetime.now(timezone.utc).date().isoformat()
+    
+    # Cap at 3 articles per day logic
+    tracker_ref = user_document(uid).collection("gamification").document("article_tracker")
+    tracker = tracker_ref.get()
+    data = tracker.to_dict() if tracker.exists else {}
+    
+    date_tracker = data.get("date")
+    count_today = data.get("count", 0)
+    
+    if date_tracker != today_str:
+        count_today = 0
+        
+    xp_awarded = 0
+    gamification_res = None
+    
+    if count_today < 3:
+        xp_awarded = 5
+        count_today += 1
+        tracker_ref.set({"date": today_str, "count": count_today})
+        gamification_res = award_xp(uid, xp_awarded, source="article_read")
+        
+    return ArticleReadResponse(gamification=gamification_res)

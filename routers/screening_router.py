@@ -51,12 +51,31 @@ async def create_screening(
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
+    # Check if first screening of the month before saving
+    from services.screening_service import get_screening_status
+    status_data = get_screening_status(uid)
+    is_first_of_month = True
+    if status_data.get("latest") and status_data["latest"].get("date"):
+        last_date = status_data["latest"]["date"]
+        today = datetime.now().astimezone().date()
+        last_date_obj = datetime.strptime(last_date, "%Y-%m-%d").date()
+        if last_date_obj.year == today.year and last_date_obj.month == today.month:
+            is_first_of_month = False
+
     result["answers"] = request.answers
     saved = save_screening(uid, result, request.note or "")
     date_value = saved.get("date") or today_id()
     next_date = datetime.strptime(date_value, "%Y-%m-%d").date() + timedelta(days=DASS21_RECOMMENDED_INTERVAL_DAYS)
     today = datetime.now().astimezone().date()
     updated_at = _utc_now_iso()
+    
+    # Lunar Aura Gamification - Screening
+    from services.gamification_service import award_xp
+    xp_gained = 100
+    if is_first_of_month:
+        xp_gained += 200
+    gamification = award_xp(uid, xp_gained, source="screening", details={"is_first_of_month": is_first_of_month})
+
     return ScreeningResponse(
         date=date_value,
         scores=result["scores"],
@@ -69,4 +88,5 @@ async def create_screening(
         recommended_interval_days=DASS21_RECOMMENDED_INTERVAL_DAYS,
         updated_at=updated_at,
         updated_statistics_version=updated_at,
+        gamification=gamification,
     )

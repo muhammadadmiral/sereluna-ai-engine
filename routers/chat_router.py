@@ -408,6 +408,23 @@ async def finish_chat_endpoint(
         notification_key=f"chat_finished:{request.room_id}:{request.session_id}",
     )
 
+    # Lunar Aura Gamification - Diary Submission
+    from services.gamification_service import award_xp
+    xp_gained = 20
+    is_deep = len(session_raw) > 200
+    if is_deep:
+        xp_gained += 15
+        
+    # Get last sentiment score from context or logic
+    # In finish_chat, we can retrieve the sentiment score from the last message
+    last_msg = messages[-1] if messages else {}
+    last_analysis = last_msg.get("analysis_results", {})
+    sentiment_score = last_analysis.get("sentiment_score", 3)
+    if sentiment_score == 5 or sentiment_score == 1:
+        xp_gained += 10
+        
+    gamification = award_xp(uid, xp_gained, source="diary", details={"is_deep_reflection": is_deep})
+
     return ChatResponse(
         reply=final_summary,
         ui_metadata=UIMetadata(sentiment_score=3, suggested_action=None, is_risky=False),
@@ -415,5 +432,6 @@ async def finish_chat_endpoint(
         session_summary=final_summary,
         room_id=request.room_id,
         session_id=request.session_id,
+        gamification=gamification,
     )
  )

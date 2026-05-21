@@ -51,3 +51,7 @@ class ArticleNotificationRequest(BaseModel):
 class ArticleNotificationResponse(BaseModel):
     success: bool = True
     notification_id: str
+
+class ArticleReadResponse(BaseModel):
+    success: bool = True
+    gamification: Optional[Dict[str, Any]] = None
