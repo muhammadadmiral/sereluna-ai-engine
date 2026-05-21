@@ -20,7 +20,20 @@ def relationship_stage(assistant_turns: int) -> str:
     return "deep_room"
 
 def detect_user_register(text: str, history_text: str) -> str:
-    combined = normalize_text(f"{history_text or ''} {text or ''}")
+    current = normalize_text(text or "")
+    user_history = " ".join(
+        line.split(":", 1)[1]
+        for line in (history_text or "").splitlines()
+        if line.lower().startswith("user:") and ":" in line
+    )
+    combined = normalize_text(f"{user_history} {current}")
+
+    if re.search(r"\b(gua|gue|gw|lu|lo|elo)\b", current):
+        return "gue-lu santai"
+    if re.search(r"\b(aku|kamu|dirimu)\b", current):
+        return "aku-kamu hangat"
+    if re.search(r"\b(saya|anda)\b", current):
+        return "saya-anda lembut"
     if re.search(r"\b(gua|gue|gw|lu|lo|elo)\b", combined):
         return "gue-lu santai"
     if re.search(r"\b(aku|kamu|dirimu)\b", combined):
@@ -55,6 +68,22 @@ def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> st
         return "safety_support"
     if is_greeting_only(normalized):
         return "check_in"
+
+    feedback_cues = {
+        "singkat", "pendek", "panjang", "kepanjangan", "kependekan", "dry",
+        "dryb", "robot", "kaku", "natural", "respon", "respons", "bales",
+        "balas", "jawaban", "jawabannya", "text", "teks",
+    }
+    if contains_any(normalized, feedback_cues):
+        return "response_feedback"
+
+    factual_product_cues = {
+        "berapa", "jumlah", "user", "pengguna", "fitur", "sereluna",
+        "aplikasi", "data", "privasi", "boleh tahu", "apa iya", "banyak orang",
+    }
+    if ("?" in (text or "") or contains_any(normalized, QUESTION_CUES)) and contains_any(normalized, factual_product_cues):
+        return "factual_or_product_question"
+
     if "?" in (text or "") or contains_any(normalized, ADVICE_CUES):
         return "advice_or_problem_solving"
     if sentiment_score <= 2 or contains_any(normalized, NEGATIVE_WORDS):
@@ -75,6 +104,10 @@ def is_short_listener_turn(text: str) -> bool:
         return False
 
     if "?" in (text or ""):
+        return False
+
+    feedback_cues = {"singkat", "pendek", "panjang", "dry", "dryb", "robot", "kaku", "respon", "respons", "bales", "balas"}
+    if any(cue in normalized for cue in feedback_cues):
         return False
 
     starter_cues = {

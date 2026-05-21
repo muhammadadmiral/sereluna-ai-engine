@@ -309,8 +309,43 @@ def _maybe_add_planned_emoji(reply: str, style_plan: Optional[Dict[str, Any]]) -
     return "\n\n".join(paragraphs)
 
 
+def _soften_formal_register(reply: str, style_plan: Optional[Dict[str, Any]]) -> str:
+    register = ((style_plan or {}).get("user_register") or "").lower()
+    if "saya-anda" in register:
+        return reply
+
+    text = reply
+    replacements = [
+        (r"\bSaya senang Anda\b", "Aku seneng kamu"),
+        (r"\bSaya ingin\b", "Aku pengen"),
+        (r"\bSaya di sini\b", "Aku di sini"),
+        (r"\bSaya siap\b", "Aku siap"),
+        (r"\bSaya\b", "Aku"),
+        (r"\bAnda\b", "kamu"),
+    ]
+    for pattern, replacement in replacements:
+        text = re.sub(pattern, replacement, text)
+    return text
+
+
+def _completion_token_budget(style_plan: Optional[Dict[str, Any]]) -> int:
+    if not style_plan:
+        return 900
+    desired = int(style_plan.get("desired_paragraphs", 2) or 2)
+    target_words = style_plan.get("target_words") or {}
+    maximum_words = int(target_words.get("maximum", 0) or 0)
+    if desired <= 1:
+        return 220
+    if desired == 2:
+        return 650
+    if desired == 3:
+        return 1100
+    return min(1800, max(1200, maximum_words * 3))
+
+
 def _polish_sereluna_reply(reply: str, user_name: str, style_plan: Optional[Dict[str, Any]]) -> str:
     text = _strip_repetitive_openers(reply, user_name)
+    text = _soften_formal_register(text, style_plan)
     name_policy = (style_plan or {}).get("name_policy") or {}
     text = _limit_name_mentions(text, user_name, int(name_policy.get("max_mentions", 0) or 0))
     text = _shape_paragraphs(text, int((style_plan or {}).get("desired_paragraphs", 2) or 2))
@@ -445,6 +480,7 @@ GAYA SERELUNA:
 - Jawaban terasa seperti obrolan AI companion yang pintar: nyambung, spesifik ke cerita user, tidak kaku, dan tidak menggurui.
 - Kalau RESPONSE PLANNER menulis "Mode pendengar singkat: YA", balas 1 kalimat pendek saja seperti teman yang lagi ngikutin cerita, misalnya "oalah, terus gimana?", "anjir, serius lu?", atau "wah gila sih itu, lanjutannya gimana?"
 - Kalau RESPONSE PLANNER meminta 3-4 paragraf, itu wajib. Jangan menjawab satu paragraf pendek. Ikuti target kata dari planner.
+- Kalau RESPONSE PLANNER meminta 1-2 paragraf, jangan dipanjang-panjangkan. Jawab inti pesan saja, tetap enak dibaca.
 - Prioritaskan jawaban panjang yang enak dibaca untuk curhat, pertanyaan berat, atau minta saran: minimal ada validasi natural, pembacaan konteks, insight, dan langkah kecil yang realistis.
 - Kalau respons terasa belum memenuhi target panjang, kembangkan dengan insight, contoh konkret, atau langkah kecil yang relevan; jangan mengulang kalimat validasi yang sama.
 - Kalau user sedang cerita panjang/curhat, respons harus terasa hadir dan mengikuti alur: pantulkan detail, uraikan makna, beri opsi langkah kecil, lalu ajak lanjut.
@@ -458,6 +494,8 @@ GAYA SERELUNA:
 - Hindari template konseling yang berulang. Validasi harus spesifik ke detail pesan user.
 - Emoji boleh sesekali sesuai planner, maksimal satu, dan jangan dipakai untuk situasi krisis.
 - Jangan kebanyakan pertanyaan. Maksimal satu pertanyaan yang paling membantu untuk lanjut ngobrol.
+- Untuk pertanyaan faktual tentang Sereluna, jawab jujur sesuai data yang tersedia. Kalau tidak punya akses angka pasti, bilang tidak punya angka pastinya. Jangan mengarang klaim seperti "banyak orang sudah memakai Sereluna".
+- Jangan berubah menjadi promosi aplikasi kecuali user memang minta penjelasan fitur.
 
 DATA USER & KONTEKS (BACA TAPI JANGAN TERLALU KAKU):
 - Nama user: {safe_user_name}
@@ -510,7 +548,7 @@ Pesan user sekarang:
             ],
             response_format={"type": "json_object"},
             temperature=0.72,
-            max_completion_tokens=1800,
+            max_completion_tokens=_completion_token_budget(style_plan),
         )
         parsed = _parse_json_object(content, {})
         raw_reply = (parsed.get("reply") or fallback_reply).strip()

@@ -111,6 +111,8 @@ def build_response_style_plan(
 
     if short_listener_turn and intent not in {"safety_support", "advice_or_problem_solving"}:
         desired_paragraphs = 1
+    elif intent in {"response_feedback", "factual_or_product_question"}:
+        desired_paragraphs = 2
     elif intent == "check_in":
         desired_paragraphs = 2 if stage == "new_room" else 3
     elif intent in {"advice_or_problem_solving", "emotional_support"} or intensity in {"heavy", "tender"}:
@@ -154,6 +156,14 @@ def build_response_style_plan(
             "jawab seperti teman ngobrol yang informatif",
             "beri jawaban jelas lalu kaitkan dengan konteks Sereluna",
         ],
+        "response_feedback": [
+            "akui feedback user secara santai dan langsung sesuaikan gaya",
+            "jelaskan singkat kenapa tadi bisa terlalu pendek atau panjang",
+        ],
+        "factual_or_product_question": [
+            "jawab fakta yang ditanya dulu secara jujur dan ringkas",
+            "kalau tidak punya data pasti, bilang tidak punya akses angka pastinya",
+        ],
         "reflective_companion": [
             "lanjutkan topik tanpa sapaan ulang",
             "mulai dari respons yang terasa spontan dan relevan",
@@ -191,6 +201,18 @@ def build_response_style_plan(
             "prioritaskan keselamatan dan bantuan manusia tepercaya",
             "hindari emoji, candaan, dan instruksi yang terdengar menggurui",
         ])
+    elif intent == "response_feedback":
+        support_moves.extend([
+            "jangan defensif",
+            "beri komitmen gaya respons berikutnya dengan bahasa natural",
+            "jangan berubah menjadi promosi aplikasi",
+        ])
+    elif intent == "factual_or_product_question":
+        support_moves.extend([
+            "jawab langsung tanpa klaim jumlah pengguna kalau datanya tidak tersedia",
+            "hindari paragraf motivasi kesehatan mental yang tidak ditanya",
+            "boleh sebut privasi secara singkat kalau relevan",
+        ])
     else:
         support_moves.extend([
             "respons seperti teman sebaya yang nyambung",
@@ -217,8 +239,8 @@ def build_response_style_plan(
         "user_register": user_register,
         "desired_paragraphs": desired_paragraphs,
         "target_words": {
-            "minimum": 12 if desired_paragraphs == 1 else 90 if desired_paragraphs == 2 else 260 if desired_paragraphs == 3 else 420,
-            "maximum": 28 if desired_paragraphs == 1 else 240 if desired_paragraphs == 2 else 560 if desired_paragraphs == 3 else 850,
+            "minimum": 12 if desired_paragraphs == 1 else 70 if desired_paragraphs == 2 else 240 if desired_paragraphs == 3 else 360,
+            "maximum": 28 if desired_paragraphs == 1 else 190 if desired_paragraphs == 2 else 460 if desired_paragraphs == 3 else 680,
         },
         "opening_strategy": opening_strategy,
         "support_moves": support_moves,
