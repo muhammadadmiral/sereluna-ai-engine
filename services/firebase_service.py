@@ -81,68 +81,83 @@ def user_document(uid: str):
     return get_firestore_client().collection("users").document(uid)
 
 
+class _FirestoreEncoder(json.JSONEncoder):
+    def default(self, obj: Any) -> Any:
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        if hasattr(obj, "item") and callable(obj.item):
+            return obj.item()
+        if hasattr(obj, "tolist") and callable(obj.tolist):
+            return obj.tolist()
+        try:
+            if type(obj).__module__ == "numpy":
+                return float(obj)
+        except Exception:
+            pass
+        try:
+            return str(obj)
+        except Exception:
+            return f"unserializable:{type(obj).__name__}"
+
+
+def _is_firestore_sentinel(value: Any) -> bool:
+    try:
+        # Check if it's a known Firestore sentinel/transform object
+        module = type(value).__module__
+        name = type(value).__name__
+        if "google.cloud.firestore" in module:
+            if any(s in name for s in ("Sentinel", "Transform", "ServerTimestamp")):
+                return True
+    except Exception:
+        pass
+    return False
+
+
+def _clean_keys(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {
+            (str(k).replace(".", "_").replace("/", "_") or "empty_key"): _clean_keys(v)
+            for k, v in value.items()
+        }
+    if isinstance(value, list):
+        return [_clean_keys(v) for v in value]
+    return value
+
+
 def serialize_firestore_value(value: Any) -> Any:
     if value is None:
         return None
 
-    # 1. Handle Firestore sentinels FIRST and return them as-is
-    # These must NOT be modified or converted to strings
+    # 1. If it's a sentinel, return as-is
+    if _is_firestore_sentinel(value):
+        return value
+
+    # 2. Use JSON roundtrip to force basic Python types for everything else
+    # This strips numpy types, sets, tuples, and other non-standard objects
     try:
-        module_name = getattr(getattr(value, "__class__", {}), "__module__", "")
-        class_name = getattr(getattr(value, "__class__", {}), "__name__", "")
-        if "google.cloud.firestore" in module_name:
-            if "Sentinel" in class_name or "Transform" in class_name or "ServerTimestamp" in class_name:
-                return value
-    except Exception:
-        pass
+        # For floats, handle NaN/Inf by converting to a string first or handling in encoder
+        # Actually, json.dumps handles them if allow_nan=False, but it raises an error.
+        # We'll use a safer approach:
+        json_str = json.dumps(value, cls=_FirestoreEncoder, allow_nan=False)
+        cleaned_value = json.loads(json_str)
+    except (ValueError, TypeError):
+        # Fallback if there are NaNs or other issues: use a more lenient dumps then clean
+        json_str = json.dumps(value, cls=_FirestoreEncoder, allow_nan=True)
+        cleaned_value = json.loads(json_str)
+        # Manually fix NaNs/Infs in the cleaned value
+        def _fix_numbers(v):
+            if isinstance(v, float):
+                if math.isnan(v) or math.isinf(v):
+                    return 0.0
+            elif isinstance(v, list):
+                return [_fix_numbers(i) for i in v]
+            elif isinstance(v, dict):
+                return {k: _fix_numbers(i) for k, i in v.items()}
+            return v
+        cleaned_value = _fix_numbers(cleaned_value)
 
-    # 2. Handle numpy types early
-    if hasattr(value, "__module__") and "numpy" in value.__module__:
-        try:
-            if hasattr(value, "item") and callable(value.item):
-                value = value.item()
-            elif hasattr(value, "tolist") and callable(value.tolist):
-                value = value.tolist()
-            else:
-                value = float(value)
-        except Exception:
-            pass
-
-    # 3. Handle basic primitives
-    if isinstance(value, str):
-        return value
-    if isinstance(value, (int, bool)):
-        return value
-    if isinstance(value, float):
-        if math.isnan(value) or math.isinf(value):
-            return 0.0
-        return value
-
-    # 4. Handle known serializable objects
-    if isinstance(value, (datetime, date)):
-        return value.isoformat()
-
-    # 5. Handle containers (recursive)
-    if isinstance(value, dict):
-        serialized_dict = {}
-        for key, item in value.items():
-            # Sanitize key: force string, handle empty, replace dots/slashes
-            safe_key = str(key) if key is not None else "None"
-            if not safe_key:
-                safe_key = "empty_key"
-            # Dots and slashes are forbidden in Firestore field names
-            safe_key = safe_key.replace(".", "_").replace("/", "_")
-            serialized_dict[safe_key] = serialize_firestore_value(item)
-        return serialized_dict
-
-    if isinstance(value, (list, tuple, set)):
-        return [serialize_firestore_value(item) for item in value]
-
-    # 6. Final resort: convert to string to avoid Firestore 'invalid nested entity' error
-    try:
-        return str(value)
-    except Exception:
-        return f"unserializable:{type(value).__name__}"
+    # 3. Final key sanitization (Firestore forbids . and / in keys)
+    return _clean_keys(cleaned_value)
 
 
 def verify_id_token(id_token: str) -> Dict[str, Any]:
