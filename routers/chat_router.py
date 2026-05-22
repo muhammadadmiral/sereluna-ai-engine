@@ -306,6 +306,8 @@ async def chat_endpoint(
                 "safety_response": True,
                 "algorithm_result": algorithm_result,
                 "risk_reason": risk_trace.get("reason"),
+                "media_ids": media_ids,
+                "media_analysis": media_results,
             },
             next_summary,
         )
@@ -327,6 +329,7 @@ async def chat_endpoint(
                 routed_to="safety_reply_without_llm",
                 elapsed_ms=int((time.perf_counter() - started_at) * 1000),
             ),
+            media=media_results,
         )
 
     keywords = algorithm_result["keywords"]
