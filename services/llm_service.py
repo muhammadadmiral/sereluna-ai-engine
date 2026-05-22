@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 from typing import Any, Dict, List, Optional
@@ -90,52 +91,57 @@ def _completion(
     temperature: float = 0.4,
     max_completion_tokens: Optional[int] = None,
     use_fast_model: bool = False,
-) -> str:
+) -> tuple[str, str]:
     logger = logging.getLogger("sereluna.llm")
     start_time = time.perf_counter()
 
     def _log_success(provider: str):
         elapsed = (time.perf_counter() - start_time) * 1000
         logger.info("LLM success: %s (%.2fms)", provider, elapsed)
+        print(f"✅ LLM Success: {provider} ({elapsed:.2f}ms)")
 
     # Tier 1: Groq Versatile (Skip if fast model requested)
     groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
     if groq_api_key and not use_fast_model:
         try:
             res = _call_groq("llama-3.3-70b-versatile", groq_api_key, messages, response_format, temperature, max_completion_tokens)
-            _log_success("Groq Versatile")
-            return res
+            _log_success("Groq Versatile (70B)")
+            return res, "Groq Versatile"
         except Exception as e:
-            logger.warning("Groq Versatile failed (likely Rate Limit): %s", e)
+            logger.warning("Groq Versatile failed: %s", e)
+            print(f"⚠️ Groq Versatile Limit/Error: {str(e)[:100]}... Falling back.")
             
     # Tier 2: Groq Instant
     if groq_api_key:
         try:
             res = _call_groq("llama-3.1-8b-instant", groq_api_key, messages, response_format, temperature, max_completion_tokens)
-            _log_success("Groq Instant")
-            return res
+            _log_success("Groq Instant (8B)")
+            return res, "Groq Instant"
         except Exception as e:
             logger.warning("Groq Instant failed: %s", e)
+            print(f"⚠️ Groq Instant Limit/Error: {str(e)[:100]}... Falling back.")
             
-    # Tier 3: Gemini (Faster than OpenRouter usually)
+    # Tier 3: Gemini
     gemini_key = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
     if gemini_key:
         try:
             res = _call_gemini(gemini_key, messages, response_format, temperature, max_completion_tokens)
-            _log_success("Gemini")
-            return res
+            _log_success("Gemini Flash")
+            return res, "Gemini"
         except Exception as e:
             logger.warning("Gemini failed: %s", e)
+            print(f"⚠️ Gemini Limit/Error: {str(e)[:100]}... Falling back.")
 
-    # Tier 4: OpenRouter (Last resort, can be slow)
+    # Tier 4: OpenRouter
     openrouter_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
     if openrouter_key:
         try:
             res = _call_openrouter(openrouter_key, messages, response_format, temperature, max_completion_tokens)
             _log_success("OpenRouter")
-            return res
+            return res, "OpenRouter"
         except Exception as e:
             logger.warning("OpenRouter failed: %s", e)
+            print(f"⚠️ OpenRouter Limit/Error: {str(e)[:100]}... Final failure.")
             
     raise RuntimeError("All LLM fallback tiers failed or no API keys configured.")
 
@@ -670,7 +676,7 @@ Pesan user sekarang:
 {user_message or ""}"""
 
     try:
-        content = _completion(
+        content, provider = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
@@ -753,7 +759,7 @@ def generate_summary(
         f"Teks percakapan lengkap sesi ini:\n{session_raw or 'N/A'}"
     )
     try:
-        content = _completion(
+        content, provider = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
