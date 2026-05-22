@@ -81,10 +81,13 @@ Invoke-Hf repos create $repoId `
     --env "APP_TIMEZONE=Asia/Jakarta"
 
 Write-Host "Setting Space secrets..."
-Set-Content -LiteralPath $tempSecretsFile -Value $tempSecretsContent -Encoding utf8
+Set-Content -LiteralPath $tempSecretsFile -Value $tempSecretsContent -Encoding ascii
 try {
     Invoke-Hf spaces secrets add $repoId `
         --secrets-file $tempSecretsFile `
+        --token $hfToken
+    Invoke-Hf spaces secrets add $repoId `
+        -s "NVIDIA_API_KEY=$nvidiaKey" `
         --token $hfToken
 }
 finally {
