@@ -1,3 +1,4 @@
+import asyncio
 import json
 import math
 import os
@@ -184,7 +185,7 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[
         )
 
     try:
-        decoded = verify_id_token(token.strip())
+        decoded = await asyncio.to_thread(verify_id_token, token.strip())
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

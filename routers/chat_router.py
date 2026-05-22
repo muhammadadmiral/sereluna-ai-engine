@@ -161,7 +161,7 @@ def _format_media_context(media_results: list[Dict[str, Any]]) -> str:
 
 
 @router.post("/", response_model=ChatResponse)
-async def chat_endpoint(
+def chat_endpoint(
     request: ChatRequest,
     background_tasks: BackgroundTasks,
     current_user: Dict[str, Any] = Depends(get_current_user),
