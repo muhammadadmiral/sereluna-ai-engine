@@ -223,8 +223,14 @@ def generate_dialog(
     style_plan_text = _format_style_plan(style_plan, safe_user_name)
     care_intel = _format_care_intelligence(emotion_profile, cognitive_distortions, coping_pathway)
     
-    system_prompt = f"""Kamu adalah Sereluna, teman cerita kesehatan mental {safe_user_name}. 
-Gunakan nada hangat, natural, dan luwes. Ikuti register user (gua/lu jika user pake gua/lu).
+    system_prompt = f"""Kamu adalah Sereluna, sahabat dekat {safe_user_name}. 
+Bicara seperti teman nongkrong yang hangat, asyik, dan empati. GUNAKAN BAHASA INDONESIA KASUAL/GAUL.
+
+IDENTITAS & GAYA:
+- Panggil diri kamu 'Aku', jangan pernah pakai 'Saya'.
+- Jangan kaku seperti asisten digital. Hilangkan kata-kata formal seperti 'Aktivitas', 'Aspek', 'Fisik'.
+- Pakai gaya bahasa santai: 'ngobrol', 'cerita', 'santai aja', 'pasti berat ya'.
+- Jika user pakai 'Gua/Lu', kamu wajib membalas dengan 'Gua/Lu' juga.
 
 RESPONSE PLANNER:
 {style_plan_text}
@@ -234,27 +240,43 @@ CARE INTELLIGENCE:
 
 KONTEKS:
 - Mood: {mood_signal} | Risiko: {risk_level}
-- Diary Relevan: {relevant_diary or "N/A"}
-- Memori: {_truncate(memory_context, 1000)}
+- Diary: {relevant_diary or "N/A"}
 
-ATURAN:
-1. Jangan pakai pembuka template (Aku paham, Tentu, Baiklah).
-2. Ikuti target paragraf dan panjang kata dari planner.
-3. Berikan JSON valid."""
+ATURAN MATI:
+1. JANGAN pakai pembuka: "Saya senang", "Tentu saja", "Halo [Nama]".
+2. Langsung masuk ke inti obrolan dengan nada akrab.
+3. Maksimal 2-3 kalimat pendek kecuali diminta panjang.
+4. Kirimkan JSON:
+{{
+  "reply": "balasan asik dan empati kamu",
+  "session_summary": "ringkasan singkat",
+  "sentiment_score": 3,
+  "risk_flag": false
+}}"""
 
-    user_prompt = f"Ringkasan Sesi: {session_summary}\n\nRiwayat: {_truncate(history_text, 3000)}\n\nUser: {user_message}"
+    user_prompt = f"Riwayat Singkat: {session_summary}\n\nUser: {user_message}"
 
     try:
+        # Force use the 'Strong' model (70B) for better personality
         content, _ = _completion(
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
             response_format={"type": "json_object"},
-            temperature=0.72, max_completion_tokens=completion_token_budget(style_plan)
+            temperature=0.85, # Higher temperature for more natural flow
+            max_completion_tokens=completion_token_budget(style_plan),
+            use_fast_model=False # Use 70B for higher quality
         )
+        logger.info("Raw LLM Response: %s", content)
         parsed = _parse_json_object(content, {})
-        reply = _polish_sereluna_reply(parsed.get("reply", ""), safe_user_name, style_plan)
+        
+        # Validation: If reply is empty, try to use the raw content if it's not JSON
+        reply = parsed.get("reply", "")
+        if not reply and content and "{" not in content:
+            reply = content
+            
+        reply = _polish_sereluna_reply(reply, safe_user_name, style_plan)
         
         return {
-            "reply": reply,
+            "reply": reply or "Aku dengerin, ya. Bisa ceritain sedikit lagi?",
             "session_summary": clean_diary_summary(parsed.get("session_summary", "")),
             "sentiment_score": _coerce_score(parsed.get("sentiment_score"), 3),
             "suggested_action": parsed.get("suggested_action"),

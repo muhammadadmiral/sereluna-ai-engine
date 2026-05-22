@@ -50,7 +50,7 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         eval_data = algorithm_result.get("supervised_model_evaluation", {})
         accuracy = eval_data.get("accuracy", "N/A")
         acc_std = eval_data.get("accuracy_std", "N/A")
-        f1_macro = eval_data.get("macro_f1", "N/A")
+        macro_f1 = eval_data.get("macro_f1", "N/A")
         train_size = eval_data.get("train_size", "N/A")
         dataset_path = eval_data.get("dataset_path", "N/A")
 
@@ -61,21 +61,27 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         supervised = algorithm_result.get("supervised_emotion_classifier") or {}
         predicted_emotion = supervised.get("predicted_emotion", "N/A")
         confidence = supervised.get("confidence", 0.0)
+        top_probs = supervised.get("top_probabilities", [])
+        prob_text = ", ".join([f"{p['emotion']}: {p['probability']}" for p in top_probs])
+        
         risk_level = algorithm_result.get("risk_level", "unknown")
+        distortions = algorithm_result.get("cognitive_distortions", {})
+        distortion_list = distortions.get("detected_patterns", [])
 
         log_msg = "\n" + "="*70 + "\n"
         log_msg += f"🤖 [SERELUNA AI - DEMO DOSEN - BACKEND PROCESS] 🤖\n"
         log_msg += "="*70 + "\n"
-        log_msg += f"1. DATA MINING & PREPROCESSING\n"
+        log_msg += f"1. DATA MINING & PREPROCESSING (INFERENCE PHASE)\n"
         log_msg += f"   - Input Teks     : {user_text}\n"
         log_msg += f"   - Metode Filter  : {filter_method}\n"
         log_msg += f"   - Hasil Normalisasi: {normalized}\n"
+        log_msg += f"   - Distorsi Kognitif: {', '.join(distortion_list) if distortion_list else 'None'}\n"
         log_msg += "-"*70 + "\n"
         log_msg += f"2. MACHINE LEARNING (EMOTION CLASSIFICATION)\n"
-        log_msg += f"   - Model Dataset  : {dataset_path} ({train_size} baris training)\n"
-        log_msg += f"   - K-Fold Accuracy : {accuracy} (±{acc_std})\n"
-        log_msg += f"   - Macro F1 Score : {f1_macro}\n"
+        log_msg += f"   - Global Model Accuracy: {accuracy} (±{acc_std})\n"
+        log_msg += f"   - Global Macro F1 Score: {macro_f1}\n"
         log_msg += f"   - Prediksi Emosi : {predicted_emotion.upper()} (Confidence: {confidence})\n"
+        log_msg += f"   - Probabilitas Top 3: {prob_text}\n"
         log_msg += "-"*70 + "\n"
         log_msg += f"3. LOGIC BERAT & RISK ASSESSMENT\n"
         log_msg += f"   - Klasifikasi Risiko: {risk_level.upper()}\n"
@@ -86,7 +92,6 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         log_msg += "="*70 + "\n"
         
         logger.info(log_msg)
-        # Fallback print for direct console visibility during demo
         print(log_msg)
     except Exception as e:
         logger.error(f"Failed to print professor log: %s", e)

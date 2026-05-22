@@ -236,102 +236,89 @@ from sklearn.model_selection import train_test_split, cross_validate, Stratified
 
 # ... rest of imports ...
 
-@lru_cache(maxsize=1)
-def _supervised_emotion_model() -> Dict[str, Any]:
+# --- Global Model Cache (Singleton for Skripsi Demo) ---
+_GLOBAL_MODEL_BUNDLE = None
+
+def get_trained_model():
+    """
+    Ensures the model is trained only once and stored in memory.
+    This satisfies the 'Data Mining' requirement without slowing down every request.
+    """
+    global _GLOBAL_MODEL_BUNDLE
+    if _GLOBAL_MODEL_BUNDLE is None:
+        print("🛠️ [SKRIPS] Initializing Data Mining & ML Training Pipeline...")
+        _GLOBAL_MODEL_BUNDLE = _supervised_emotion_model_full_process()
+    return _GLOBAL_MODEL_BUNDLE
+
+def _supervised_emotion_model_full_process() -> Dict[str, Any]:
+    """
+    The full academic pipeline: Data loading, Feature Extraction, and Training.
+    """
     rows = _read_supervised_emotion_dataset()
     texts = [row["text"] for row in rows]
     labels = [row["label"] for row in rows]
     classes = sorted(set(labels))
 
-    # We use a fixed seed for the production hold-out split, 
-    # but we'll use Cross-Validation to get a "real" accuracy for display.
+    # Cross-validation for academic rigor (sidang)
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     pipeline = _emotion_classification_pipeline()
     
+    # We run this once at startup so the metrics in the logs are real
     cv_results = cross_validate(
         pipeline, texts, labels, 
         cv=skf, 
-        scoring=['accuracy', 'f1_macro', 'f1_weighted'],
+        scoring=['accuracy', 'f1_macro'],
         return_train_score=False
     )
 
-    # Actual Hold-out for detailed report
-    x_train, x_test, y_train, y_test = train_test_split(
-        texts,
-        labels,
-        test_size=0.20,
-        random_state=42, # Hold-out seed
-        stratify=labels,
-    )
-
-    evaluation_model = _emotion_classification_pipeline()
-    evaluation_model.fit(x_train, y_train)
-    y_pred = evaluation_model.predict(x_test)
-
-    report = classification_report(
-        y_test,
-        y_pred,
-        labels=classes,
-        output_dict=True,
-        zero_division=0,
-    )
-    
-    # Calculate Mean and Std Dev for Sidang
     mean_accuracy = float(np.mean(cv_results['test_accuracy']))
     std_accuracy = float(np.std(cv_results['test_accuracy']))
+    macro_f1 = float(np.mean(cv_results['test_f1_macro']))
+
+    # Final production fit
+    production_model = _emotion_classification_pipeline()
+    production_model.fit(texts, labels)
 
     evaluation = {
         "dataset_path": str(SUPERVISED_EMOTION_DATASET.relative_to(PROJECT_ROOT)),
         "dataset_size": len(rows),
-        "train_size": len(x_train),
-        "test_size": len(x_test),
+        "train_size": len(rows),
         "classes": classes,
         "accuracy": round(mean_accuracy, 4),
         "accuracy_std": round(std_accuracy, 4),
-        "holdout_accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
-        "macro_precision": round(float(report["macro avg"]["precision"]), 4),
-        "macro_recall": round(float(report["macro avg"]["recall"]), 4),
-        "macro_f1": round(float(np.mean(cv_results['test_f1_macro'])), 4),
-        "weighted_f1": round(float(np.mean(cv_results['test_f1_weighted'])), 4),
+        "macro_f1": round(macro_f1, 4),
         "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
         "cv_folds": 5
     }
 
-    production_model = _emotion_classification_pipeline()
-    production_model.fit(texts, labels)
     return {
         "model": production_model,
         "evaluation": evaluation,
     }
 
-
 def evaluate_supervised_emotion_model() -> Dict[str, Any]:
-    return _supervised_emotion_model()["evaluation"]
-
+    """
+    Returns the evaluation metrics for the professor's demo.
+    """
+    return get_trained_model()["evaluation"]
 
 def reload_supervised_emotion_model() -> Dict[str, Any]:
-    _supervised_emotion_model.cache_clear()
+    """
+    Clears the cache and re-trains the model.
+    """
+    global _GLOBAL_MODEL_BUNDLE
+    _GLOBAL_MODEL_BUNDLE = None
     return evaluate_supervised_emotion_model()
-
 
 def classify_emotion_supervised(text: str) -> Dict[str, Any]:
     normalized = _normalize_text(text)
     if not normalized:
-        return {
-            "predicted_emotion": "neutral",
-            "confidence": 0.0,
-            "accepted": False,
-            "top_probabilities": [],
-            "algorithm": {
-                "name": "TF-IDF Logistic Regression Emotion Classifier",
-                "version": "1.0",
-                "training_source": "data/training/emotion_dataset.csv",
-                "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
-            },
-        }
+        return {"predicted_emotion": "neutral", "confidence": 0.0, "accepted": False}
 
-    model_bundle = _supervised_emotion_model()
+    # Use the cached global model
+    model_bundle = get_trained_model()
     model = model_bundle["model"]
+    
     probabilities = model.predict_proba([normalized])[0]
     classes = list(model.classes_)
     ranked = sorted(
@@ -350,19 +337,11 @@ def classify_emotion_supervised(text: str) -> Dict[str, Any]:
         "confidence": round(confidence, 4),
         "accepted": confidence >= SUPERVISED_CONFIDENCE_THRESHOLD,
         "top_probabilities": ranked[:3],
-        "evaluation_summary": {
-            "accuracy": model_bundle["evaluation"]["accuracy"],
-            "macro_f1": model_bundle["evaluation"]["macro_f1"],
-            "weighted_f1": model_bundle["evaluation"]["weighted_f1"],
-            "test_size": model_bundle["evaluation"]["test_size"],
-            "classes": model_bundle["evaluation"]["classes"],
-        },
+        "evaluation_summary": model_bundle["evaluation"],
         "algorithm": {
             "name": "TF-IDF Logistic Regression Emotion Classifier",
-            "version": "1.0",
-            "method": "train/test split on curated emotion dataset, TF-IDF word n-gram + character n-gram + lexicon-score features, Logistic Regression classifier",
-            "training_source": "data/training/emotion_dataset.csv",
-            "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
+            "method": "Hybrid TF-IDF + Mental Health Expert Features",
+            "training_source": "data/training/emotion_dataset.csv"
         },
     }
 

@@ -31,6 +31,20 @@ from routers import (
 
 app = FastAPI(title="Sereluna AI Engine", version="1.0.0")
 
+@app.on_event("startup")
+async def startup_event():
+    # Warm up the ML models for the Professor Demo
+    from services.nlp.ml_service import get_trained_model
+    import logging
+    logger = logging.getLogger("sereluna.startup")
+    logger.info("Initializing Machine Learning Models (Full Data Mining Pipeline)...")
+    try:
+        # This will trigger the 5-fold cross-validation once
+        get_trained_model()
+        logger.info("ML Models initialized successfully.")
+    except Exception as e:
+        logger.error(f"Failed to initialize ML models: {e}")
+
 # Setup CORS
 app.add_middleware(
     CORSMiddleware,
