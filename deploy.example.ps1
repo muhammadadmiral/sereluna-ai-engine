@@ -28,6 +28,7 @@ $nvidiaKey = "YOUR_NVIDIA_NGC_API_KEY_HERE"
 $groqKey = "YOUR_GROQ_API_KEY_HERE"
 $guardianKey = "YOUR_GUARDIAN_API_KEY_HERE"
 $firebasePath = "google-service.json" # Atur path jika berbeda
+$firebaseStorageBucket = "YOUR_FIREBASE_STORAGE_BUCKET_HERE"
 # ==========================================
 
 if (-not (Test-Path $firebasePath)) {
@@ -60,8 +61,11 @@ Invoke-Hf repos create $repoId `
     --private `
     --exist-ok `
     --token $hfToken `
-    --env "NVIDIA_MODEL=moonshotai/kimi-k2-instruct" `
+    --env "NVIDIA_MODEL=deepseek-ai/deepseek-v4-pro" `
     --env "NVIDIA_FAST_MODEL=meta/llama-3.1-8b-instruct" `
+    --env "NVIDIA_VISION_MODEL=google/gemma-3n-e2b-it" `
+    --env "NVIDIA_THINKING=false" `
+    --env "NVIDIA_TOP_P=0.95" `
     --env "GROQ_MODEL=llama-3.3-70b-versatile" `
     --env "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
     --env "GROQ_FAST_MODEL=llama-3.1-8b-instant" `
@@ -83,6 +87,7 @@ finally {
 Write-Host "Setting Firebase project variables: $firebaseProjectId"
 Invoke-Hf spaces variables add $repoId `
     -e "FIREBASE_PROJECT_ID=$firebaseProjectId" `
+    -e "FIREBASE_STORAGE_BUCKET=$firebaseStorageBucket" `
     -e "GOOGLE_CLOUD_PROJECT=$firebaseProjectId" `
     -e "GCLOUD_PROJECT=$firebaseProjectId" `
     --token $hfToken

@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 import firebase_admin
 from dotenv import load_dotenv
 from fastapi import Header, HTTPException, status
-from firebase_admin import auth, credentials, firestore
+from firebase_admin import auth, credentials, firestore, storage
 
 load_dotenv()
 
@@ -49,7 +49,11 @@ def initialize_firebase() -> None:
     service_account_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
     service_account_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_PATH")
     project_id = _resolve_firebase_project_id(service_account_json, service_account_path)
-    app_options = {"projectId": project_id} if project_id else None
+    app_options = {"projectId": project_id} if project_id else {}
+    storage_bucket = os.getenv("FIREBASE_STORAGE_BUCKET")
+    if storage_bucket:
+        app_options["storageBucket"] = storage_bucket.strip()
+    app_options = app_options or None
 
     if service_account_json:
         try:
@@ -71,6 +75,14 @@ def initialize_firebase() -> None:
 def get_firestore_client():
     initialize_firebase()
     return firestore.client()
+
+
+def get_storage_bucket():
+    initialize_firebase()
+    bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
+    if not bucket_name:
+        raise RuntimeError("FIREBASE_STORAGE_BUCKET is not configured")
+    return storage.bucket(bucket_name.strip())
 
 
 def server_timestamp():

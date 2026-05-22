@@ -2,6 +2,7 @@ fastapi
 firebase-admin
 groq
 numpy
+python-multipart
 python-dotenv
 scipy
 scikit-learn

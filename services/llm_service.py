@@ -15,6 +15,13 @@ from services.summary_service import clean_diary_summary
 
 load_dotenv()
 
+
+def _bool_env(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
 def _call_groq(model_name: str, api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
     client = Groq(api_key=api_key, max_retries=0, timeout=20)
     kwargs = {
@@ -96,9 +103,14 @@ def _call_nvidia(model_name: str, api_key: str, messages: list, response_format:
         "model": model_name,
         "messages": messages,
         "temperature": temperature,
-        "top_p": 0.7,
+        "top_p": float(os.getenv("NVIDIA_TOP_P", "0.95")),
         "max_tokens": max_completion_tokens or 1024,
     }
+    thinking = os.getenv("NVIDIA_THINKING")
+    if thinking is not None and thinking.strip():
+        data["chat_template_kwargs"] = {
+            "thinking": _bool_env("NVIDIA_THINKING")
+        }
     if response_format:
         data["response_format"] = response_format
         
@@ -106,6 +118,47 @@ def _call_nvidia(model_name: str, api_key: str, messages: list, response_format:
     with urllib.request.urlopen(req) as response:
         result = json.loads(response.read().decode("utf-8"))
         return result["choices"][0]["message"]["content"] or ""
+
+
+def analyze_image_with_nvidia(
+    image_data_url: str,
+    user_prompt: str,
+    max_tokens: int = 700,
+) -> Dict[str, Any]:
+    api_key = (os.getenv("NVIDIA_API_KEY") or "").strip()
+    if not api_key:
+        raise RuntimeError("NVIDIA_API_KEY is not configured")
+
+    model_name = os.getenv("NVIDIA_VISION_MODEL", "google/gemma-3n-e2b-it")
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Kamu membantu membaca gambar yang dikirim user untuk aplikasi kesehatan mental. "
+                "Jelaskan isi gambar secara aman, jangan membuat diagnosis, dan jangan menebak identitas orang."
+            ),
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": user_prompt
+                    or "Baca gambar ini secara ringkas. Jika ini screenshot chat, rangkum konteks dan nada emosinya.",
+                },
+                {"type": "image_url", "image_url": {"url": image_data_url}},
+            ],
+        },
+    ]
+    response = _call_nvidia(
+        model_name=model_name,
+        api_key=api_key,
+        messages=messages,
+        response_format=None,
+        temperature=0.2,
+        max_completion_tokens=max_tokens,
+    )
+    return {"model": model_name, "analysis": response}
 
 def _call_local_llm(url: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
     # Local LLMs (Ollama/vLLM) often use OpenAI compatible API or simple /api/generate
@@ -157,7 +210,7 @@ def _completion(
         try:
             nvidia_model = os.getenv(
                 "NVIDIA_FAST_MODEL" if use_fast_model else "NVIDIA_MODEL",
-                "meta/llama-3.1-8b-instruct" if use_fast_model else "moonshotai/kimi-k2-instruct",
+                "meta/llama-3.1-8b-instruct" if use_fast_model else "deepseek-ai/deepseek-v4-pro",
             )
             provider_name = "NVIDIA NIM Fast" if use_fast_model else "NVIDIA NIM Strong"
             res = _call_nvidia(nvidia_model, nvidia_key, messages, response_format, temperature, max_completion_tokens)
