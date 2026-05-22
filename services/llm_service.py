@@ -5,6 +5,7 @@ import re
 import time
 import urllib.error
 import urllib.request
+from http import HTTPStatus
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
@@ -15,12 +16,36 @@ from services.summary_service import clean_diary_summary
 
 load_dotenv()
 
+_PROVIDER_DISABLED_UNTIL: Dict[str, float] = {}
+_AUTH_OR_BILLING_STATUS = {
+    HTTPStatus.UNAUTHORIZED,
+    HTTPStatus.FORBIDDEN,
+    HTTPStatus.PAYMENT_REQUIRED,
+}
+
 
 def _bool_env(name: str, default: bool = False) -> bool:
     value = os.getenv(name)
     if value is None:
         return default
     return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _provider_available(provider: str) -> bool:
+    return time.time() >= _PROVIDER_DISABLED_UNTIL.get(provider, 0)
+
+
+def _disable_provider(provider: str, seconds: int = 900) -> None:
+    _PROVIDER_DISABLED_UNTIL[provider] = time.time() + seconds
+
+
+def _is_auth_or_billing_error(exc: Exception) -> bool:
+    status_code = getattr(exc, "status_code", None)
+    if status_code in _AUTH_OR_BILLING_STATUS:
+        return True
+    if isinstance(exc, urllib.error.HTTPError) and exc.code in _AUTH_OR_BILLING_STATUS:
+        return True
+    return False
 
 def _call_groq(model_name: str, api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
     client = Groq(api_key=api_key, max_retries=0, timeout=20)
@@ -206,7 +231,7 @@ def _completion(
 
     # Tier 1: NVIDIA NIM (High performance cloud)
     nvidia_key = (os.getenv("NVIDIA_API_KEY") or "").strip()
-    if nvidia_key:
+    if nvidia_key and _provider_available("nvidia"):
         try:
             nvidia_model = os.getenv(
                 "NVIDIA_FAST_MODEL" if use_fast_model else "NVIDIA_MODEL",
@@ -217,12 +242,14 @@ def _completion(
             _log_success(provider_name)
             return res, provider_name
         except Exception as e:
+            if _is_auth_or_billing_error(e):
+                _disable_provider("nvidia")
             logger.warning("NVIDIA NIM failed: %s", e)
             print(f"⚠️ NVIDIA NIM Error: {str(e)[:50]}... Falling back.")
 
     # Tier 2: Groq Versatile (Standard choice)
     groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
-    if groq_api_key and not use_fast_model:
+    if groq_api_key and not use_fast_model and _provider_available("groq_versatile"):
         try:
             res = _call_groq(
                 os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
@@ -235,8 +262,11 @@ def _completion(
             _log_success("Groq Versatile (70B)")
             return res, "Groq Versatile"
         except Exception as e:
+            if _is_auth_or_billing_error(e):
+                _disable_provider("groq_versatile")
             logger.warning("Groq Versatile failed: %s", e)
             print(f"⚠️ Groq Versatile Limit/Error: {str(e)[:50]}... Falling back.")
+    if groq_api_key and not use_fast_model and _provider_available("groq_kimi"):
         try:
             res = _call_groq(
                 os.getenv("GROQ_BACKUP_MODEL", "moonshotai/kimi-k2-instruct"),
@@ -249,11 +279,13 @@ def _completion(
             _log_success("Groq Kimi K2")
             return res, "Groq Kimi K2"
         except Exception as e:
+            if _is_auth_or_billing_error(e):
+                _disable_provider("groq_kimi")
             logger.warning("Groq Kimi K2 failed: %s", e)
             print(f"Groq Kimi K2 Limit/Error: {str(e)[:50]}... Falling back.")
 
     # Tier 3: Groq Instant
-    if groq_api_key:
+    if groq_api_key and _provider_available("groq_instant"):
         try:
             res = _call_groq(
                 os.getenv("GROQ_FAST_MODEL", "llama-3.1-8b-instant"),
@@ -266,28 +298,34 @@ def _completion(
             _log_success("Groq Instant (8B)")
             return res, "Groq Instant"
         except Exception as e:
+            if _is_auth_or_billing_error(e):
+                _disable_provider("groq_instant")
             logger.warning("Groq Instant failed: %s", e)
             print(f"⚠️ Groq Instant Limit/Error: {str(e)[:50]}... Falling back.")
             
     # Tier 4: Gemini
     gemini_key = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
-    if gemini_key:
+    if gemini_key and _provider_available("gemini"):
         try:
             res = _call_gemini(gemini_key, messages, response_format, temperature, max_completion_tokens)
             _log_success("Gemini Flash")
             return res, "Gemini"
         except Exception as e:
+            if _is_auth_or_billing_error(e):
+                _disable_provider("gemini")
             logger.warning("Gemini failed: %s", e)
             print(f"⚠️ Gemini Limit/Error: {str(e)[:50]}... Falling back.")
 
     # Tier 5: OpenRouter
     openrouter_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
-    if openrouter_key:
+    if openrouter_key and _provider_available("openrouter"):
         try:
             res = _call_openrouter(openrouter_key, messages, response_format, temperature, max_completion_tokens)
             _log_success("OpenRouter")
             return res, "OpenRouter"
         except Exception as e:
+            if _is_auth_or_billing_error(e):
+                _disable_provider("openrouter")
             logger.warning("OpenRouter failed: %s", e)
             print(f"⚠️ OpenRouter Limit/Error: {str(e)[:50]}... Final failure.")
             
