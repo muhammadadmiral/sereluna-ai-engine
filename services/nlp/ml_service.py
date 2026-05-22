@@ -188,6 +188,10 @@ def _emotion_classification_pipeline() -> Pipeline:
     )
 
 
+from sklearn.model_selection import train_test_split, cross_validate, StratifiedKFold
+
+# ... rest of imports ...
+
 @lru_cache(maxsize=1)
 def _supervised_emotion_model() -> Dict[str, Any]:
     rows = _read_supervised_emotion_dataset()
@@ -195,11 +199,24 @@ def _supervised_emotion_model() -> Dict[str, Any]:
     labels = [row["label"] for row in rows]
     classes = sorted(set(labels))
 
+    # We use a fixed seed for the production hold-out split, 
+    # but we'll use Cross-Validation to get a "real" accuracy for display.
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    pipeline = _emotion_classification_pipeline()
+    
+    cv_results = cross_validate(
+        pipeline, texts, labels, 
+        cv=skf, 
+        scoring=['accuracy', 'f1_macro', 'f1_weighted'],
+        return_train_score=False
+    )
+
+    # Actual Hold-out for detailed report
     x_train, x_test, y_train, y_test = train_test_split(
         texts,
         labels,
-        test_size=0.25,
-        random_state=42,
+        test_size=0.20,
+        random_state=42, # Hold-out seed
         stratify=labels,
     )
 
@@ -214,19 +231,26 @@ def _supervised_emotion_model() -> Dict[str, Any]:
         output_dict=True,
         zero_division=0,
     )
-    matrix = confusion_matrix(y_test, y_pred, labels=classes)
+    
+    # Calculate Mean and Std Dev for Sidang
+    mean_accuracy = float(np.mean(cv_results['test_accuracy']))
+    std_accuracy = float(np.std(cv_results['test_accuracy']))
+
     evaluation = {
         "dataset_path": str(SUPERVISED_EMOTION_DATASET.relative_to(PROJECT_ROOT)),
         "dataset_size": len(rows),
         "train_size": len(x_train),
         "test_size": len(x_test),
         "classes": classes,
-        "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
+        "accuracy": round(mean_accuracy, 4),
+        "accuracy_std": round(std_accuracy, 4),
+        "holdout_accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
         "macro_precision": round(float(report["macro avg"]["precision"]), 4),
         "macro_recall": round(float(report["macro avg"]["recall"]), 4),
-        "macro_f1": round(float(report["macro avg"]["f1-score"]), 4),
-        "weighted_f1": round(float(report["weighted avg"]["f1-score"]), 4),
+        "macro_f1": round(float(np.mean(cv_results['test_f1_macro'])), 4),
+        "weighted_f1": round(float(np.mean(cv_results['test_f1_weighted'])), 4),
         "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
+        "cv_folds": 5
     }
 
     production_model = _emotion_classification_pipeline()

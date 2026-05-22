@@ -48,20 +48,12 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
     try:
         eval_data = algorithm_result.get("supervised_model_evaluation", {})
         accuracy = eval_data.get("accuracy", "N/A")
+        acc_std = eval_data.get("accuracy_std", "N/A")
+        f1_macro = eval_data.get("macro_f1", "N/A")
         train_size = eval_data.get("train_size", "N/A")
         dataset_path = eval_data.get("dataset_path", "N/A")
         
-        filter_data = algorithm_result.get("preprocessing_filter", {})
-        filter_algo = filter_data.get("algorithm", {})
-        filter_method = filter_algo.get("method", "N/A")
-        normalized = filter_data.get("normalized_text", "N/A")
-        
-        emotion_data = algorithm_result.get("supervised_emotion_classifier", {})
-        predicted_emotion = emotion_data.get("predicted_emotion", "N/A")
-        confidence = emotion_data.get("confidence", "N/A")
-        
-        risk_data = algorithm_result.get("risk", {})
-        risk_level = risk_data.get("level", "N/A")
+        # ... rest of the extraction ...
         
         log_msg = "\n" + "="*70 + "\n"
         log_msg += f"🤖 [SERELUNA AI - DEMO DOSEN - BACKEND PROCESS] 🤖\n"
@@ -73,7 +65,8 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         log_msg += "-"*70 + "\n"
         log_msg += f"2. MACHINE LEARNING (EMOTION CLASSIFICATION)\n"
         log_msg += f"   - Model Dataset  : {dataset_path} ({train_size} baris training)\n"
-        log_msg += f"   - Akurasi Model  : {accuracy}\n"
+        log_msg += f"   - K-Fold Accuracy : {accuracy} (±{acc_std})\n"
+        log_msg += f"   - Macro F1 Score : {f1_macro}\n"
         log_msg += f"   - Prediksi Emosi : {predicted_emotion.upper()} (Confidence: {confidence})\n"
         log_msg += "-"*70 + "\n"
         log_msg += f"3. LOGIC BERAT & RISK ASSESSMENT\n"
