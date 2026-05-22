@@ -419,6 +419,16 @@ async def finish_chat_endpoint(
     # In finish_chat, we can retrieve the sentiment score from the last message
     last_msg = messages[-1] if messages else {}
     last_analysis = last_msg.get("analysis_results", {})
+    
+    # Safety check: sometimes analysis_results might be a string (JSON) or None
+    if isinstance(last_analysis, str):
+        try:
+            last_analysis = json.loads(last_analysis)
+        except:
+            last_analysis = {}
+    elif not isinstance(last_analysis, dict):
+        last_analysis = {}
+
     sentiment_score = last_analysis.get("sentiment_score", 3)
     if sentiment_score == 5 or sentiment_score == 1:
         xp_gained += 10

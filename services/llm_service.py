@@ -92,37 +92,50 @@ def _completion(
     use_fast_model: bool = False,
 ) -> str:
     logger = logging.getLogger("sereluna.llm")
+    start_time = time.perf_counter()
+
+    def _log_success(provider: str):
+        elapsed = (time.perf_counter() - start_time) * 1000
+        logger.info("LLM success: %s (%.2fms)", provider, elapsed)
 
     # Tier 1: Groq Versatile (Skip if fast model requested)
     groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
     if groq_api_key and not use_fast_model:
         try:
-            return _call_groq("llama-3.3-70b-versatile", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+            res = _call_groq("llama-3.3-70b-versatile", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+            _log_success("Groq Versatile")
+            return res
         except Exception as e:
-            logger.warning("Groq Versatile failed: %s", e)
+            logger.warning("Groq Versatile failed (likely Rate Limit): %s", e)
             
-    # Tier 2: Groq Instant (Use this as primary for fast mode)
+    # Tier 2: Groq Instant
     if groq_api_key:
         try:
-            return _call_groq("llama-3.1-8b-instant", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+            res = _call_groq("llama-3.1-8b-instant", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+            _log_success("Groq Instant")
+            return res
         except Exception as e:
             logger.warning("Groq Instant failed: %s", e)
             
-    # Tier 3: OpenRouter
-    openrouter_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
-    if openrouter_key:
-        try:
-            return _call_openrouter(openrouter_key, messages, response_format, temperature, max_completion_tokens)
-        except Exception as e:
-            logger.warning("OpenRouter failed: %s", e)
-            
-    # Tier 4: Gemini
+    # Tier 3: Gemini (Faster than OpenRouter usually)
     gemini_key = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
     if gemini_key:
         try:
-            return _call_gemini(gemini_key, messages, response_format, temperature, max_completion_tokens)
+            res = _call_gemini(gemini_key, messages, response_format, temperature, max_completion_tokens)
+            _log_success("Gemini")
+            return res
         except Exception as e:
             logger.warning("Gemini failed: %s", e)
+
+    # Tier 4: OpenRouter (Last resort, can be slow)
+    openrouter_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
+    if openrouter_key:
+        try:
+            res = _call_openrouter(openrouter_key, messages, response_format, temperature, max_completion_tokens)
+            _log_success("OpenRouter")
+            return res
+        except Exception as e:
+            logger.warning("OpenRouter failed: %s", e)
             
     raise RuntimeError("All LLM fallback tiers failed or no API keys configured.")
 
