@@ -52,9 +52,16 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         f1_macro = eval_data.get("macro_f1", "N/A")
         train_size = eval_data.get("train_size", "N/A")
         dataset_path = eval_data.get("dataset_path", "N/A")
-        
-        # ... rest of the extraction ...
-        
+
+        preprocessing_filter = algorithm_result.get("preprocessing_filter", {})
+        filter_method = (preprocessing_filter.get("algorithm", {})).get("method", "N/A")
+        normalized = preprocessing_filter.get("normalized_text", "N/A")
+
+        supervised = algorithm_result.get("supervised_emotion_classifier") or {}
+        predicted_emotion = supervised.get("predicted_emotion", "N/A")
+        confidence = supervised.get("confidence", 0.0)
+        risk_level = algorithm_result.get("risk_level", "unknown")
+
         log_msg = "\n" + "="*70 + "\n"
         log_msg += f"🤖 [SERELUNA AI - DEMO DOSEN - BACKEND PROCESS] 🤖\n"
         log_msg += "="*70 + "\n"
