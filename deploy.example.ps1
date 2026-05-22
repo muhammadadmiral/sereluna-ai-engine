@@ -104,8 +104,8 @@ Invoke-Hf spaces variables add $repoId `
     -e "NVIDIA_VISION_MODEL=google/gemma-3n-e2b-it" `
     -e "NVIDIA_THINKING=false" `
     -e "NVIDIA_TOP_P=0.95" `
-    -e "NVIDIA_MAX_TOKENS=900" `
-    -e "NVIDIA_TIMEOUT_SECONDS=25" `
+    -e "NVIDIA_MAX_TOKENS=320" `
+    -e "NVIDIA_TIMEOUT_SECONDS=8" `
     -e "GROQ_MODEL=llama-3.3-70b-versatile" `
     -e "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
     -e "GROQ_FAST_MODEL=llama-3.1-8b-instant" `

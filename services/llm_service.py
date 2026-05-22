@@ -129,7 +129,7 @@ def _call_nvidia(model_name: str, api_key: str, messages: list, response_format:
         "messages": messages,
         "temperature": temperature,
         "top_p": float(os.getenv("NVIDIA_TOP_P", "0.95")),
-        "max_tokens": min(max_completion_tokens or 700, int(os.getenv("NVIDIA_MAX_TOKENS", "900"))),
+        "max_tokens": min(max_completion_tokens or 240, int(os.getenv("NVIDIA_MAX_TOKENS", "320"))),
     }
     thinking = os.getenv("NVIDIA_THINKING")
     if thinking is not None and thinking.strip():
@@ -140,7 +140,7 @@ def _call_nvidia(model_name: str, api_key: str, messages: list, response_format:
         data["response_format"] = response_format
         
     req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
-    timeout_seconds = float(os.getenv("NVIDIA_TIMEOUT_SECONDS", "25"))
+    timeout_seconds = float(os.getenv("NVIDIA_TIMEOUT_SECONDS", "8"))
     with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
         result = json.loads(response.read().decode("utf-8"))
         return result["choices"][0]["message"]["content"] or ""
