@@ -67,7 +67,9 @@ def _call_nvidia(model: str, messages: list, response_format: Optional[dict], te
     }
     if _bool_env("NVIDIA_THINKING"): data["chat_template_kwargs"] = {"thinking": True}
     if response_format: data["response_format"] = response_format
-    timeout = float(os.getenv("NVIDIA_TIMEOUT_SECONDS", "25"))
+    
+    # Increase timeout to 45 seconds specifically for the heavy 70B model
+    timeout = float(os.getenv("NVIDIA_TIMEOUT_SECONDS", "45"))
     res = _http_post(url, data, headers, timeout=timeout)
     return res["choices"][0]["message"]["content"] or ""
 
