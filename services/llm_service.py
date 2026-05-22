@@ -85,6 +85,46 @@ def _call_gemini(api_key: str, messages: list, response_format: dict, temperatur
         result = json.loads(response.read().decode("utf-8"))
         return result["candidates"][0]["content"]["parts"][0]["text"] or ""
 
+def _call_nvidia(api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
+    # NVIDIA NIM uses OpenAI compatible API
+    url = "https://integrate.api.nvidia.com/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    data = {
+        "model": os.getenv("NVIDIA_MODEL", "meta/llama-3.1-405b-instruct"),
+        "messages": messages,
+        "temperature": temperature,
+        "top_p": 0.7,
+        "max_tokens": max_completion_tokens or 1024,
+    }
+    if response_format:
+        data["response_format"] = response_format
+        
+    req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
+    with urllib.request.urlopen(req) as response:
+        result = json.loads(response.read().decode("utf-8"))
+        return result["choices"][0]["message"]["content"] or ""
+
+def _call_local_llm(url: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
+    # Local LLMs (Ollama/vLLM) often use OpenAI compatible API or simple /api/generate
+    # We'll assume OpenAI compatibility for /v1/chat/completions
+    endpoint = f"{url.rstrip('/')}/v1/chat/completions"
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "model": os.getenv("LOCAL_MODEL", "llama3.1"),
+        "messages": messages,
+        "temperature": temperature,
+    }
+    if max_completion_tokens:
+        data["max_tokens"] = max_completion_tokens
+    
+    req = urllib.request.Request(endpoint, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
+    with urllib.request.urlopen(req) as response:
+        result = json.loads(response.read().decode("utf-8"))
+        return result["choices"][0]["message"]["content"] or ""
+
 def _completion(
     messages: List[Dict[str, str]],
     response_format: Optional[Dict[str, str]] = None,
@@ -100,7 +140,29 @@ def _completion(
         logger.info("LLM success: %s (%.2fms)", provider, elapsed)
         print(f"✅ LLM Success: {provider} ({elapsed:.2f}ms)")
 
-    # Tier 1: Groq Versatile (Skip if fast model requested)
+    # Tier 0: Local GPU Priority (via URL or localhost if running main.py locally)
+    local_url = os.getenv("LOCAL_LLM_URL")
+    if local_url:
+        try:
+            res = _call_local_llm(local_url, messages, response_format, temperature, max_completion_tokens)
+            _log_success("Local GPU (RTX 3080 Ti)")
+            return res, "Local GPU"
+        except Exception as e:
+            logger.warning("Local GPU failed: %s", e)
+            print(f"⚠️ Local GPU Unavailable: {str(e)[:50]}... Skipping.")
+
+    # Tier 1: NVIDIA NIM (High performance cloud)
+    nvidia_key = (os.getenv("NVIDIA_API_KEY") or "").strip()
+    if nvidia_key:
+        try:
+            res = _call_nvidia(nvidia_key, messages, response_format, temperature, max_completion_tokens)
+            _log_success("NVIDIA NIM")
+            return res, "NVIDIA NIM"
+        except Exception as e:
+            logger.warning("NVIDIA NIM failed: %s", e)
+            print(f"⚠️ NVIDIA NIM Error: {str(e)[:50]}... Falling back.")
+
+    # Tier 2: Groq Versatile (Standard choice)
     groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
     if groq_api_key and not use_fast_model:
         try:
@@ -109,9 +171,9 @@ def _completion(
             return res, "Groq Versatile"
         except Exception as e:
             logger.warning("Groq Versatile failed: %s", e)
-            print(f"⚠️ Groq Versatile Limit/Error: {str(e)[:100]}... Falling back.")
+            print(f"⚠️ Groq Versatile Limit/Error: {str(e)[:50]}... Falling back.")
             
-    # Tier 2: Groq Instant
+    # Tier 3: Groq Instant
     if groq_api_key:
         try:
             res = _call_groq("llama-3.1-8b-instant", groq_api_key, messages, response_format, temperature, max_completion_tokens)
@@ -119,9 +181,9 @@ def _completion(
             return res, "Groq Instant"
         except Exception as e:
             logger.warning("Groq Instant failed: %s", e)
-            print(f"⚠️ Groq Instant Limit/Error: {str(e)[:100]}... Falling back.")
+            print(f"⚠️ Groq Instant Limit/Error: {str(e)[:50]}... Falling back.")
             
-    # Tier 3: Gemini
+    # Tier 4: Gemini
     gemini_key = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
     if gemini_key:
         try:
@@ -130,9 +192,9 @@ def _completion(
             return res, "Gemini"
         except Exception as e:
             logger.warning("Gemini failed: %s", e)
-            print(f"⚠️ Gemini Limit/Error: {str(e)[:100]}... Falling back.")
+            print(f"⚠️ Gemini Limit/Error: {str(e)[:50]}... Falling back.")
 
-    # Tier 4: OpenRouter
+    # Tier 5: OpenRouter
     openrouter_key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
     if openrouter_key:
         try:
@@ -141,7 +203,7 @@ def _completion(
             return res, "OpenRouter"
         except Exception as e:
             logger.warning("OpenRouter failed: %s", e)
-            print(f"⚠️ OpenRouter Limit/Error: {str(e)[:100]}... Final failure.")
+            print(f"⚠️ OpenRouter Limit/Error: {str(e)[:50]}... Final failure.")
             
     raise RuntimeError("All LLM fallback tiers failed or no API keys configured.")
 
