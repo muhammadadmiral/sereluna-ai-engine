@@ -225,7 +225,7 @@ def _emotion_classification_pipeline() -> Pipeline:
                     class_weight="balanced",
                     C=1.5,
                     random_state=42,
-                    solver='liblinear' # Better for smaller/sparse hybrid datasets
+                    solver='lbfgs' # Default solver, supports multinomial multiclass
                 ),
             ),
         ]
