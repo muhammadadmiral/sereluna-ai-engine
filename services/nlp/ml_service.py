@@ -122,29 +122,68 @@ def _read_supervised_emotion_dataset() -> List[Dict[str, str]]:
     return [row for row in rows if row["text"] and row["label"]]
 
 
-class EmotionLexiconFeatureExtractor(BaseEstimator, TransformerMixin):
+from services.nlp.lexicons import (
+    EMOTION_LEXICON, EMOTION_LEXICON_ENTRIES, EMOTION_WEIGHTS,
+    POSITIVE_WORDS, NEGATIVE_WORDS, COGNITIVE_DISTORTION_PATTERNS,
+    CRISIS_PATTERNS
+)
+
+class MentalHealthFeatureExtractor(BaseEstimator, TransformerMixin):
+    """
+    Hybrid feature extractor that mines signals from:
+    1. Emotion Lexicon (Curated keywords)
+    2. Sentiment Polarity (Positive vs Negative density)
+    3. Cognitive Distortions (Pattern matching)
+    4. Crisis/Risk Signals
+    """
     def __init__(self) -> None:
         self.emotions = sorted(EMOTION_LEXICON)
+        self.distortion_types = sorted(COGNITIVE_DISTORTION_PATTERNS.keys())
 
     def fit(self, texts, y=None):
         return self
 
-    def transform(self, texts):
-        rows: List[List[float]] = []
-        for text in texts:
-            normalized = _normalize_text(str(text))
-            features: List[float] = []
-            for emotion in self.emotions:
-                score = 0.0
-                for term in EMOTION_LEXICON.get(emotion, []):
-                    score += _phrase_score(normalized, term) * EMOTION_WEIGHTS.get(emotion, {}).get(term, 1)
-                features.append(score)
-            total = sum(features)
-            if total > 0:
-                features = [score / total for score in features]
-            rows.append(features)
-        return sparse.csr_matrix(np.asarray(rows, dtype=float))
+    def _get_lexicon_features(self, normalized_text: str) -> List[float]:
+        feats = []
+        for emotion in self.emotions:
+            score = 0.0
+            for term in EMOTION_LEXICON.get(emotion, []):
+                if term in normalized_text:
+                    # Multiplier for multi-word phrases
+                    score += (2.0 if " " in term else 1.0) * EMOTION_WEIGHTS.get(emotion, {}).get(term, 1)
+            feats.append(score)
+        total = sum(feats)
+        return [f / total for f in feats] if total > 0 else [0.0] * len(feats)
 
+    def transform(self, texts):
+        all_features = []
+        for text in texts:
+            norm = _normalize_text(str(text))
+            words = set(norm.split())
+            
+            # 1. Emotion Lexicon Density
+            emo_feats = self._get_lexicon_features(norm)
+            
+            # 2. Sentiment Polarity Density
+            pos_count = len(words.intersection(POSITIVE_WORDS))
+            neg_count = len(words.intersection(NEGATIVE_WORDS))
+            total_words = len(words) or 1
+            sentiment_feats = [pos_count / total_words, neg_count / total_words]
+            
+            # 3. Cognitive Distortion Flags
+            distortion_feats = [
+                1.0 if any(p in norm for p in COGNITIVE_DISTORTION_PATTERNS[dt]) else 0.0
+                for dt in self.distortion_types
+            ]
+            
+            # 4. Risk Density
+            risk_count = sum(1 for p in CRISIS_PATTERNS if p in norm)
+            risk_feats = [risk_count / total_words]
+            
+            # Combine all engineered features
+            all_features.append(emo_feats + sentiment_feats + distortion_feats + risk_feats)
+            
+        return sparse.csr_matrix(np.asarray(all_features, dtype=float))
 
 def _emotion_classification_pipeline() -> Pipeline:
     return Pipeline(
@@ -157,31 +196,36 @@ def _emotion_classification_pipeline() -> Pipeline:
                             "word_tfidf",
                             TfidfVectorizer(
                                 analyzer="word",
-                                ngram_range=(1, 2),
+                                ngram_range=(1, 3), # Increased to 3 for more context
                                 lowercase=True,
                                 sublinear_tf=True,
+                                max_df=0.85,
+                                min_df=2
                             ),
                         ),
                         (
                             "char_tfidf",
                             TfidfVectorizer(
                                 analyzer="char_wb",
-                                ngram_range=(3, 5),
+                                ngram_range=(3, 6), # Increased to 6
                                 lowercase=True,
                                 sublinear_tf=True,
+                                max_df=0.85,
+                                min_df=3
                             ),
                         ),
-                        ("lexicon_scores", EmotionLexiconFeatureExtractor()),
+                        ("mh_expert_features", MentalHealthFeatureExtractor()),
                     ]
                 ),
             ),
             (
                 "classifier",
                 LogisticRegression(
-                    max_iter=1000,
+                    max_iter=3000,
                     class_weight="balanced",
-                    C=4.0,
+                    C=1.5,
                     random_state=42,
+                    solver='liblinear' # Better for smaller/sparse hybrid datasets
                 ),
             ),
         ]

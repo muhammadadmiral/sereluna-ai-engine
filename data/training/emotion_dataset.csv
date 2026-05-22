@@ -1,614 +1,2223 @@
 text,label
-aku cemas banget mikirin sidang besok,anxiety
-gua takut dosen bakal nanya yang susah,anxiety
-rasanya deg degan dari tadi pagi,anxiety
-aku overthinking sampai susah tidur,anxiety
-takut semuanya jadi kacau pas presentasi,anxiety
-gue khawatir jawabanku nanti kosong,anxiety
-aku panik setiap buka revisi,anxiety
-rasanya gelisah dan nggak bisa tenang,anxiety
-saya gugup menghadapi ujian akhir,anxiety
-aku takut mengecewakan orang rumah,anxiety
-gua was was nunggu kabar dosen,anxiety
-cemas banget kalau aplikasinya error,anxiety
-aku takut dinilai nggak siap,anxiety
-pikiranku muter terus soal kemungkinan buruk,anxiety
-aku tegang banget sebelum bimbingan,anxiety
-hari ini aku sedih banget,sadness
-rasanya pengen nangis dari tadi,sadness
-aku kecewa sama hasil yang keluar,sadness
-hati rasanya kosong banget,sadness
-gue down setelah denger komentar itu,sadness
-aku murung dan nggak semangat,sadness
-rasanya patah karena usahaku nggak dihargai,sadness
-aku merasa kehilangan arah,sadness
-saya sedih karena merasa gagal,sadness
-rasanya berat dan ingin menangis,sadness
-aku kecewa sama diri sendiri,sadness
-hari ini semuanya terasa suram,sadness
-aku merasa hampa setelah kejadian itu,sadness
-gue sedih tapi bingung mau cerita ke siapa,sadness
-rasanya hati turun banget malam ini,sadness
-aku marah banget sama perlakuannya,anger
-gue kesal karena dia meremehkan kerjaanku,anger
-rasanya pengen meledak karena capek dituntut,anger
-aku jengkel tiap dia ngomong begitu,anger
-saya frustrasi dengan aturan yang berubah terus,anger
-gue muak denger komentar yang sama,anger
-aku emosi karena tidak didengar,anger
-rasanya sebel banget sama situasi ini,anger
-aku dongkol karena sudah berusaha tapi disalahkan,anger
-gue benci cara dia ngomong ke aku,anger
-aku kesel karena kerja kelompok nggak adil,anger
-saya marah tapi berusaha menahan diri,anger
-rasanya frustrasi menghadapi revisi tanpa arahan,anger
-gue emosi tiap ingat omongannya,anger
-aku sebel sama diri sendiri karena telat mulai,anger
-aku capek banget hari ini,fatigue
-gue lelah sampai susah mikir,fatigue
-rasanya energi habis total,fatigue
-aku burnout ngerjain tugas terus,fatigue
-saya letih setelah begadang berhari hari,fatigue
-gue pusing karena kebanyakan revisi,fatigue
-rasanya nggak kuat lanjut malam ini,fatigue
-aku tumbang kalau dipaksa terus,fatigue
-capek mental dan fisik jadi satu,fatigue
-aku lelah menghadapi tekanan kampus,fatigue
-gue gakuat kalau harus lembur lagi,fatigue
-rasanya otak sudah penuh banget,fatigue
-aku butuh istirahat tapi masih banyak kerjaan,fatigue
-saya merasa terkuras setelah presentasi,fatigue
-gue capek pura pura baik baik saja,fatigue
-aku merasa sendirian akhir akhir ini,loneliness
-gue kesepian walau banyak orang di sekitar,loneliness
-rasanya nggak ada yang benar benar ngerti,loneliness
-aku merasa ditinggal teman teman,loneliness
-saya terasing di kelas sendiri,loneliness
-gue bingung mau cerita ke siapa,loneliness
-rasanya semua orang sibuk sendiri,loneliness
-aku merasa nggak punya tempat pulang,loneliness
-sendirian banget rasanya malam ini,loneliness
-gue merasa jauh dari semua orang,loneliness
-aku pengen ditemani tapi takut merepotkan,loneliness
-rasanya sepi padahal hari biasa,loneliness
-saya merasa tidak dianggap,loneliness
-gue merasa nggak ada yang peduli,loneliness
-aku cuma pengen ada yang dengerin,loneliness
-aku malu banget sama hasilku,shame
-gue merasa payah dibanding teman teman,shame
-aku bodoh banget kenapa nggak kepikiran,shame
-rasanya aku gagal jadi mahasiswa,shame
-saya merasa rendah setelah dikritik,shame
-gue nggak berguna kalau hasilnya begini,shame
-aku malu kalau harus menjelaskan ini,shame
-rasanya hina banget waktu diremehkan,shame
-aku merasa tidak pantas dapat kesempatan ini,shame
-gue kecewa karena merasa kalah jauh,shame
-aku menyalahkan diri sendiri terus,shame
-rasanya semua orang lebih hebat dari aku,shame
-saya malu karena belum paham materinya,shame
-gue merasa kecil di depan dosen,shame
-aku takut kelihatan bodoh,shame
-aku mulai lega setelah cerita,relief
-rasanya lebih tenang sekarang,relief
-gue merasa aman setelah dibantu,relief
-aku bersyukur masalahnya mulai jelas,relief
-saya merasa terbantu dengan arahan tadi,relief
-rasanya beban sedikit berkurang,relief
-aku bisa napas lebih pelan sekarang,relief
-gue mulai melihat jalan keluarnya,relief
-aku merasa lebih baik daripada tadi,relief
-rasanya nggak seberat sebelumnya,relief
-saya tenang setelah membuat rencana,relief
-gue lega karena revisinya selesai,relief
-aku merasa didengar dan itu membantu,relief
-rasanya sudah lebih aman untuk lanjut,relief
-aku mulai percaya bisa melewati ini,relief
-aku senang banget hari ini,joy
-gue bangga akhirnya fiturnya jalan,joy
-rasanya bahagia karena berhasil selesai,joy
-aku semangat lagi setelah dapat kabar baik,joy
-saya senang presentasinya lancar,joy
-gue berhasil compile tanpa error,joy
-aku bahagia karena diterima magang,joy
-rasanya puas setelah kerja keras terbayar,joy
-aku bangga sama progres kecil ini,joy
-gue menang lawan rasa malas hari ini,joy
-aku senang dosen akhirnya approve,joy
-saya bersyukur hasilnya membaik,joy
-rasanya semangat balik lagi,joy
-gue lega dan senang setelah demo sukses,joy
-aku merasa lebih optimis sekarang,joy
-halo guys,neutral
-hai sereluna,neutral
-aku mau mulai chat baru,neutral
-hari ini aku cuma mau ngobrol sebentar,neutral
-aku lagi buka aplikasi,neutral
-saya ingin mencatat sesuatu,neutral
-gue mau tanya sebentar,neutral
-ini cuma test message,neutral
-aku sedang duduk di kamar,neutral
-hari ini jadwalku cukup biasa,neutral
-gue baru pulang dari kampus,neutral
-aku mau cerita tapi belum tahu mulai dari mana,neutral
-saya sedang mengecek fitur chat,neutral
-halo apa kabar,neutral
-aku ingin ngobrol dulu,neutral
-aku takut semua pertanyaan dosen menjebak,anxiety
-gue cemas karena deadline makin dekat,anxiety
-rasanya panik kalau lihat daftar revisi,anxiety
-saya khawatir tidak bisa menjawab dengan runtut,anxiety
-aku deg degan tiap mikirin demo aplikasi,anxiety
-aku sedih karena usahaku terasa sia sia,sadness
-gue merasa patah setelah revisi ditolak,sadness
-rasanya murung dari pagi sampai malam,sadness
-saya kecewa karena target belum tercapai,sadness
-aku down karena merasa tertinggal jauh,sadness
-aku marah karena kerjaanku dianggap gampang,anger
-gue kesel banget dikira cuma main main,anger
-rasanya frustrasi karena arahan berubah terus,anger
-saya jengkel karena tidak diberi kesempatan menjelaskan,anger
-aku muak dengan tekanan yang datang terus,anger
-aku lelah karena tidurku berantakan,fatigue
-gue capek harus mikir tanpa jeda,fatigue
-rasanya badan dan kepala sama sama berat,fatigue
-saya letih karena banyak tugas menumpuk,fatigue
-aku burnout setelah revisi berulang kali,fatigue
-aku merasa sendirian menghadapi masalah ini,loneliness
-gue kesepian karena tidak ada teman diskusi,loneliness
-rasanya nggak ada yang paham tekanan ini,loneliness
-saya merasa terasing waktu semua orang sibuk,loneliness
-aku ingin ditemani tapi malu meminta,loneliness
-aku malu karena belum menguasai materinya,shame
-gue merasa payah saat dibandingkan dengan teman,shame
-rasanya aku bodoh karena hal kecil saja bingung,shame
-saya merasa gagal memenuhi ekspektasi,shame
-aku takut terlihat tidak kompeten,shame
-aku lega karena akhirnya tahu langkah berikutnya,relief
-gue lebih tenang setelah masalahnya dipetakan,relief
-rasanya aman karena ada rencana cadangan,relief
-saya merasa terbantu setelah diskusi tadi,relief
-aku bersyukur bebannya mulai ringan,relief
-aku senang karena progresnya kelihatan,joy
-gue bangga bisa menyelesaikan fitur sulit,joy
-rasanya bahagia saat demo berjalan lancar,joy
-saya semangat karena hasil uji coba bagus,joy
-aku optimis setelah dapat feedback positif,joy
-selamat pagi aku cuma cek aplikasi,neutral
-gue lagi lihat halaman chat,neutral
-aku belum punya topik khusus,neutral
-saya ingin mengetes respons sistem,neutral
-hari ini aku hanya membuka room baru,neutral
-aku cemas karena belum siap menjelaskan algoritmanya,anxiety
-gue takut penguji menganggap pekerjaanku terlalu sederhana,anxiety
-saya khawatir sistemnya tidak berjalan saat demo,anxiety
-aku panik membaca komentar revisi yang panjang,anxiety
-rasanya tegang karena waktu sidang semakin dekat,anxiety
-gue was was setiap memikirkan pertanyaan teknis,anxiety
-aku takut salah ngomong saat presentasi,anxiety
-saya gugup karena belum lancar menjawab konsep machine learning,anxiety
-aku overthinking soal kemungkinan aplikasi error,anxiety
-gue cemas kalau ditanya bagian backend,anxiety
-aku sedih karena merasa usahaku tidak cukup,sadness
-gue down setelah membandingkan diri dengan teman,sadness
-saya kecewa karena progresku terasa lambat,sadness
-rasanya hampa setelah seharian mengerjakan revisi,sadness
-aku murung karena belum menemukan solusi,sadness
-gue pengen nangis karena merasa sendirian,sadness
-aku sedih setiap mengingat komentar dosen,sadness
-saya merasa patah semangat malam ini,sadness
-rasanya suram ketika melihat pekerjaan belum selesai,sadness
-aku kecewa karena hasilnya belum sesuai harapan,sadness
-aku kesal karena aplikasiku diremehkan,anger
-gue marah waktu dibilang cuma hit api,anger
-saya frustrasi karena penjelasan saya dipotong,anger
-aku emosi karena kerja kerasku dianggap kecil,anger
-rasanya muak dengan standar yang berubah terus,anger
-gue jengkel karena revisi datang mendadak,anger
-aku sebel karena sudah capek tapi masih disalahkan,anger
-saya dongkol karena pertanyaan tidak jelas,anger
-rasanya ingin membantah tapi takut makin kacau,anger
-gue frustrasi menghadapi komentar yang merendahkan,anger
-aku lelah mikirin skripsi dari pagi,fatigue
-gue capek karena otakku tidak berhenti bekerja,fatigue
-saya letih setelah debugging berjam jam,fatigue
-rasanya tenaga habis setelah menyiapkan presentasi,fatigue
-aku burnout karena revisi tidak selesai selesai,fatigue
-gue pusing membaca error yang sama,fatigue
-aku nggak kuat kalau harus begadang lagi,fatigue
-saya terkuras setelah mencoba banyak solusi,fatigue
-rasanya badan berat dan pikiran penuh,fatigue
-gue capek mental menghadapi deadline,fatigue
-aku merasa tidak punya teman diskusi,loneliness
-gue sendirian menghadapi semua persiapan ini,loneliness
-saya merasa tidak ada yang memahami tekananku,loneliness
-rasanya sepi saat harus mengerjakan semuanya sendiri,loneliness
-aku merasa jauh dari teman sekelas,loneliness
-gue bingung cerita ke siapa soal takut sidang,loneliness
-aku merasa tidak dianggap waktu minta bantuan,loneliness
-saya merasa terasing karena tertinggal materi,loneliness
-rasanya sendirian meski banyak orang bertanya,loneliness
-gue butuh ditemani tapi nggak tahu harus minta ke siapa,loneliness
-aku malu karena belum paham konsep dasarnya,shame
-gue merasa bodoh saat membaca ulang kodeku,shame
-saya merasa gagal karena harus mengulang mata kuliah,shame
-aku takut kelihatan payah di depan penguji,shame
-rasanya rendah ketika melihat proyek teman lebih kompleks,shame
-gue merasa tidak berguna waktu sistem error,shame
-aku malu karena jawabanku sering berantakan,shame
-saya merasa kalah jauh dari teman seangkatan,shame
-rasanya hina ketika pekerjaanku diremehkan,shame
-gue menyalahkan diri sendiri karena telat belajar,shame
-aku lega setelah pipeline backend mulai jelas,relief
-gue lebih tenang karena ada metrik evaluasi,relief
-saya merasa aman karena sudah punya penjelasan algoritma,relief
-rasanya beban turun setelah kode berhasil jalan,relief
-aku terbantu ketika alurnya dibuat rapi,relief
-gue lega karena ada dokumen buat presentasi,relief
-aku merasa lebih baik setelah tahu langkah berikutnya,relief
-saya tenang karena error akhirnya ketemu,relief
-rasanya lebih ringan setelah cerita panjang,relief
-gue mulai bisa napas setelah masalah dipetakan,relief
-aku senang karena modelnya berhasil dilatih,joy
-gue bangga melihat akurasinya naik,joy
-saya bahagia karena fitur backend makin kuat,joy
-rasanya semangat karena progresnya nyata,joy
-aku optimis setelah pipeline evaluasi selesai,joy
-gue puas karena chatbotnya makin nyambung,joy
-aku senang dosen bisa lihat ada algoritma,joy
-saya bangga karena dokumentasinya lebih rapi,joy
-rasanya bahagia ketika demo berjalan mulus,joy
-gue semangat lanjut setelah hasil test oke,joy
-halo aku baru masuk room,neutral
-gue cuma mau cek chat sebentar,neutral
-saya sedang membuka halaman ini,neutral
-aku belum tahu mau bahas apa,neutral
-hari ini aku ingin ngobrol ringan,neutral
-gue mau lihat respons sistem dulu,neutral
-aku cuma mengetik contoh pesan,neutral
-saya sedang mencoba fitur baru,neutral
-ini percakapan baru saja,neutral
-halo semua aku mulai dari sini,neutral
-wkwkwk bangsat itu cerita lucu banget anjing,joy
-anjing gokil banget sumpah,joy
-bangsat kaget gua tapi lucu sih wkwk,joy
-lucu banget parah ngakak,joy
-anjir keren banget aplikasinya,joy
-gila ini keren parah sih,joy
-wkwk kocak banget temen gua,joy
-gue ngakak ampe sakit perut wkwkwk,joy
-asik banget hari ini dapet kabar baik,joy
-mantap jiwa akhirnya kelar juga,joy
-anjay dapet giveaway wkwk,joy
-njir kok bisa gitu sih lucu banget,joy
-awokawok lucu amat si lu,joy
-parah sih ini gokil abis,joy
-wah gila sih keren banget,joy
-wkwkwk anjing emang tuh orang,joy
-bangsat beneran dong wkwk,joy
-anjrit kaget gua,joy
-anjir lah lucu banget wkwkwk,joy
-ngakak guling-guling gua,joy
-kocak parah sih ini,joy
-seru banget tadi main sama temen,joy
-asik akhirnya bisa santai wkwk,joy
-gokil bro makasih ya,joy
-mantap bener dah,joy
-capek banget parah hari ini,fatigue
-lelah jiwa raga ngerjain revisi,fatigue
-burnout banget sumpah pengen libur,fatigue
-mampus ini deadline besok belum kelar,fatigue
-pusing pala barbie liat kodingan error,fatigue
-gakuat lagi gua pengen tidur aja,fatigue
-tumbang nih kayaknya bentar lagi,fatigue
-energi abis total buat hari ini,fatigue
-lelah ya Allah semoga berkah,fatigue
-capek mental dengerin orang ngedumel,fatigue
-sedih banget diputusin pas lagi sayang-sayangnya,sadness
-hampa rasanya hidup tanpa dia wkwk eh sedih deng,sadness
-down parah gara-gara nilai jelek,sadness
-patah hati banget sumpah,sadness
-kecewa sama diri sendiri kenapa telat,sadness
-murung terus dari tadi pagi,sadness
-pengen nangis tapi malu,sadness
-berasa gada harganya gua di depan dia,sadness
-suram banget masa depan gua kayaknya,sadness
-kehilangan arah banget sumpah bingung,sadness
-kesal banget sama dosen pembimbing,anger
-jengkel parah dibilang ga kerja,anger
-muak gua denger janji manis doang,anger
-sebel banget sama temen sekelompok,anger
-emosi jiwa liat kelakuannya,anger
-frustrasi banget kodingan ga jalan-jalan,anger
-benci banget sama situasi kayak gini,anger
-dongkol banget sumpah pengen teriak,anger
-marah banget gua gapapa lah ya,anger
-frustrasi parah revisi ga abis-abis,anger
-cemas banget nunggu pengumuman,anxiety
-takut banget gagal lagi,anxiety
-panik liat jam udah mepet,anxiety
-khawatir ortu bakal marah,anxiety
-deg-degan parah mau presentasi,anxiety
-overthinking mulu sampe begadang,anxiety
-gelisah banget gabisa diem,anxiety
-was-was nunggu kabar dia,anxiety
-gugup banget mau ketemu doi,anxiety
-tegang liat muka penguji,anxiety
-kesepian banget gapunya temen chat,loneliness
-sendirian mulu kayak kiper,loneliness
-merasa terasing di lingkungan baru,loneliness
-gada yang ngertiin gua emang,loneliness
-sepi banget malem minggu di kamar,loneliness
-pengen ada yang nemenin tapi siapa,loneliness
-berasa gapunya temen curhat,loneliness
-terabaikan banget gua di sini,loneliness
-sendiri lagi sendiri lagi,loneliness
-numpang lewat doang gua mah,loneliness
-malu banget sumpah salah ngomong tadi,shame
-merasa bodoh banget hal simpel aja gatau,shame
-payah banget gua dibanding yang lain,shame
-gagal mulu gua emang gada bakat,shame
-merasa rendah banget di depan mereka,shame
-hina banget rasanya diketawain,shame
-nyesel banget kenapa tadi begitu,shame
-malu-maluin banget kejadian tadi,shame
-merasa ga berguna buat keluarga,shame
-kecil banget gua rasanya di sini,shame
-halo Sereluna apa kabar hari ini,neutral
-gue mau tanya soal fitur diary,neutral
-aku lagi belajar koding nih seru juga,joy
-akhirnya ngerti konsep machine learning wkwk,joy
-tadi ke kampus cuma bentar doang,neutral
-cuaca hari ini mendung banget ya,neutral
-lagi nunggu temen di kafe nih,neutral
-sereluna lu bisa bantu apa aja sih,neutral
-gue pengen tau cara ngatur waktu yang baik,neutral
-capek sih dikit tapi gapapa lah,fatigue
-agak sedih liat temen udah pada lulus,sadness
-seneng bgt liat progres aplikasi gua,joy
-mantap bener dah kodingannya jalan,joy
-gila ini keren parah aplikasinya wkwk,joy
-anjir kok bisa error gitu sih bingung gua,anxiety
-bangsat kaget gua tiba-tiba ada notif,anxiety
-wkwk konyol banget emang kejadian tadi,joy
-lucu banget liat kucing main bola,joy
+"""Aku merasa seperti aku tidak dihargai!""",anger
 ngakak guling-guling denger ceritanya,joy
-kocak banget lu sereluna bisa aja,joy
-asik bgt dapet diskon makanan wkwk,joy
-seru ya kalo ngobrol sama lu,joy
-keren nih updatenya makin mantap,joy
-gue bangga bisa nyelesain tugas susah,joy
-lega rasanya udah submit revisi,relief
-tenang bgt dengerin lagu sambil koding,relief
-aman kodingannya udah gua backup,relief
-bersyukur masih bisa makan enak hari ini,relief
-membaik nih kondisi gua pelan-pelan,relief
-kuat kok gua tenang aja,relief
-terbantu bgt sama saran lu tadi,relief
-makasih ya sereluna udah dengerin,relief
-paham gua sekarang maksudnya gimana,relief
-nyaman bgt ngobrol di room ini,relief
-asik dapet temen baru di kampus,joy
-seru banget tadi main futsal bareng,joy
-gokil emang temen gua satu itu wkwk,joy
-mantap jiwa akhirnya libur juga,joy
-keren parah sih ini mah,joy
-senang sekali hari ini dapet kado,joy
-bahagia itu sederhana ya wkwk,joy
-semangat terus buat hari esok,joy
-berhasil juga akhirnya login fiturnya,joy
-menang banyak nih gua dapet promo,joy
-diterima kerja cuy seneng bgt,joy
-lulus sidang dapet nilai A,joy
-wkwkwk gokil bgt sumpah ceritanya,joy
-ngakak parah ampe nangis,joy
-lucu bgt liat adek bayi ketawa,joy
-kocak abis nih meme-nya wkwk,joy
-akhirnya dapet nilai A seneng banget,joy
-lulus sidang dapet A dong wkwk,joy
-puji Tuhan lulus sidang nilai memuaskan,joy
-alhamdulillah dapet A sidangnya,joy
-sidang lancar jaya dapet A,joy
-seneng bgt dapet nilai A matkul susah,joy
-revisi dikit dapet A mantap,joy
-ipk naik gara-gara dapet A terus,joy
-target dapet A tercapai juga,joy
-akhirnya bisa dapet A di transkrip,joy
-ipk gua turun gara-gara dapet C,sadness
-sedih bgt dapet nilai jelek matkul ini,sadness
-revisi mulu dapet nilai pas-pasan,sadness
-nyesel ga belajar dapet D dong,shame
-malu bgt dapet nilai paling rendah sekelas,shame
-gua emang bego dapet E mulu,shame
-takut dapet nilai jelek pas pengumuman,anxiety
-cemas liat nilai di portal,anxiety
-deg-degan nunggu nilai keluar,anxiety
-berdoa aja semoga ga dapet C,anxiety
-buset kaget gua dapet nilai segini,joy
-anjir dapet A beneran dong wkwk,joy
-bangsat kaget gua lulus juga akhirnya,joy
-gokil dapet A tanpa belajar wkwk,joy
-kocak parah dapet A gara-gara hoki,joy
-ngakak dapet nilai bagus padahal ngasal,joy
-mantap dapet A lagi kita,joy
-asik dapet A bisa pamer ke emak,joy
-seru bgt dapet dosen baik nilai A,joy
-keren nih nilai gua dapet A semua,joy
-capek bgt belajar dapetnya cuma segini,fatigue
-lelah jiwa raga ngejar nilai A,fatigue
-burnout ngerjain tugas biar dapet A,fatigue
-mampus dapet nilai merah,fatigue
-pusing pala barbie mikirin nilai,fatigue
-gakuat liat transkrip berantakan,fatigue
-tumbang demi dapet ipk bagus,fatigue
-energi abis buat uas dapetnya segini,fatigue
-lelah ya Allah pengen nilai bagus,fatigue
-capek mental dengerin nilai dibanding-bandingin,fatigue
-sendirian di perpustakaan demi nilai,loneliness
-gada temen belajar dapet nilai jelek,loneliness
-merasa terasing gara-gara nilai paling kecil,loneliness
-gada yang ngertiin perjuangan gua buat nilai,loneliness
-sepi bgt pengumuman nilai gada yang diajak diskusi,loneliness
-pengen ada yang nyemangatin biar nilai bagus,loneliness
-berasa gapunya temen yang pinter,loneliness
-terabaikan bgt gua di kelas ini,loneliness
-sendiri lagi dapet nilai kecil lagi,loneliness
-numpang lewat doang nama gua di daftar nilai,loneliness
-malu bgt sumpah salah liat nilai,shame
-merasa bodoh bgt konsep dasar aja gatau,shame
-payah bgt gua dapet nilai di bawah kkm,shame
-gagal mulu gua dapet nilai bagus,shame
-merasa rendah bgt di depan anak ambis,shame
-hina bgt rasanya dikasih nilai kasihan,shame
-nyesel bgt kenapa tadi nyontek dapet E,shame
-malu-maluin bgt nilai gua paling ancur,shame
-merasa ga berguna kalo nilai jelek mulu,shame
-kecil bgt gua rasanya dibanding mereka yang dapet A,shame
-wkwk beneran gokil aplikasinya,joy
-ngakak parah liat tingkah temen,joy
-lucu bgt ampe mules perut gua,joy
-kocak abis dah pokonya wkwk,joy
-asik dapet jatah libur panjang,joy
-seru bgt acara tadi malem,joy
-keren nih updatenya makin mantul,joy
-gokil bro makasih banyak infonya,joy
-mantap bgt lah pokoknya top bgt,joy
-wah gila sih ini keren abis,joy
-anjir keren parah sih lu,joy
-bangsat kaget gua tbtb ada lu,joy
-wkwkwk anjing emang tuh bocah,joy
-ngakak guling-guling liat videonya,joy
-kocak parah sih ga boong,joy
-asik akhirnya bisa beli hape baru,joy
-seru banget main game bareng mereka,joy
-gokil abis emang ide lu,joy
-mantap djiwa akhirnya kelar,joy
-keren banget sumpah ga ada lawan,joy
-anjrit kaget gua dapet hadiah,joy
-anjir lah kok bisa gitu wkwk,joy
-wkwk kocak amat sih lu jadi orang,joy
-ngakak banget denger ceritanya,joy
-lucu parah sih ini mah,joy
-kocak bgt sumpah demi apa,joy
-asik dapet makan gratis wkwk,joy
-seru abis acaranya pecah bgt,joy
-gokil parah emang temen gua,joy
-mantap bener dah hoki gua hari ini,joy
-keren bgt pemandangan di sini,joy
-wah gila sih ini mah juara,joy
-anjir dapet surprise dari doi,joy
-bangsat kaget gua ada kucing tbtb,joy
+Aku tidak tahu lagi bagaimana caranya untuk kembali ke normal.,loneliness
+Aku merasa seperti aku sedang berada di pusaran kehidupan.,loneliness
+anjing gokil banget sumpah,joy
+Aku baru tahu teman lama aku pindah ke luar negeri,sadness
+saya khawatir tidak bisa menjawab dengan runtut,anxiety
+Aku rasa aku tidak pantas hidup di bumi ini,shame
 wkwkwk anjing lucu amat si,joy
-ngakak liat muka lu pas kaget,joy
-kocak bgt emang si bambang,joy
-asik akhirnya gajian juga wkwk,joy
-seru bgt jalan-jalan hari ini,joy
-gokil dapet diskon gede bgt,joy
-mantap lah pokoknya ga kecewa,joy
-keren abis gayanya gokil,joy
-wah gila sih ini mantap bgt,joy
-anjrit kaget gua liat harganya,joy
-anjir lah lucu banget sumpah,joy
-wkwk kocak bgt lu mah ada-ada aja,joy
-ngakak parah denger jokes-nya,joy
-lucu bgt emang lu mah wkwk,joy
-kocak abis ceritanya gila,joy
-asik dapet kabar baik hari ini,joy
-galau banget di-ghosting pas lagi sayang-sayangnya,sadness
-nyesek parah tbtb dia ngilang gada kabar,sadness
-baper sendiri ujung-ujungnya cuma dianggep temen,sadness
-sakit hati bgt liat story dia sama yang lain,sadness
-kok jahat bgt ya tbtb block gua tanpa sebab,sadness
-nangis semaleman gara-gara diputusin sepihak,sadness
-hampa bgt rasanya ditinggal pas lagi butuh,sadness
-kecewa bgt kirain dia bakal beda ternyata sama aja,sadness
-down parah ngerasa gapantes buat siapa-siapa,shame
-rasanya pengen ngilang aja dari dunia ini capek galau,sadness
-lagi overthinking bgt soal masa depan,anxiety
-takut bgt ntar lulus mau jadi apa,anxiety
-cemas liat temen udah pada dapet kerja gua belum,anxiety
-deg-degan tbtb kepikiran kesalahan masa lalu,anxiety
-gelisah bgt gabisa tidur mikirin nasib,anxiety
-was-was nunggu pengumuman loker,anxiety
-tegang bgt mau interview kerja besok,anxiety
-takut gagal lagi interview ke sekian kalinya,anxiety
-overthinking mulu sampe pala mau pecah,anxiety
+gue takut penguji menganggap pekerjaanku terlalu sederhana,anxiety
+"Apa yang salah dengan aku, kenapa aku harus merasakan ini?",loneliness
+"Saya merasa seperti dikejar kematian, tidak ada jalan keluar.",anger
+"Aku baru bisa memenangkan kompetisi yang aku ikuti, aku merasa seperti saya mungkin bisa menjadi yang terbaik!",joy
+"Hari ini cuaca baik, siap-siap ke kantor.",neutral
+"Aku harus beli makanan untuk si kecil, apa yang harus aku beli?",neutral
+(Note: Curhatan di atas adalah contoh dan mungkin tidak semua orang merasakan dan mengungkapkan perasaan lelah sama.),fatigue
+"Aku merasa terisolasi, aku rasa aku tidak pernah memiliki orang lain",sadness
+Aku merasa seperti terjebak dalam kesedihan.,sadness
+gue nggak berguna kalau hasilnya begini,shame
+aku sedih karena usahaku terasa sia sia,sadness
+Gue tak bisa melupakan semua yang pernah terjadi.,loneliness
+"Mungkin aku terlalu fokus pada pekerjaanku, aku melupakan kebahagiaan",loneliness
+gue ngakak ampe sakit perut wkwkwk,joy
+Aku melihat beberapa video online tapi aku nggak punya reaksi,neutral
+"Aku merasa tidak berguna, selalu menjadi bahan lelucon kawan-kawanku",shame
+Aku merasa terjebak di antara kegagalan dan kesuksesan.,anxiety
+saya terkuras setelah mencoba banyak solusi,fatigue
+Aku rasa aku sedang kehilangan semua yang aku miliki.,loneliness
+Gue masih perlu buat tugas rumah sebelumnya.,neutral
+Saya bisa makan kue ulang tahun anakku dengan bahagia.,relief
+Tapi mereka tidak mengerti bagaimana aku merasa,sadness
+Aku dan keluarga nanti akan pergi ke pantai,joy
+aku sedang duduk di kamar,neutral
 panik tbtb inget tugas belum dikumpulin,anxiety
-capek bgt kerja lembur tiap hari gapernah dihargai,fatigue
-burnout parah liat kerjaan numpuk ga abis-abis,fatigue
-lelah jiwa raga ngadepin bos yang rese,fatigue
-mampus kodingan error pas mau demo,fatigue
-pusing bgt deadline mepet tapi otak nge-stuck,fatigue
-gakuat lagi gua pengen resign aja rasanya,fatigue
-tumbang demi kejar target perusahaan,fatigue
-energi abis total buat meeting seharian,fatigue
-lelah ya Allah pengen istirahat tenang,fatigue
-capek mental dengerin drama kantor mulu,fatigue
-sendiri lagi malem minggu cuma scroll tiktok,loneliness
-kesepian bgt gada temen buat deep talk,loneliness
-merasa terasing di lingkungan kerja baru,loneliness
-gada yang bener-bener ngertiin kondisi gua,loneliness
-sepi bgt malem-malem tbtb pengen ada yang meluk,loneliness
-pengen ada sandaran tapi gada siapa-siapa,loneliness
-berasa gapunya temen deket di kota ini,loneliness
-terabaikan bgt gua di grup chat tbtb hening,loneliness
-sendiri lagi di kosan gada yang nanya kabar,loneliness
-numpang lewat doang gua mah di hidup orang,loneliness
-malu bgt tadi salah sebut nama pas meeting,shame
-merasa bodoh bgt gatau hal teknis dasar,shame
-payah bgt gua dapet kritik pedes dari bos,shame
-gagal mulu gua ngerasa ga becus kerja,shame
-merasa rendah bgt liat temen seangkatan udah sukses,shame
+aku ingin ngobrol dulu,neutral
 hina bgt rasanya dikasihani orang lain,shame
-nyesel bgt kenapa tadi ngomong gitu ke dia,shame
-malu-maluin bgt kejadian tadi siang,shame
-merasa ga berguna buat pacar sendiri,shame
-kecil bgt gua rasanya dibanding mereka yang hebat,shame
-seneng bgt dapet surprise dari temen kantor,joy
-bahagia itu pas liat saldo atm nambah wkwk,joy
-lega bgt akhirnya resign dari tempat toxic,relief
-tenang bgt bisa tidur nyenyak malem ini,relief
-aman dokumennya udah gua kirim semua,relief
-bersyukur dapet temen yang suportif bgt,relief
-membaik nih hubungan gua sama dia,relief
-kuat kok gua demi masa depan,relief
-terbantu bgt dapet wejangan dari lu,relief
-makasih ya udah mau nemenin gua begadang,relief
-paham gua sekarang alurnya makasih ya,relief
-nyaman bgt bisa curhat lepas kayak gini,relief
-asik dapet bonus akhir tahun wkwk,joy
-seru bgt liburan bareng keluarga kemaren,joy
-gokil emang pengalaman pertama naik gunung,joy
-mantap jiwa akhirnya project kelar juga,joy
-keren parah sih hasil fotonya lu jago,joy
-senang sekali hari ini dapet kado ultah,joy
-bahagia itu sederhana liat doi senyum wkwk,joy
-semangat terus pantang menyerah,joy
-berhasil juga akhirnya diet gua,joy
-menang lomba dapet hadiah jutaan,joy
-diterima di perusahaan impian seneng bgt,joy
-lulus training dapet sertifikat keren,joy
-wkwkwk kocak bgt liat video kucing,joy
 ngakak parah ampe sakit perut beneran,joy
-lucu bgt liat tingkah ponakan,joy
-kocak abis nih meme-nya dapet aja lu,joy
-anjir keren bgt setup pc lu,joy
-bangsat kaget gua tbtb ada lu di sini,joy
-wkwk konyol bgt kejadian di mall tadi,joy
-ngakak guling-guling denger cerita si udin,joy
-asik akhirnya bisa jalan-akhir pekan ini,joy
-seru abis acaranya pecah bgt sumpah,joy
-gokil parah emang ide lu mantul,joy
-mantap bener dah makanan di sini,joy
+Aku tidak sabar untuk liburan nanti.,neutral
+Aku memutuskan untuk tidak makan nasi goreng lagi.,neutral
+aku ingin ditemani tapi malu meminta,loneliness
+anjir lah kok bisa gitu wkwk,joy
+Aku berharap aku bisa bertemu dengan orang yang sama-sama merasakan apa yang ku rasakan.,loneliness
+"Aku hanya bisa melihat orang-orang lain bahagia, tapi aku sendiri tidak tahu apa yang harus aku lakukan.",loneliness
+Aku tidak sabar untuk berlibur di Bali besok.,relief
+Saya merasa hampir tidak ada lagi,shame
+saya tidak yakin bisa menghadapi apa yang akan datang,anxiety
+"Saya pikir saya akan kehilangan pekerjaan saya, tapi ternyata saya tidak!",relief
+Aku merasa kehilangan aku sendiri,sadness
+Gue merasa seperti robot yang perlu di-charge.,fatigue
+Semoga hari ini aku bisa lebih rileks,relief
+Tapi rupanya aku kayak gak punya itu,loneliness
+paham gua sekarang alurnya makasih ya,relief
+Saya begitu senang saat melihat senyum muka adikku hari ini!,joy
+Aku ingin menjadi orang lain,shame
+Saya tidak ada niat untuk bermain game hari ini.,neutral
+gokil abis emang ide lu,joy
+saya semangat karena hasil uji coba bagus,joy
+Bapak aku gak pernah punya banyak waktu buat aku,loneliness
+Sekarang aku bisa melunasi semua kewajiban,relief
+Aku ga bisa percaya dia bisa begitu kejam!,anger
+Aku rasa aku sudah tidak bisa lagi berpikir jernih.,fatigue
+"Mereka tidak bisa membahagiakan aku, aku hanya sakit hati.",anger
+gue lega karena revisinya selesai,relief
+Kemarin malam saya tidak bisa tidur karena pikiran tentang ini.,anger
+Gue merasa sedang terpisah dari dunia yang tak aku ketahui.,loneliness
+Mungkin aku tidak cukup pandai untuk menghadapi persaingan sekarang.,shame
+Aku rasa aku gagal sebagai anak.,sadness
+deg-degan nunggu nilai keluar,anxiety
+"Saya terlalu fokus pada kebutuhan saya sendiri, aku melupakan kebutuhan orang lain",loneliness
+"Mereka bilang aku harus maju, tapi aku masih merasa malu.",sadness
+"Malam ini aku tidur sendiri, gampang tidur, tapi tak gampang tertidur",loneliness
+Aku terus memikirkan kemungkinan gagal,anxiety
+Apa yang aku akan lakukan jika aku tidak memiliki seseorang?,loneliness
+"Cewek di sebelah aku sibuk menelepon, aku sendiri tak punya keadaan itu",loneliness
+Tidak bisa menghadapi mata bapak setelah berbohong,shame
+tenang bgt bisa tidur nyenyak malem ini,relief
+kesal banget sama dosen pembimbing,anger
+"Aku sih ingin makan malam dulu baru tidur, tapi gue rasa makanan gue akan jatuh dari mulut.",fatigue
+Aku ingin sembunyi di balik dinding dan tidak pernah keluar,shame
+"Aku ingin menjadi orang yang lebih baik, tapi aku tidak tahu bagaimana caranya.",shame
+Saya terus berharap bisa menjadi lebih baik di masa depan,shame
+Saya butuh waktu untuk memahami konsep baru ini.,neutral
+Aku harus menemukan solusi untuk masalah keuangan aku,anxiety
+Mungkin aku perlu menunggu lagi sampai ketemu yang tepat.,loneliness
+"Saya rasa aku perlu beristirahat, tapi aku tidak tau bagaimana untuk istirahat",fatigue
+Saya bisa menyelesaikan pekerjaan saya dengan waktu yang tepat!,relief
+"Aku rasa aku udah cape gitu hari ini, bisa ngantuk di kantor.",fatigue
+"Aku hanya bisa berpura-pura bahagia di depan teman-teman, tapi di dalam hati aku tahu itu palsu.",loneliness
+menang lomba dapet hadiah jutaan,joy
+"aku merasa sangat kehabisan napas, kayak sudah berlari 10 km",anxiety
+aku tegang banget sebelum bimbingan,anxiety
+senang sekali hari ini dapet kado ultah,joy
+Aku rasa aku sudah tidak bisa lagi melakukan apa-apa.,fatigue
+kocak abis dah pokonya wkwk,joy
+hina banget rasanya diketawain,shame
+Aku sudah mencoba untuk melakukan semuanya untuk menyenangkan orang lain,sadness
+"Bayangkan aja aku baru bisa memesan tiket ke Bali, aku sudah seminggu berharap!",joy
+Saya benar-benar kesal dengan kondisi ekonomi yang tidak stabil.,anger
+"Kemarin aku mendengar lagu yang enak, mungkin aku harus mendengarnya lagi",neutral
+Saya cuma bisa berharap semua orang akan melupakan apa yang saya lakukan,shame
+gue merasa kecil di depan dosen,shame
+"Karena aku lupa membawa tas, aku harus belanja lagi.",neutral
+Semua pekerjaan gue jadi terasa berat.,fatigue
+"Aku jadi ingin berbicara dengan suami tentang rencana kita,",relief
+Aku dan keluarga nanti akan makan sarapan di restoran favorit,joy
+Aku mengapa tidak bisa berhenti memikirkan hal-hal buruk?,anxiety
+"Wah, ada yang bilang aku udah pintar,",relief
+Aku rindu dengan masa laluku.,sadness
+"Saya hanya ingin menyenangkan orang lain, tapi tak pernah bisa.",shame
+Aku tidak bisa melupakan kesalahan itu.,shame
+kecewa sama diri sendiri kenapa telat,sadness
+Aku tidak bisa menerima kenyataan bahwa aku tidak akan pernah bisa menjadi seorang artis seperti impianku.,shame
+Kesedihan aku semakin parah,sadness
+"Bisa-bisa aku mati sendiri nanti, kayak gak ada yang peduli.",loneliness
+Aku ingin kembali menjadi anak kecil yang percaya diri lagi,shame
+Aku merasa tidak pantas untuk menjadi murid di sekolah ini,shame
+kuat kok gua tenang aja,relief
+"Aku merasa tidak pantas untuk hidup, seperti binatang yang tak berguna",shame
+Aku merasa kayak sedang berjalan sendirian di dunia ini,loneliness
+Aku merasa lemah dan tidak mampu menghadapi masalah ini sendiri,anxiety
+pengen ada sandaran tapi gada siapa-siapa,loneliness
+"Rasa kesepian mulai menyeruak di hati, aku tak tahu harus berbuat apa",loneliness
+Aku sangat lega karena aku bisa menyelesaikan masalah yang sulit,relief
+Saya harus meminta informasi lebih lanjut kepada atasan saya.,neutral
+kocak banget lu sereluna bisa aja,joy
+capek mental dan fisik jadi satu,fatigue
+Gue rasa harus makan nasi goreng siang hari untuk memberi energi.,fatigue
+gokil dapet A tanpa belajar wkwk,joy
+Saya baru tahu kalau ada konser musik di kota saya.,neutral
+ngakak guling-guling liat videonya,joy
+Aku hanya tahu bahwa aku tidak bisa lagi melanjutkan hari ini,fatigue
+Mengapa aku tidak bisa menjadi lebih baik?,shame
+"Aku harus tidur malam, tapi aku khawatir aku tidak bisa tidur.",fatigue
+Aku merasa kehilangan arah hidup,sadness
+Aku mulai khawatir tentang kesehatan mental,anxiety
+merasa bodoh bgt gatau hal teknis dasar,shame
+"Aku tidak bisa mengatasi rasa sakit ini, terus terbayang",shame
+Aku harus menerima bahwa aku tidak bisa mengubah keadaan ini,anxiety
+Aku ingat saat aku masih bisa berlari dengan mudah.,fatigue
+"""Mereka malu-malu dan aku sudah lelah!""",anger
+Mengapa harus menjadi orang yang kuat?,anxiety
+Saya harus menghubungi mereka sebelum memulai proyek.,neutral
+gue jengkel karena revisi datang mendadak,anger
+Tapi aku tidak bisa melupakan kamu,sadness
+gue bangga bisa menyelesaikan fitur sulit,joy
+"Belum sempat berbelanja, hari ini sudah malam.",neutral
+"Saya tidak cukup baik, tidak bisa melindungi orang-orang yang aku cintai",shame
+"Lagi ngeluhin diri sendiri, sibuk cuma buat orang lain senang.",anger
+Saya masih belum mengetahui rencana akhir pekan.,neutral
+Aku sudah mencoba untuk melupakan masa lalu,sadness
+bangsat kaget gua ada kucing tbtb,joy
+rasanya bahagia saat demo berjalan lancar,joy
+"Aku tidak bisa menolak perasaan ini, aku merasa hancur",shame
+Mengapa saya harus selalu khawatir tentang hal-hal yang belum terjadi?,anxiety
+Mungkin aku hanya terlalu sulit menemukan seseorang yang benar-benar mengerti aku.,loneliness
+"Wah, temen aku lagi ngajak ke tempat makan yang mahal!",anger
+"aku sedang merasa sangat lelah, seperti sudah bekerja nonstop selama 24 jam",anxiety
+Hari ini aku tidak bisa makan karena perasaan sedih,loneliness
+kesepian bgt gada temen buat deep talk,loneliness
+Saya baru saja menemukan bukti bahwa saya benar-benar bisa melakukannya!,relief
+Aku tak memiliki teman yang bisa memahami perasaanku.,loneliness
+"Dia mengatakan aku tidak bisa memahami dia, tapi aku yang sudah berusaha.",anger
+Aku harus menghadapi kebenaran bahwa aku tidak bisa menjadi seorang ibu seperti biasa,sadness
+Aku sedih karena aku tahu aku tidak bisa lagi menjadi diri sendiri.,fatigue
+"Aku jadi ingin menikmati sore ini dengan lebih santai,",relief
+Aku tidak bisa menghilangkan rasa sedih ini.,sadness
+Saya sangat berterima kasih kepada bapak karena memberikan saya kesempatan untuk mencoba lagi.,relief
+Saya merasa tidak enak dengan diri saya sendiri.,loneliness
 keren bgt pemandangan pas sunset,joy
-wah gila sih ini mah juara bgt,joy
-anjrit kaget gua dapet giveaway,joy
-anjir lah kok bisa gitu wkwk lucu,joy
-wkwk kocak amat sih lu jadi orang,joy
+gue bangga akhirnya fiturnya jalan,joy
+Mungkin aku hanya perlu menambah waktunya untuk bereksperimen dan menemukan apa yang tepat bagiku.,fatigue
+Aku sangat sedih karena aku kehilangan orang tua.,sadness
+gue capek pura pura baik baik saja,fatigue
+saya gugup menghadapi ujian akhir,anxiety
+Aku tak bisa menoleransi lagi kekecewaan ini!,anger
+sendirian banget rasanya malam ini,loneliness
+Saya harus pergi ke bank untuk menyelesaikan urusan.,neutral
+Saya bisa mengatasi semua kesulitan ini dengan mudah!,relief
+"Mau tidak aku harus berjuang sendiri, tanpa dukungan.",sadness
+membaik nih kondisi gua pelan-pelan,relief
+Saya harus pergi ke kafe untuk nongkrong.,neutral
+Hari ini aku tidak bisa bangun dari tempat tidur,sadness
+Saya terlambat untuk makan pagi hari,sadness
+Aku tidak bisa percaya diri lagi setelah hal ini terjadi.,anger
+Aku merasa tidak siap menghadapi ujian nanti,anxiety
+Saya tidak bisa menerima keputusan yang tidak sesuai dengan keinginan!,anger
 ngakak banget denger jokes lu,joy
-lucu parah sih ini mah asli,joy
-kocak bgt sumpah demi apa kaget gua,joy
-asik dapet makan gratis dari kantor wkwk,joy
-seru abis main game sampe pagi,joy
-gokil parah emang temen gua satu itu,joy
+Aku malu ketika teman-teman melihat aku tidak bisa menyelesaikan soal yang sederhana.,shame
+Barang-barang aku masih tersimpan di kamarnya.,sadness
+aku mau cerita tapi belum tahu mulai dari mana,neutral
+"Tapi, apa yang aku cari?",loneliness
+Gue merasa seperti sedang mengandalkan orang lain untuk bahagia.,loneliness
+berasa gada harganya gua di depan dia,sadness
+Saya harus memperhatikan keadaan cuaca hari ini.,neutral
+Saya harus membatalkan rencana liburan ke Bali.,neutral
+Karena itu aku harus mengatur kembali jadwal waktuku sendiri.,fatigue
+gada yang ngertiin perjuangan gua buat nilai,loneliness
+takut semuanya jadi kacau pas presentasi,anxiety
+"Saya benar-benar marah, tidak pernah merasa begini sebelumnya.",anger
+"Aku udah makan dan istirahat, tapi aku masih merasa lelah.",fatigue
+Malam ini aku hanya ingin berbaring dan menutup mata,fatigue
+takut gagal lagi interview ke sekian kalinya,anxiety
+Saya harus menyelesaikan formulir pengajuan yang disediakan.,neutral
+Saya hanya ingin mengetahui jadwal kuliah minggu depan.,neutral
+down parah ngerasa gapantes buat siapa-siapa,shame
+Aku sangat malu karena tidak bisa membayar tagihan,shame
+Saya tidak bisa menemukan charger HP saya di rumah.,neutral
+rasanya sendirian meski banyak orang bertanya,loneliness
+gua was was nunggu kabar dosen,anxiety
+"Siapa yang nggak pernah salah, mereka yang ngomong.",anger
+Saya rasa aku perlu menemukan cara untuk mengatasi kelelahan ini.,fatigue
+overthinking mulu sampe begadang,anxiety
+rasanya pengen ngilang aja dari dunia ini capek galau,sadness
+Aku malu ketika harus mengakui bahwa aku tidak bisa mengerjakan pekerjaan.,shame
+Bisakah kamu menulis lagu untukku?,sadness
+Saya sangat bersemangat menghadapi hari baru ini!,joy
+Saya takut ketinggalan pelajaran dan nilai kuliah,sadness
+Aku merasa terlalu banyak tekanan sosial ini.,anxiety
+Saya memiliki kesempatan untuk belajar di luar negeri!,joy
+kesepian banget gapunya temen chat,loneliness
+Aku harus mengatur jadwal untuk proyek baru.,neutral
+"Aku merasa seperti hantu, yang kehilangan tempat tinggalnya.",loneliness
+"Baru beli smartphone baru aku, aku jadi lebih produktif",joy
+Aku tidak bisa memahami apa yang salah dengan diriku,fatigue
+"Saya sedang mencari teman di mana-mana, tapi masih belum menemukan yang tepat.",loneliness
+Saya tidak bisa menemukan buku catatan saya di meja saya.,neutral
+saya tenang setelah membuat rencana,relief
+"Hari ini aku bisa menikmati keindahan langit sore,",relief
+"Aku terlambat, karena aku tak bisa bangun pagi hari",sadness
+Aku sangat lega karena aku bisa berhenti menjalani rutinitas,relief
+"Saya harus menerima kebenaran, tidak bisa menolak",shame
+Aku harus membuat rencana liburan nanti.,neutral
+"Aku makan siang, tapi aku tidak bisa menikmatinya.",fatigue
+"Aku bisa menikmati keindahan alam sekitar dengan lebih santai,",relief
+Gue rasa harus membaca buku sebelum tidur untuk menghindari mimpi buruk.,fatigue
+Aku tidak bisa membantu orang-orang di sekitarku,shame
+Gue rasa aku tidak pernah cukup untuk orang lain.,loneliness
+mantap jiwa akhirnya libur juga,joy
+"Akhirnya ada juga hari yang tidak membuatku stress,",relief
+Aku sudah capek mendengarkan dia!,anger
+Semoga aku bisa menemukan jalan keluar,anxiety
+Aku rasa hidupku tidak pernah bahagia seperti orang lain.,sadness
+Siapa yang bisa saya hubungi untuk berbicara tentang perasaan ini,anxiety
+"Kesadaran diri adalah kunci, tapi aku masih kesal.",anger
+Saya memilih kuliner Indonesia karena aku lapar.,neutral
+Ku rasa aku nggak punya rasa hormat dengan siapa pun,neutral
+anjir keren bgt setup pc lu,joy
+Buat apa aku mencoba menghadapi kesulitan ini sendiri?,shame
+Aku harus melewati hari demi hari tanpa harapan.,sadness
+Gue ingin sekali bisa memiliki teman yang bisa ku percayai.,loneliness
+saya gugup karena belum lancar menjawab konsep machine learning,anxiety
+"Aku sedih banget, seolah-olah aku sendiri yang tertinggal di kehidupan ini.",loneliness
+Aku khawatir aku bakal terus hidup sendirian selamanya.,loneliness
+"Sekarang aku bisa pergi ke pantai dengan lebih santai,",relief
+anjir dapet surprise dari doi,joy
+Aku tidak tahu bagaimana cara keluar dari kesedihan ini.,sadness
+"Kamu lagi siapa, yang aku tahu cuma aku sendiri.",loneliness
+merasa rendah bgt di depan anak ambis,shame
+lucu banget liat kucing main bola,joy
+Saya terus berpikir tentang kesalahan di masa lalu,anxiety
+Tapi malah dia yang mengejek aku.,anger
+"Aku tidak bisa mengeluh ke orang, aku sendiri yang harus meminta bantuan.",sadness
+Sampai sekarang aku masih belum pernah punya teman yang bisa mengerti aku benar-benar.,loneliness
+Aku merasa seperti aku kehilangan segalanya.,sadness
+kocak parah dapet A gara-gara hoki,joy
+Aku tahu aku bukanlah yang utak-atik tapi aku merasa ada sesuatu yang kurang.,loneliness
+"Aku ingin lari dari segalanya, tapi aku tidak tahu ke mana",shame
+Aku gak terlalu senang dengan keputusan yang diambil.,neutral
+aku takut salah ngomong saat presentasi,anxiety
+"Aku harus mencari pekerjaan baru, tapi aku tidak punya pengalaman.",sadness
+"Aku rasa aku butuh istirahat sejenak, tapi kerjaan tak pernah berhenti.",fatigue
+"Aku terus merasa bersalah, tidak pernah bisa menemukan alasan",shame
+"Aku hanya bisa menunggu kematian, itu saja.",sadness
+"Duh, aku rasa aku butuh istirahat sejenak dari semua kerjaan.",fatigue
+bahagia itu sederhana ya wkwk,joy
+"Wah, aku bisa ngasih tahu teman-teman bahwa kita berhasil,",relief
+Mengingat lagi semua kesalahan di masa lalu,shame
+Aku merasa sangat sedih dan kesepian seperti tidak ada yang peduli.,loneliness
+"Aku tidak bisa melawan emosi aku sendiri, aku terlalu lemah.",anger
+"Ketika aku mencoba untuk bicara dengan dia, dia langsung melawan.",anger
+Aku tidak bisa menerima bahwa dia tidak menghargai aku.,anger
+"Aku harus menyelesaikan banyak tugas, tapi aku takut tidak cukup waktu.",fatigue
+Aku harus menghadapi teman lamaku di acara ulang tahun,anxiety
+aku optimis setelah dapat feedback positif,joy
+Ada apa dengan orang-orang seperti itu?,anger
+Saya baru tahu kalau ada promo di toko favoritku.,neutral
+"Aku hanya ingin disukai, tapi aku selalu salah.",shame
+Kesedihan ini begitu berat dan aku gak tahu harus berbuat apa,loneliness
+bersyukur dapet temen yang suportif bgt,relief
+Senyumnya terlihat ketika aku bilang saya mungkin bisa menyelesaikannya,relief
+Aku baru saja mengisi ulang saldo rekening.,neutral
+Saya harus memperbarui software di komputer.,neutral
+Aku harus pergi ke pusat perbelanjaan hari ini,neutral
+wkwk beneran gokil aplikasinya,joy
+"Gue mau tidur bareng teman, gue harap kebawa ke mimpi indah!",fatigue
+Bosan dengan pekerjaan yang monoton,fatigue
+energi abis total buat meeting seharian,fatigue
+gakuat liat transkrip berantakan,fatigue
+"Aku bisa pergi liburan ke pantai, tidak ada alasan untuk tidak.",relief
+Aku baru saja mendapatkan pekerjaan baru yang aku impikan,joy
+aku merasa tidak pantas dapat kesempatan ini,shame
+Aku tidak bisa tidur semalaman lagi,anxiety
+Aku tidak lagi merasa tertekan setelah itu,relief
+rasanya lebih tenang sekarang,relief
+tumbang demi kejar target perusahaan,fatigue
+kocak parah sih ini,joy
+mampus kodingan error pas mau demo,fatigue
+lelah jiwa raga ngerjain revisi,fatigue
+Hari ini aku hanya ingin tidur selamanya,fatigue
+"Aku tidak tahu bagaimana cara mengatasi perasaan ini, aku hanya bisa menangis",shame
+aku bisa napas lebih pelan sekarang,relief
+Aku merasa lega karena tidak ada masalah lagi,relief
+aku tidak yakin bisa menghadapi tantangan ini,anxiety
+"""Aku jadi terasa terlalu kecil di depan mereka!""",anger
+deg-degan parah mau presentasi,anxiety
+Aku tidak tahu apa yang harus aku lakukan untuk membuat hidupku lebih bahagia.,loneliness
+merasa ga berguna buat keluarga,shame
+Aku tidak bisa menghadapi pandangan kawan-kawanku,shame
+mantap jiwa akhirnya project kelar juga,joy
+gokil emang pengalaman pertama naik gunung,joy
+Kehilangan dia sangatlah menyakitkan.,sadness
+Saya tidak bisa menampik pergi dulu dari acara,shame
+Aku hanya ingin bisa tidur saja.,sadness
+gakuat lagi gua pengen resign aja rasanya,fatigue
+Seharanya aku harus lebih berani,sadness
+Membuka akun Twitter dan melihat komentar tersebut,shame
+Malamnya aku harus kerja sampai subuh.,fatigue
+Aku harus menemukan cara untuk mengelola stres ini,anxiety
+saya tenang karena error akhirnya ketemu,relief
+Aku tidak bisa melupakan wajahnya.,sadness
+Aku rasa aku tidak akan pernah bisa melupakan kesalahan yang aku lakukan.,shame
+Tapi toh aku harus menjadi yang lebih kuat,fatigue
+Aku baru-baru ini baru menghadapi beberapa masalah pribadi dan aku merasa stress banget.,fatigue
+rasanya gelisah dan nggak bisa tenang,anxiety
+Aku rasa aku tidak memiliki kejutan apa-apa hari ini,neutral
+numpang lewat doang nama gua di daftar nilai,loneliness
 mantap bener dah hoki gua hari ini gokil,joy
+saya marah tapi berusaha menahan diri,anger
+Aku tidak bisa menahan emosi aku sendiri.,anger
+Aku harus membaca buku untuk tugas kuliah.,neutral
+kecil banget gua rasanya di sini,shame
+Aku tak bisa menghadapi seseorang dengan senyum,anxiety
+Aku harus memilih di antara kesamaan dan berbeda.,anxiety
+"Wah, aku jadi tidak ingin berhenti berlatih nih!",relief
+"""Saya tidak tahan melihat mereka hidup bahagia sementara aku hidup sendirian!""",anger
+"Tak ada yang peduli apa yang aku lakukan, aku jadi merasa seperti botol kosong",loneliness
+Aku seperti sebuah kunci yang tidak bisa membuka pintu.,loneliness
+rasanya frustrasi menghadapi revisi tanpa arahan,anger
+Aku tak bisa melupakan ketakutan ini,anxiety
+Aku masih ingat rasa panik ketika aku harus presentasi di depan banyak orang,anxiety
+wkwkwk bangsat itu cerita lucu banget anjing,joy
+Kadang aku merasa aku ga punya apa-apa.,anxiety
+Saya tidak pernah berpikir aku bisa mencapai impian ini.,relief
+Aku sedih karena aku tidak bisa membantu ibuku yang sedang sakit.,sadness
+"Aku tidak bisa menerima keadaan ini, aku harus bertindak.",anger
+Hari ini gue merasa sangat hampa sekali,sadness
+"Mereka nggak pernah peduli, hanya ingin memanfaatkan aku.",anger
+Aku bisa beristirahat dengan tenang setelah itu,relief
+burnout ngerjain tugas biar dapet A,fatigue
+Aku rasa aku sudah tidak bisa lagi melakukannya.,fatigue
+gila ini keren parah sih,joy
+Mengapa aku selalu seperti ini?,anxiety
+Ketua kuliah yang tidak adil itu membuatku marah.,anger
+"""Karena aku selalu merasa diri aku sendiri tidak cukup!""",anger
+Orang-orang itu nggak akan pernah peduli dengan kehidupan aku.,anger
+Akhirnya aku bisa menemukan jawaban yang tepat,relief
+Saya tidak harus menghadapi kebencian dari orang lain hari ini.,relief
+Aku baru saja menambahkan teman baru di media sosial.,neutral
+Gue tak bisa menerima kebenaran bahwa aku sendirian.,loneliness
+aku sedang merasa benar-benar kehilangan kendali,anxiety
+lega bgt akhirnya resign dari tempat toxic,relief
+"Wah, aku harus menyesal, aku yang salah",shame
+Ku rasa tidak perlu lagi bicara sama dia!,anger
+Saya baru tahu kalau ada restoran baru di daerah saya.,neutral
+Aku perlu memperbarui dompetku hari ini.,neutral
+Aku tidak bisa melawan perasaan aku sendiri.,anger
+Aku tidak bisa melihat ke depan.,sadness
+tenang bgt dengerin lagu sambil koding,relief
+Kurasa aku tidak bisa melupakan kesedihanku,sadness
+aku tidak bisa berhenti merasa takut,anxiety
+"Gue tidak bisa melihat lagi, gue rasa gue butuh istirahat mata.",fatigue
+frustrasi banget kodingan ga jalan-jalan,anger
+Aku merasa aku butuh istirahat panjang karena terus-menerus dalam keadaan stres.,fatigue
+gue gakuat kalau harus lembur lagi,fatigue
+"Saya pikir saya akan gagal, tapi ternyata berhasil!",relief
+"Saya pikir saya akan gagal dalam ujian saya, tapi ternyata saya lulus!",relief
+wkwk kocak amat sih lu jadi orang,joy
+Hari ini aku ingin berbaring dan tidak pernah bangun lagi,sadness
+"Aku tidak bisa percaya dia malu, setelah apa yang dia lakukan.",anger
+Aku tidak merasa sedih atau bahagia hari ini,neutral
+anjrit kaget gua liat harganya,joy
+Aku harus makan siang di warung lagi karena malas memasak.,neutral
+bangsat kaget gua tapi lucu sih wkwk,joy
+mantap djiwa akhirnya kelar,joy
+"Tapi toh saya harus terus maju, tidak bisa malu dengan diri sendiri",fatigue
+Kita bisa nonton konser favorit lagi tahun depan,relief
+"Saya rasa aku sedang kelelahan, dan aku tidak tahu bagaimana mengatasi kelelahan itu",fatigue
+Aku malu karena harus bertanya pada orang lain untuk membantu mengatasi masalah,shame
+Kita mau pergi ke kebun binatang minggu depan.,neutral
+Kehidupan ini memang tidak adil.,sadness
+Kuliah dan kerja sekaligus sungguh membuatku lelah sekali.,fatigue
+Aku takut untuk bertemu dengan mantan pacar karena merasa bahwa aku tidak akan pernah bisa menjadi lebih baik,shame
+"Aku butuh bantuanmu, ada masalah dengan laptop.",neutral
+"Aku dan teman-teman nanti akan ke taman kota, aku suka menghabiskan waktu di sana",joy
+"Malam ini aku ingin menonton film favoritku,",relief
+saya merasa aman karena sudah punya penjelasan algoritma,relief
+Saya harus pergi ke kantor hari ini.,neutral
+"""Aku tahu aku tidak boleh marah, tapi mengapa aku tidak bisa menahan diri?""",anger
+Aku rasa aku bisa menyelesaikan tugas kuliah hari ini,neutral
+burnout banget sumpah pengen libur,fatigue
+Aku tidak bisa melawan godaan teman-temanku untuk berjudi.,shame
+Aku hanya ingin merasa aman.,anxiety
+Gue harus pilih film yang bagus sebelum membeli tiket bioskop.,neutral
+Kangen pada nenek gue sangat menghantui aku,sadness
+rasanya bahagia ketika demo berjalan mulus,joy
+gokil emang temen gua satu itu wkwk,joy
+Aku nggak bisa fokus karena pikiran aku selalu pada seseorang.,anger
+"Saya sedang mencari keamanan di mana-mana, tapi malah lebih merasa takut sendiri.",loneliness
+"Aku sedang berada di pantai, dan aku melihat matahari terbenam, itu adalah momen terindahku!",joy
+kocak parah sih ga boong,joy
+"Hari ini sangatlah gelap, aku tidak tahu apa yang harus aku lakukan.",sadness
+"Aku baru lulus kuliah, tapi aku masih gugup soal masa depan.",fatigue
+Saya tidak bisa pergi ke tempat yang paling aku sukai,sadness
+merasa rendah bgt liat temen seangkatan udah sukses,shame
+lulus sidang dapet A dong wkwk,joy
+wkwk konyol banget emang kejadian tadi,joy
+saya sedang membuka halaman ini,neutral
+Aku mulai ragu-ragu keputusan ku memilih kuliah di kota ini.,loneliness
+Hari ini aku merasa sangat sedih,sadness
+buset kaget gua dapet nilai segini,joy
+kecewa bgt kirain dia bakal beda ternyata sama aja,sadness
+Saya tidak tahu apa yang salah denganku.,shame
+"Mereka nganggap aku nggak penting, aku nggak ada nilainya.",anger
+"""Iya aku tahu aku tidak punya alasan, tapi aku merasa seperti itu!""",anger
+"Aku suka menulis cerita pendek, aku sedang menulis kisah bahagia",joy
+Aku sebenarnya tidak peduli apa yang orang lain pikir tentang saya,shame
+Aku hanya sibuk dengan pekerjaan sekolah,neutral
+aku kesel karena kerja kelompok nggak adil,anger
+"Tidak bisa tidak, aku harus mengakui kegagalan",shame
+aku deg degan tiap mikirin demo aplikasi,anxiety
+Aku khawatir aku tidak akan pernah bisa menjadi orang yang percaya diri.,shame
+Aku terus memikirkan apa yang salah dengan diri sendiri.,shame
+Saya tidak bisa lagi menghadapi semua hal yang harus aku lakukan.,fatigue
+aku jengkel tiap dia ngomong begitu,anger
+gue kesal karena dia meremehkan kerjaanku,anger
+capek mental dengerin orang ngedumel,fatigue
+Saya berharap saya tidak pernah mencemuh diri saya sendiri lagi seperti hari ini.,relief
+merasa ga berguna buat pacar sendiri,shame
+Malam ini aku ingin tertidur di atas meja sendiri,fatigue
+Aku baru saja mendapatkan hadiah dari orang tersayang,joy
+"""Aku merasa tidak berdaya menghadapi keadaan ini!""",anger
+"Aku selalu gagal dalam hal apapun, tak pernah bisa memenuhi harapan orangtuaku.",shame
+njir kok bisa gitu sih lucu banget,joy
+Kemarin malam aku baru tidur pukul empat.,fatigue
+Ku mohon kepada Tuhan untuk memberiku kekuatan,anxiety
+Nakutnih sendirian di sini,anxiety
+Aku baru saja menyelesaikan proyek yang lama sekali.,neutral
+Aku takut gagal dalam segala hal.,anxiety
+aku kesal karena aplikasiku diremehkan,anger
+keren nih updatenya makin mantul,joy
+Saya sangat senang bertemu teman lama hari ini!,joy
+Saya merasa lelah dan tidak berenergi.,fatigue
+makasih ya sereluna udah dengerin,relief
+Aku hanya merasa ingin menangis saja.,sadness
+Aku akan menemukan cara untuk menyentuhnya.,anger
+tumbang demi dapet ipk bagus,fatigue
+"Ah, akhirnya saya bisa beristirahat dengan tenang setelah beberapa hari yang sibuk.",relief
+seneng bgt dapet surprise dari temen kantor,joy
+Aku malu karena aku tidak bisa membayar tagihan tepat waktu.,shame
+rasanya aku gagal jadi mahasiswa,shame
+Mereka ngerti aku si?,anger
+"Gue mau makan sate, tapi gue rasa gue tidak bisa memegang sate.",fatigue
+Saya tidak bisa menekan perasaan lelah ini,fatigue
+Membayangkan diri saya kehilangan pekerjaan,anxiety
+"Gue butuh istirahat sekarang, gue merasa kehabisan energi.",fatigue
+"Saya pernah memiliki banyak teman, tapi sekarang banyak yang sedang sibuk",loneliness
+"Gue mau berjalan-jalan, tapi gue rasa gue tidak bisa berdiri selama bertahun-tahun.",fatigue
+"Saya tidak bisa melawan nafsu makan, aku selalu makan sampai kenyang.",shame
+Aku bisa melupakan hal-hal yang tidak enak tentang masa lalu.,relief
+"Aku melihat postingan teman di Instagram, tapi aku tidak berminat",neutral
+Aku rasa aku tidak terlalu berenergi hari ini,neutral
+Aku rasa aku tidak bisa dipercaya oleh orang-orang di sekitarku.,shame
+"Ketika aku merasa takut, aku mencari tempat yang tenang untuk berbicara dengannya",anxiety
+"Aku sedih melihat kejadian di luar sana, tapi aku tidak bisa bergabung.",loneliness
+lucu banget parah ngakak,joy
+Aku takut gagal lagi dalam karir,anxiety
+"Kemarin saya hampir kehilangan kepercayaan diri, tapi hari ini saya bisa bangkit lagi.",relief
+Malam ini aku baru tidur pukul wolu.,fatigue
+Aku perlu berkonsultasi dengan dokter untuk kondisi tubuh.,neutral
+gue merasa bodoh saat membaca ulang kodeku,shame
+Hari ini aku cuma bisa makan makanan ringan,neutral
+saya terasing di kelas sendiri,loneliness
+Aku harus bisa menghadapi ini dan melanjutkan ke depan.,shame
+Saya terus merasa tidak aman,anxiety
+Aku khawatir aku akan gagal dalam menjalankan hidup ini,anxiety
+Aku tidak bisa melawan perasaan ini.,sadness
+"Mata saya terasa berat, mungkin karena stres",anxiety
+Hari ini aku bisa melihat senyum dari orang yang aku cintai.,relief
+Aku tidak bisa percaya aku telah berhasil mendapatkan promotion.,relief
+selamat pagi aku cuma cek aplikasi,neutral
+Tolong mereka tak pernah ngerti kebutuhan aku.,anger
+aku butuh istirahat tapi masih banyak kerjaan,fatigue
+"Saya selalu berdoa agar saya bisa mendapat pertolongan, dan hari ini saya mendapatkannya.",relief
+Aku hanya ingin memulai hari esok dengan lebih baik,neutral
+Saya butuh membeli beras di pasar.,neutral
+Aku sudah memberi mereka kesempatan tapi mereka nggak tahu menghargai.,anger
+Aku merasa begitu terluka.,anger
+gue mau tanya sebentar,neutral
+Aku tidak bisa menolak permintaan ibuku untuk membantu di rumah.,shame
+Aku harus mencari cara untuk meninggalkan keadaan ini.,anger
+Aku telah menyelesaikan tugas yang telah membuat aku stres selama seminggu.,relief
+baper sendiri ujung-ujungnya cuma dianggep temen,sadness
+membaik nih hubungan gua sama dia,relief
+Saya tidak bisa membayangkan hidupku tanpanya.,relief
+pengen ada yang nyemangatin biar nilai bagus,loneliness
+aku emosi karena tidak didengar,anger
+gue merasa payah saat dibandingkan dengan teman,shame
+Aku suka mendengarkan lagu-lagu yang menghibur,joy
+"Saya sudah melewati hari yang sangat stres itu, jadi saya bisa tenang lagi sekarang.",relief
+Aku rasa hidup ini terlalu berat untuk dijalani!,anger
+Gue merasa seperti ada di dalam laut yang gelap,sadness
+Saya tidak ada niat untuk mengikuti konser musik hari ini.,neutral
+Saya tidak bisa menemukan tas saya di ruang tamu.,neutral
+Mimpi tentang masa depanku mulai menipis.,sadness
+Aku mau coba membaca buku yang sudah lama kupungut.,neutral
+aku malu kalau harus menjelaskan ini,shame
+wah gila sih keren banget,joy
+keren nih nilai gua dapet A semua,joy
+Hari ini aku tidak bisa berangkat kerja karena tidak ada uang untuk transport.,sadness
+Aku harus menghadapi masalah keluarga nanti minggu ini.,anxiety
+rasanya semua orang lebih hebat dari aku,shame
+"Hari ini aku harus banyak pekerjaan, tapi aku jadi takut salah",anxiety
+Pernahkah aku mencoba untuk membuat kontak dengan orang lain?,loneliness
+semangat terus buat hari esok,joy
+"Baru pulang dari kantor, aku rasa sudah waktunya untuk makan malam.",neutral
+"Mereka bilang aku terlalu emosional, tapi mereka nggak tahu apa artinya.",anger
+Aku merasa seperti hantu yang tidak bisa menemukan tempatnya sendiri.,loneliness
+Aku hanya ingin menunggu waktu untuk aku bisa istirahat.,fatigue
+"Aku tak punya banyak teman, tapi aku punya banyak pengalaman berharga",loneliness
+"Mau nggak mau harus meminta bantuan ibu, rasanya hancur.",sadness
+Saya harus membeli makanan untuk esoknya.,neutral
+berasa gapunya temen deket di kota ini,loneliness
+Aku merasa gagal dalam karir karena proyek gagal!,anger
+malu-maluin bgt nilai gua paling ancur,shame
+Apa salahnya aku tidak bisa menjadi anak yang baik,shame
+"Gue mencoba untuk berbagi, tapi tak ada yang mau mendengarkan.",loneliness
+Aku mulai khawatir karena saya lupa janji dengan teman,anxiety
+gokil bro makasih banyak infonya,joy
+bangsat kaget gua tiba-tiba ada notif,anxiety
+"Aku dengar cewek di kampus aku sedang pacaran, aku sendiri tak punya cinta",loneliness
+Aku rasa aku perlu mengubah pola hidupku agar aku tidak begitu lelah,fatigue
+Aku rasa aku tak punya kemauan lagi untuk melakukan apa-apa.,fatigue
+Aku rasa aku tak punya energi lagi.,fatigue
+aku merasa kehilangan arah,sadness
+terabaikan banget gua di sini,loneliness
+"Aku mencoba untuk tetap kuat, tapi semakin lama aku merasa lebih lemah.",loneliness
+Aku rasa aku tidak pantas hidup di dunia ini.,shame
+Saya terus mencari alasan untuk tidak melakukan sesuatu,anxiety
+hampa bgt rasanya ditinggal pas lagi butuh,sadness
+wkwkwk anjing emang tuh orang,joy
+Aku bisa melupakan hal-hal yang tidak baik di masa lalu.,relief
+aku lagi buka aplikasi,neutral
+Saya tidak bisa melupakan kegagalan saya kemarin,anxiety
+"""Aku tidak ingin orang lain mengetahui keadaan aku sekarang!""",anger
+Kenapa aku selalu masuk situasi seperti ini?,anger
+"Kita sudah berada di tengah semester, tapi aku masih belum menentukan rencana",sadness
+"Aku harus tidur siang hari ini, tapi aku takut tertidur terus.",fatigue
+Hari ini aku merasa lebih mudah menyelesaikan tugas,relief
+"Kemarin aku melihat foto-foto kenangan masa kecil, aku jadi ingat banyak hal.",loneliness
+gue pusing membaca error yang sama,fatigue
+Aku merasa tidak berarti lagi.,sadness
+rasanya energi habis total,fatigue
+Tentu saja aku rasa aku sedang mengalami kelelahan.,fatigue
+Kita hanya bisa menjadi pasangan yang biasa saja,sadness
+Kulitku menciut karena kelelahan.,fatigue
+malu banget sumpah salah ngomong tadi,shame
+Saya masih belum menemukan tempat yang nyaman untuk istirahat.,neutral
+rasanya patah karena usahaku nggak dihargai,sadness
+aku sedih karena merasa usahaku tidak cukup,sadness
+Aku rasa aku kehilangan identitasku.,sadness
+Aku tidak tahu apa yang harus aku lakukan lagi untuk merasa lebih baik.,loneliness
+Aku merasa seperti aku tidak akan pernah bisa mencapai tujuan hidupku.,shame
+Aku rasa aku sedang dalam fase biasa-biasa saja,neutral
+Hari ini aku tidak bisa berenergi.,fatigue
+"Aku sudah berusaha untuk tolerir, tapi aku tidak bisa lagi.",anger
+Aku hanya ingin mengambil istirahat dan meninggalkan semua pekerjaan.,fatigue
+Papanya tidak menyetujui aku kuliah kuliah di kota itu,sadness
+Keluarga aku gak pernah punya banyak waktu buat aku,loneliness
+"Saya tidak punya apa-apa, kecuali beban yang harus ditanggung",shame
+"""Gue sudah lelah terus-terusan menghadapi keadaannya ini!""",anger
+Aku rasa aku sudah tidak bisa lagi melanjutkan hidup ini.,fatigue
+Aku ingat kalau aku pernah lebih bahagia.,fatigue
+asik dapet kabar baik hari ini,joy
+Aku rasa aku udah kelelahan secara mental dan fisik.,fatigue
+"Halo orang-orang, saya merasa sangat berbahagia sekarang!",relief
+Saya harus menyelesaikan pekerjaan dulu sebelum pergi ke kantor.,neutral
+Aku ingin bisa lupa semua yang telah terjadi.,sadness
+"Saya merasa sangat lega sekarang, semua masalah saya selesai!",relief
+"Hari ini terasa berat banget, gak ada niat makan",loneliness
+Apa salah aku? Kenapa tak bisa berhasil seperti rekan-rekanku?,shame
+Aku tidak bisa melawan keadaan itu.,anger
+Aku nggak bisa ngedalamin hari ini.,fatigue
+"Aku baru bisa membelikan mobil impianku, aku sangat, sangat bahagia!",joy
+Aku tidak bisa menghadapi kritik dari orang lain.,shame
+Aku harus mencari solusi untuk mengatasi kekhawatiran ini.,anxiety
+lelah ya Allah semoga berkah,fatigue
+gue kesepian karena tidak ada teman diskusi,loneliness
+aku belum tahu mau bahas apa,neutral
+Aku hanya bisa berharap untuk kuat,anxiety
+"Saya begitu lelah, hari ini seperti terus-menerus berputar",fatigue
+"Selamat, aku bisa menyelesaikan tes dengan hasil yang bagus,",relief
+Kantor mulai terlihat sibuk lagi.,neutral
+pusing bgt deadline mepet tapi otak nge-stuck,fatigue
+aku senang dosen bisa lihat ada algoritma,joy
+"Saya bisa menyelesaikan masalah saya sendiri, saya tidak butuh bantuan!",relief
+hampa rasanya hidup tanpa dia wkwk eh sedih deng,sadness
+Aku tidak bisa lagi membeli hadiah untuk teman-temanku.,sadness
+Aku takut aku tidak bisa mendapatkan pekerjaan yang baik.,sadness
+merasa bodoh bgt konsep dasar aja gatau,shame
+"Gembira sekali, aku bisa jadi penulis yang terbaik,",relief
+"Saya tidak bisa mengeluh terus, jadi aku harus maju",fatigue
+rasanya sepi padahal hari biasa,loneliness
+Setiap hari aku harus hadapi kekecewaan yang sama.,sadness
+"Tadi aku harus bangun pagi untuk kerjaan, sekarang gue cuma mau tidur.",fatigue
+ngakak guling-guling denger cerita si udin,joy
+Hari ini aku hanya ingin berbaring dan tidak bangun lagi.,fatigue
+"""Aku merasa dikecewakan setiap kali aku memikirkan apa yang kita miliki bersama!""",anger
+sendiri lagi malem minggu cuma scroll tiktok,loneliness
+"Sebenarnya aku hanya lelah, bukan stres",fatigue
+"Saya butuh istirahat parah, tapi waktu tidak mengindahkannya",fatigue
+Saya tidak mau lagi terlibat dengan orang-orang seperti itu.,anger
+Aku harus membuat rencana kembali ke sekolah.,neutral
+"Saya berhasil menyelesaikan proyek bulan ini tepat waktu, hehe!",joy
+Saya merasa seperti terjebak dalam roda yang tidak berhenti,fatigue
+Aku tidak bisa melupakan cintanya.,sadness
+gada yang bener-bener ngertiin kondisi gua,loneliness
+"Gue lagi ngerti, nggak perlu ngasih perhatian pada mereka.",anger
+"Saya mau tidur selamanya, tapi ada pekerjaan lainnya",fatigue
+saya merasa terasing waktu semua orang sibuk,loneliness
+Hari ini aku menemukan buku favoritku kembali di dalam kamarnya.,joy
+wkwkwk gokil bgt sumpah ceritanya,joy
+"Aku tidak bisa lagi menghadapi kehidupan ini, aku perlu bantuan.",sadness
+Jangan-jangan saya kehilangan peluang emas,anxiety
+numpang lewat doang gua mah,loneliness
+Aku tidak pantas untuk menjadi seorang pengajar,shame
+rasanya tenaga habis setelah menyiapkan presentasi,fatigue
+Hari ini aku tidak harus ke kantor dan bisa istirahat.,relief
+Aku tidak bisa menghadapi cinta karena maluku sendiri,shame
+"Aku dan keluarga nanti akan ke pantai, aku suka melakukan olahraga di pantai",joy
+Membuka buku laporan dan melihat nilai yang sangat buruk,shame
+Dia selalu memotong-potong aku sendiri di depan semua orang.,anger
+"Gue rasa tidak bisa berbicara lagi, gue mau tidur aja.",fatigue
+Saya baru tahu kalau ada kesempatan untuk meningkatkan karir.,neutral
+"Tahun kemarin aku pergi ke Bali, tahun ini nggak perlu",neutral
+Saya butuh waktu untuk menyelesaikan tugas ini.,neutral
+gue merasa tidak berguna waktu sistem error,shame
+gue merasa patah setelah revisi ditolak,sadness
+Tidak tahu apa yang harus dilakukan untuk mengatasi stres ini,anxiety
+gelisah banget gabisa diem,anxiety
+"Kita udah lama sekali, apakah dia ingat aku lagi?",loneliness
+aku menyalahkan diri sendiri terus,shame
+Hari ini aku tidak bisa makan apa-apa.,anger
+Malam ini aku tidak bisa menangis lagi,sadness
+Dia terlalu egois untuk dipercaya!,anger
+aku sebel sama diri sendiri karena telat mulai,anger
+Aku merasa lega karena aku bisa pergi ke pantai hari Sabtu.,relief
+Aku akan mencoba untuk tidak merasa takut lagi.,shame
+Saya sangat marah dengan keadaan cuaca yang tidak baik!,anger
+malu bgt sumpah salah liat nilai,shame
+overthinking mulu sampe pala mau pecah,anxiety
+puji Tuhan lulus sidang nilai memuaskan,joy
+"Saya telah menyelesaikan semua pekerjaan saya, hari ini benar-benar indah!",relief
+hampir semua hal di kehidupan ini seperti ujian besar bagi aku,anxiety
+Saya tidak pernah menyangka bahwa saya bisa mendapat promosi di usia muda.,relief
+"Sama-sama, aku akhirnya selesai proyek yang menyeramkan aku!",relief
+Aku merasa begitu sendirian di dunia ini.,sadness
+"Aku dan teman-teman nanti akan ke mall, aku harus membeli baju baru",joy
+payah bgt gua dapet nilai di bawah kkm,shame
+Gue capek ngelihat orang milih kepentingan sendiri.,anger
+apa yang salah dengan hidup aku?,anxiety
+asik dapet makan gratis dari kantor wkwk,joy
+"Lagi merasa hancur, seperti tidak ada lagi harapan.",anger
+ini percakapan baru saja,neutral
+Seharusnya aku sudah tidur malam ini.,fatigue
+rasanya sudah lebih aman untuk lanjut,relief
+Aku harus memilih tempat wisata yang bagus sebelum pergi.,neutral
+"Dia mengatakan aku harus lebih sabar, tapi aku sedang kehabisan sabar.",anger
+Aku tidak bisa percaya aku telah berhasil menyelesaikan proyek besar ini.,relief
+Saya tidak tahu mengapa aku masih bisa sedih seperti ini.,sadness
+Membayangkan diri saya gagal membuat proyek kerjaan,anxiety
+Membuat saya semakin terpuruk.,shame
+Tadi aku nemuin bukunya favorit di toko lama deket rumah,neutral
+"Aku hanya bisa berbaring di sini, menyaksikan waktu berlalu.",loneliness
+"Aku lagi bingung harus memilih antara kuliah atau kerja sambilan, aku takut salah nih.",anxiety
+"Aku merasa seperti tidak pernah ada, seperti hanyalah bayangan.",anger
+"Ketika teman-teman lain sudah punya pacar, aku masih sendirian",shame
+Dia tidak peduli dengan apa yang aku rasakan!,anger
+Aku merasa tidak punya uang lagi!,anger
+"Aku merasa seperti kambing hitam, selalu dihukum oleh orang",shame
+"Tadi aku lihat film romantis, gak terlalu seru.",neutral
+aku malu banget sama hasilku,shame
+saya dongkol karena pertanyaan tidak jelas,anger
+Aku merasa tidak berguna sama sekali,shame
+Aku bisa makan sushi favoritku di restoran terbaru.,relief
+Saya harus memperhatikan kesehatan saya.,neutral
+Aku bisa menikmati malam ini dengan teman-teman tanpa harus khawatir tentang pekerjaan.,relief
+gue capek harus mikir tanpa jeda,fatigue
+Aku ingin menghapus semua dari ingatan saya,shame
+jengkel parah dibilang ga kerja,anger
+"Aku harus pergi ke luar kota besok, aku khawatir",anxiety
+Aku hanya ingin berjalan tanpa rasa takut,anxiety
+"Aku tahu aku salah, tapi aku tak tahu harus melakukannya bagaimana",shame
+pengen ada yang nemenin tapi siapa,loneliness
+"Aku ingin tahu apa yang dia inginkan, jadi aku bisa menyesuaikan diri.",anger
+Aku tahu aku bisa menemukan solusi yang tepat,relief
+Mungkin aku harus melewati hari-hari ini dengan menghadapi kenyataan,sadness
+"Wah, saya benar-benar kira saya akan kehabisan uang di akhir bulan, tapi ternyata ada sisa duit dari bulan lalu.",relief
+"Kuliah, kuliah, kuliah, apa yang aku lakukan dengan hidup ini?",anxiety
+Semoga cuaca esok pagi tidak terlalu panas.,neutral
+keren abis gayanya gokil,joy
+asik dapet jatah libur panjang,joy
+aku burnout ngerjain tugas terus,fatigue
+Aku pikir aku sudah siap untuk mengetahui kabar buruk,sadness
+"Gue capek banget, tapi tak ada seseorang yang bisa ku panggil.",loneliness
+alhamdulillah dapet A sidangnya,joy
+aku senang karena progresnya kelihatan,joy
+Aku harus memilih pilihan yang tepat sebelum memulai.,neutral
+"""Aku kesal dengan diriku sendiri, mengapa aku terus-terusan seperti ini?""",anger
+Aku malu untuk menghadap orangtuaku,shame
+Saya butuh membeli kopi di kantin.,neutral
+"Saya rasa aku sedang mengalami kelesuan, dan aku tidak tahu bagaimana mengatasi itu.",fatigue
+Saya hanya ingin tahu apakah kamu sudah makan sarapan.,neutral
+Saya sangat senang menyaksikan pertandingan sepakbola malam ini!,joy
+Saya hanya ingin tidur dan tidak pernah bangun lagi.,fatigue
+Aku pikir aku sangat bahagia dulu.,anger
+gue cemas karena deadline makin dekat,anxiety
+dongkol banget sumpah pengen teriak,anger
+nyesel bgt kenapa tadi nyontek dapet E,shame
+rasanya aku bodoh karena hal kecil saja bingung,shame
+kocak bgt emang si bambang,joy
+"Cari duit, kerja, makan, tidur... itu saja",fatigue
+Aku merasa malu karena harus meminta bantuan orang lain.,sadness
+hari ini aku cuma mau ngobrol sebentar,neutral
+"Mereka ngomong begitu, tapi aku tahu aku adalah orang yang paling peduli.",anger
+Sekarang aku sedang capek sendiri!,anger
+rasanya murung dari pagi sampai malam,sadness
+Malam ini aku harus bangun lagi.,fatigue
+gue cuma mau cek chat sebentar,neutral
+gue kecewa karena merasa kalah jauh,shame
+bangsat kaget gua tbtb ada lu di sini,joy
+"Saya rasa aku sudah tidak bisa lagi melanjutkan hari ini, aku terlalu lelah.",fatigue
+"Saya sangat sedih mendengar kabar tentang rekan kerja yang kawin, aku rasa aku ketinggalan zaman",sadness
+Hari ini aku tidak terlalu bahagia atau sedih juga.,neutral
+pengen nangis tapi malu,sadness
+"Nakutnih sama tes besok, aku tak bisa tidur semalaman",anxiety
+Rasa gugup tidak pernah hilang aku,anxiety
+wkwk kocak bgt lu mah ada-ada aja,joy
+Saya harus pergi ke kampus hari ini.,neutral
+Ketika ada yang bilang aku tidak cukup pintar,shame
+Aku hanya ingin tidur dan tidak pernah bangun lagi,fatigue
+Aku gak terlalu puas dengan hasil yang dicapai.,neutral
+ngakak guling-guling gua,joy
+sereluna lu bisa bantu apa aja sih,neutral
+Aku hanya ingin tidur dan tidak pernah bangun.,fatigue
+Aku rasa aku tidak punya kesempatan lagi untuk mencoba lagi.,sadness
+Aku merasa tidak ada yang bisa melawan kesedihanku.,sadness
+Aku sedih melihat kehidupan orang lain yang indah.,loneliness
+mengapa aku selalu seperti ini? mengapa aku tidak bisa tenang?,anxiety
+keren bgt pemandangan di sini,joy
+Saya sedang mencari informasi tentang festival musik di bulan depan.,neutral
+Aku malu menghadap orang tua karena nilai yang sangat buruk,shame
+capek bgt kerja lembur tiap hari gapernah dihargai,fatigue
+asik bgt dapet diskon makanan wkwk,joy
+Jadi aku sulit untuk beristirahat karena pikiran yang terus-menerus,anxiety
+Mereka tidak pernah memiliki empati sama orang lain.,anger
+mantap bener dah,joy
+saya ingin mengetes respons sistem,neutral
+gue bangga melihat akurasinya naik,joy
+Gue tidak tahu harus berbuat apa karena aku sendiri,loneliness
+Mata saya mulai terasa terbakar karena berada di hadapan layar laptop,anxiety
+Aku merasa lega bisa menemukan tiket pesawat murah untuk berlibur.,relief
+"Aku merasa sangat tidak berharga, tidak bisa membuat orang lain bahagia",shame
+Belanja kebutuhan bulan depan aku belum mulai.,neutral
+Aku rindu dengan teman gue yang telah pindah,sadness
+galau banget di-ghosting pas lagi sayang-sayangnya,sadness
+wah gila sih ini keren abis,joy
+Aku harus menemukan cara untuk menghilangkan kekhawatiran ini,anxiety
+Hari ini aku hanya ingin bisa menemukan seseorang yang bisa mendengar,loneliness
+Aku tak bisa menerima kritik dari orang tua,anxiety
+Terus memikirkan apa yang salah denganku.,shame
+"Gue ingin sekali ada seseorang yang bisa aku panggil ""saudara"".",loneliness
+Saya tidak bisa menerima kekalahannya di pertandingan sepak bola!,anger
+"Mencoba untuk menemukan kebahagiaan, tapi aku masih belum menemukannya.",sadness
+Aku akan mencoba mencapai target dengan tekad keras,sadness
+hari ini aku hanya membuka room baru,neutral
+"Saya tak bisa melupakan dia, walaupun sudah 2 tahun aku tidak bertemu lagi",sadness
+"Aku punya hari yang biasa-biasa saja, apa lagi mau dilakukan",neutral
+Kok bisa dia begitu kasar tanpa alasan!,anger
+Saya merasa sangat rendah diri,shame
+capek sih dikit tapi gapapa lah,fatigue
+Saya kesal banget dengan keadaan jalan ini lagi macet!,anger
+wkwk kocak banget temen gua,joy
+gue sendirian menghadapi semua persiapan ini,loneliness
+"Aku harus menghadapi wawancara kerja, aku takut",anxiety
+Saya merasa tidak pantas untuk dipercaya.,shame
+"Aku malu banget hari ini, aku salah di depan teman-teman",shame
+Mereka nggak akan pernah peduli pada kesedihan aku.,anger
+aku belum punya topik khusus,neutral
+Gue harus memastikan semua halaman siap sebelum print laporan.,neutral
+lulus sidang dapet nilai A,joy
+gue merasa jauh dari semua orang,loneliness
+saya bahagia karena fitur backend makin kuat,joy
+"Aku sibuk hari ini, harus finish presentasi dulu sebelum liburan.",neutral
+"Mungkin aku perlu minum kopi, tapi aku rasa itu tidak cukup",fatigue
+Aku harus menyelesaikan tugas kuliah sebelum esok,neutral
+Saya harus memperbarui aplikasi pada ponsel saya.,neutral
+Saya sedang sibuk dengan proyek kuliah.,neutral
+Aku merasa sangat kecewa sama diri sendiri karena gagal menyelesaikan proyek kerjaan,shame
+"Dia pikir aku terlalu sensitif, tapi itu karena dia sendiri yang tidak pernah peduli.",anger
+Saya harus belajar matematika untuk tes nanti.,neutral
+lucu bgt liat tingkah ponakan,joy
+Papa senang sekali lihat saya bisa sukses.,relief
+"Aku melihat film yang menarik, mungkin aku harus menontonnya nanti",neutral
+Aku merasa puas dengan hasil pekerjaanku hari ini.,relief
+Aku merasa kehabisan harapan,sadness
+Aku merasa lemah dan tidak bisa melakukan apa-apa,anxiety
+saya sedang mencoba fitur baru,neutral
+Saya dapat nilai yang bagus dari proyek ini.,relief
+Saya bisa pergi liburan ke Maldives dengan pasangan.,relief
+lucu parah sih ini mah asli,joy
+Saya rasa perasaan marah ini mulai mengganggu hidup saya.,anger
+"Saya sudah kehabisan sabar, harusnya mereka tahu batas.",anger
+seru bgt acara tadi malem,joy
+Gue merasa seperti sedang terjebak dalam sebuah duka abadi.,loneliness
+Saya sedang mencari buku puisi favorit saya.,neutral
+Aku rasa kepalaku kayak mau pingsan.,fatigue
+"Aku rasa aku udah giliran istirahatnya, tapi gak pernah ada istirahat yg cukup",fatigue
+Hari ini lagi bad mood aku.,sadness
+"Saya sudah berusaha, tapi mereka tidak mau mendengar.",anger
+"Aku hanya ingin menjadi bahagia, tapi aku tidak bisa menemukannya.",shame
+"Kemarin aku lihat teman ku berdua2 makan malam, aku jadi sedih sendirian.",loneliness
+"Aku suka membaca buku, aku baru saja menyelesaikan satu buah buku",joy
+saya letih setelah begadang berhari hari,fatigue
+Aku hanya ingin beristirahat dan tidak pernah kembali ke hari ini,fatigue
+Aku hanya bisa sendirian di sini,loneliness
+Mungkin aku perlu mencari bantuan profesi.,anger
+Kenapa aku harus memikirkan tentang hubungan yang gagal?,loneliness
+saya kecewa karena target belum tercapai,sadness
+Semua tugas gue jadi terasa lebih berat dibandingkan kemarin.,fatigue
+"""Aku merasa sangat frustrasi!""",anger
+"Hari ini aku diharuskan membuka presentasi di depan tim, tapi aku tidak siap.",shame
+Saya sudah tidak sabar lagi untuk liburan!,anger
+rasanya badan berat dan pikiran penuh,fatigue
+cemas banget nunggu pengumuman,anxiety
+halo semua aku mulai dari sini,neutral
+Membayangkan diri saya tidak bisa maju dalam karir,anxiety
+Aku hanya perlu mencari cara untuk mengatasi kelelahan fisik dan mental.,fatigue
+aku sebel karena sudah capek tapi masih disalahkan,anger
+aku merasa lebih optimis sekarang,joy
+khawatir ortu bakal marah,anxiety
+ipk naik gara-gara dapet A terus,joy
+gue lega karena ada dokumen buat presentasi,relief
+Saya akhirnya berhasil makan makanan favoritku yang asin-asin!,joy
+Aku merasa lega karena berhasil menyelesaikan konflik dengan pacarku.,joy
+Saya sedang mencari informasi tentang cuaca hari ini.,neutral
+"Aku tak bisa lebih kuat lagi, aku perlu orang yang peduli padaku.",loneliness
+aku merasa jauh dari teman sekelas,loneliness
+Aku merasa kehilangan kepercayaan diri dan aku mulai ragu-ragu diri sendiri.,loneliness
+Aku tidak bisa melawan emosi ku sendiri.,anger
+gue bangga bisa nyelesain tugas susah,joy
+Saya masih belum menemukan tempat yang tepat untuk bekerja.,neutral
+sendirian di perpustakaan demi nilai,loneliness
+sedih banget diputusin pas lagi sayang-sayangnya,sadness
+Aku tak bisa menerima kenyataan bahwa aku sendirian di sini.,loneliness
+revisi mulu dapet nilai pas-pasan,sadness
+Saya merasa sangat lega tidak ada kecelakaan di jalan raya.,relief
+Saya tidak bisa menerima kritik dari orang tua!,anger
+Saya bisa menikmati weekend kali ini tanpa beban perasaan.,relief
+Hari ini gue harus ke dokter untuk konsultasi.,neutral
+Akhirnya aku bisa menemukan tempat kost yang tepat!,joy
+"Saya sedang mencari kebahagiaan di mana-mana, tapi malah lebih merasa kesepian saja.",loneliness
+Malam ini saya bisa menonton acara TV yang sudah lama ditunggu.,neutral
+pusing pala barbie mikirin nilai,fatigue
+Aku tahu aku bisa menyelesaikannya dengan tenang,relief
+Saya tidak pernah menyangka bahwa saya bisa menyelesaikan proyek besar ini dalam waktu singkat.,relief
+aku merasa tidak dianggap waktu minta bantuan,loneliness
+rasanya puas setelah kerja keras terbayar,joy
+Aku khawatir aku tidak akan pernah menemukan pekerjaan yang tepat untukku.,shame
+"""Aku tidak bisa melihat masa depan!""",anger
+Hari ini sangatlah sunyi dan hening.,sadness
+"Udah cape, aku bisa lulus pekerjaan besar hari ini",relief
+"Saya tidak pernah merasa seperti ini sebelumnya, benar-benar merasa berbahagia!",relief
+Aku tidak bisa membayar semua hutangku,shame
+Tapi setelah itu aku kembali ke kesepian ini,loneliness
+aku marah banget sama perlakuannya,anger
+"Kita makan siang bareng di kampus, tapi aku terasa seperti diri sendiri",loneliness
+Hari ini aku harus kerja sampai malam.,fatigue
+"Aku jadi ingin menikmati keindahan alam sekitar,",relief
+Aku merasa aku sedang tinggal di planet yang berbeda.,loneliness
+was-was nunggu kabar dia,anxiety
+Gue ingin sekali bisa melupakan semua yang pernah terjadi.,loneliness
+anjir keren banget aplikasinya,joy
+"Aku tidak bisa meninggalkan pekerjaanku, aku khawatir",anxiety
+gokil bro makasih ya,joy
+Aku sudah tidak sabar lagi dengan temen yang selalu melanggar janji!,anger
+"Hei, kamu pasti gembira juga ya? Sekarang aku bisa pulang lebih pagi,",relief
+"Mereka tidak pernah memikirkan perasaan saya, hanya kepentingan mereka sendiri.",anger
+Aku nggak bisa menemukan tempat nyaman untuk aku berbagi pengalaman.,loneliness
+"""Aku tidak sabar lagi dengan keadaan ini!""",anger
+terabaikan bgt gua di kelas ini,loneliness
+Aku merasa tertekan dengan pekerjaan yang harus diakhiri hari ini!,anger
+malu bgt tadi salah sebut nama pas meeting,shame
+Aku bisa makan nasi goreng favoritku hari ini.,relief
+Tiba-tiba aku teringat tentang nenek gue,sadness
+"Mereka mengatakan aku terlalu sensitif, tapi aku tahu apa yang aku rasakan.",anger
+gue capek karena otakku tidak berhenti bekerja,fatigue
+Hari ini aku ingin hanya berbaring dan tidak melakukan apapun,fatigue
+capek banget parah hari ini,fatigue
+"Aku merasa lelah, tidak bisa fokus.",fatigue
+"Wah, aku finally naik level di game favoritku!",joy
+"Aku kembali lagi, mengapa aku selalu membuat kesalahan yang sama?",shame
+wkwk kocak amat sih lu jadi orang,joy
+Aku rasa aku sudah tidak bisa lagi menahan lelah ini.,fatigue
+Siapa yang bisa membantu aku untuk menghilangkan rasa takut ini?,anxiety
+"Aku tidak punya apa-apa, bahkan tidak punya harga diri",shame
+Malam ini aku terjaga karena mimpi buruk,sadness
+numpang lewat doang gua mah di hidup orang,loneliness
+halo Sereluna apa kabar hari ini,neutral
+Saya jadi gembira sekali bisa menemukan tempat baru di kota,relief
+Ketakutan mengisi setiap detikku,anxiety
+"Saya benar-benar tidak sabar, seperti di bawah tekanan berat.",anger
+sidang lancar jaya dapet A,joy
+Aku tidak bisa menahan air mata lagi,shame
+Kata-kata manis milik oranglain di social media hanya membuatku sedih.,loneliness
+asik banget hari ini dapet kabar baik,joy
+senang sekali hari ini dapet kado,joy
+Aku nggak punya perasaan apa-apa dengan film yang aku tonton tadi,neutral
+Dia tidak pernah peduli dengan perasaan aku.,anger
+gokil parah emang ide lu mantul,joy
+gue lebih tenang setelah masalahnya dipetakan,relief
+"Mencoba untuk melupakan, tapi kenangan itu masih terbayang.",sadness
+frustrasi parah revisi ga abis-abis,anger
+Saya harus membeli suku cadang untuk mobil.,neutral
+rasanya nggak ada yang benar benar ngerti,loneliness
+Aku tidak terlalu berminat dengan topik kuliah hari ini,neutral
+Saya rasa saya harus menghadapi banyak hal yang tidak saya inginkan,anxiety
+Aku tidak bisa melupakan dia.,sadness
+Ku rasa hari ini aku nggak punya kebahagiaan yang istimewa,neutral
+"Aku ingin berhenti, tapi tidak bisa.",anger
+Akhirnya aku bisa pulang ke kampung halaman.,relief
+Kenapa dia harus begitu kasar?!,anger
+"Kemarin saya merasa sedih, tapi hari ini saya bisa tersenyum lagi.",relief
+ngakak parah denger jokes-nya,joy
+Saya baru tahu kalau hari esok adalah hari libur panjang.,neutral
+"Aku mencoba untuk menemukan harapan, tapi semakin lama aku merasa semakin sedih.",loneliness
+"Aku rasa aku udah menghabiskan semua energi aku, dan aku tidak punya banyak lagi",fatigue
+mampus dapet nilai merah,fatigue
+Aku tidak terlalu bosan dengan tugas yang aku lakukan.,neutral
+seru ya kalo ngobrol sama lu,joy
+Aku masih berusaha untuk tidak memikirkan kejadian itu.,shame
+Saya harus menyelesaikan tugas dulu sebelum beristirahat.,neutral
+Aku sangat kesal sama temenku yang selalu tidak bertanggung jawab.,anger
+lucu parah sih ini mah,joy
+aku nggak kuat kalau harus begadang lagi,fatigue
+Aku tidak tahu apa yang harus aku lakukan.,fatigue
+aku tidak bisa menghadapi kegagalan,anxiety
+benci banget sama situasi kayak gini,anger
+Aku sudah lupa cara menenangkan diri sendiri,anxiety
+Saya terus mencari jawaban di internet tapi masih bingung,anxiety
+Saya akhirnya bisa menemukan tempat makan kuliner yang lezat!,joy
+"Aku tidak bisa fokus lagi, lelah banget nih.",fatigue
+Saya rasa aku perlu istirahat lebih dari cukup,fatigue
+"Saya ingin kembali ke kehidupan saya dulu, saat masih merasa bahagia dan nyaman.",loneliness
+"Aku rasa puas, karena aku bisa menyelesaikan proyek besar",relief
+"Saya tidak bisa bicara lagi, saya hanya bisa berkeluhkahan.",anger
+Aku benar-benar marah sekarang!,anger
+Kehidupan ini benar-benar menguras tenagaku,fatigue
+anjir lah lucu banget wkwkwk,joy
+Aku harus mengatur waktu sebelum memulai proyek baru.,neutral
+aku murung dan nggak semangat,sadness
+Aku harus melawan rasa takut untuk mencapai kesuksesan.,anxiety
+Aku tidak bisa mengalahkan rasa malu ini,shame
+"Malam lalu aku tidur terlalu sedikit, hari ini aku terasa lelah",anxiety
+Akhirnya aku bisa menemukan solusi masalah yang memusingkan saya,relief
+"Aku ga bisa tidur malam ini, pikiran aku terus melayang ke masa depan.",anxiety
+Aku ga bisa tidur karena selalu memikirkan apa yang bisa terjadi besok,anxiety
+Saya harus menyesali keputusan yang aku ambil,shame
+"Maukah kamu pergi bersamaku ke pantai, aku butuh udara laut.",sadness
+"Saya tidak pernah merasa ada yang memahami saya seperti ini, rasanya hampir tidak ada yang peduli dengan saya, apa yang salah dengan diri saya?",loneliness
+Aku rasa aku udah tidak memiliki kekuatan lagi.,fatigue
+aku mulai percaya bisa melewati ini,relief
+aku lagi belajar koding nih seru juga,joy
+Hari ini aku hanya ingin menemukan seseorang yang bisa dengar,loneliness
+Saya terlambat datang ke acara itu,relief
+"Aku tidak bisa membantu orang lain, hanya bisa membantu diri sendiri",shame
+Saya telah menyelesaikan semua proyek saya sebelum deadline!,relief
+Aku harus mengatur jadwal kuliah hari ini,neutral
+saya frustrasi karena penjelasan saya dipotong,anger
+Malamnya aku tak bisa tidur karena khawatir tentang rencana besok,anxiety
+"Mencoba untuk move on, tapi masih sangat sulit.",sadness
+Saya sudah tidak punya kemampuan lagi,fatigue
+Saya harus menyiapkan materi untuk rapat minggu depan.,neutral
+"Jika aku tidak bisa menenangkan diri, bagaimana aku bisa mengalami kebahagiaan?",anxiety
+Kehilangan dia membuat aku merasa tidak peduli dengan apa yang akan terjadi.,sadness
+Kita bisa pergi ke pantai lagi nanti minggu,relief
+Ahirnya saya bisa menyelesaikan proyek yang membuat saya stres selama seminggu.,relief
+lelah jiwa raga ngejar nilai A,fatigue
+saya takut kehilangan orang yang aku cintai,anxiety
+"Aku rasa aku kehilangan banyak hal, bahkan diriku sendiri.",loneliness
+"Aku lupa masuk kuliah, hehe bisa berangkat pagi ini.",relief
+Hari ini aku sedikit lelah bermain dengan anak kecil.,neutral
+Aku merasa sangat putus asa.,sadness
+hari ini aku sedih banget,sadness
+Aku nggak pernah ngerti mengapa orang itu ada di hidupku.,anger
+gue khawatir jawabanku nanti kosong,anxiety
+lucu bgt liat adek bayi ketawa,joy
+Aku tidak bisa lagi melihat keindahan dunia ini.,sadness
+Aku tidak bisa menahan air mata,sadness
+Aku khawatir aku akan tertinggal dari teman-temanku,anxiety
+saya sedang mengecek fitur chat,neutral
+tadi ke kampus cuma bentar doang,neutral
+Aku suka mengabadikan momen-momen bahagia dengan foto,joy
+Maaf aku tidak bisa makan malam karena terlalu malu minta uang dari ibu.,shame
+"""Aku ingin mereka tahu bagaimana aku merasa!""",anger
+aku bersyukur bebannya mulai ringan,relief
+Dia terlalu sulit dipercaya!,anger
+"Aku pikir aku sudah lulus, tapi ternyata aku gagal",shame
+Aku telah berhasil mengatasi masalah di tempat kerja.,relief
+Hari-hari terasa panjang karena aku harus menghadapi semua sendirian.,loneliness
+hina bgt rasanya dikasih nilai kasihan,shame
+Saya mendapat undangan ke konser favorit di bulan depan!,joy
+aku kecewa karena hasilnya belum sesuai harapan,sadness
+Aku rasa aku sedang berjalan sendiri di kehidupan.,loneliness
+"Akhirnya aku lulus tes yang aku takutin, aku bahagia banget!",joy
+Saya merasa sangat sendirian di tengah-tengah orang banyak.,loneliness
+"Aku tidak bisa memberikan yang terbaik, hanya bisa memberikan yang paling buruk",shame
+sepi banget malem minggu di kamar,loneliness
+Saya rasa saya tidak mungkin mencapai apa yang saya inginkan,anxiety
+"Saya benar-benar takut saya akan kehilangan pekerjaan saya, tapi ternyata saya tidak!",relief
+Aku rasa aku tak bisa melupakanmu sekarang.,sadness
+Saya bisa menyelesaikan perangkap hukum saya.,relief
+"Aku rasa aku udah giliran istirahatnya, tapi aku harus tetap bekerja",fatigue
+Siapa yang pernah membantuku saat aku butuh!,anger
+Saya tidak bisa berpikir jelas hari ini,fatigue
+Aku sangat berharap dia bisa menjadi lebih baik.,anger
+"Ah, saya tidak bisa menahan gembira setelah mengetahui kabar baik ini.",relief
+Aku rasa aku tidak pantas menjadi siswa universitas.,shame
+"Halo orang-orang, saya baru saja menyelesaikan pekerjaan saya!",relief
+Gue tak pernah merasa nyaman sendirian di dalam rumah.,loneliness
+"Saya tidak bisa memaafkan diri sendiri, terus merasa bersalah",shame
+"Aku merasa begitu sendirian di sini, seperti ada yang tertinggal di tempatnya sendiri.",loneliness
+Aku sedang sangat marah ini!,anger
+mengapa aku tidak bisa lebih optimis?,anxiety
+aku tidak bisa berhenti berpikir tentang kesalahan masa lalu,anxiety
+Apa yang harus aku lakukan untuk menghilangkan rasa takut ini?,anxiety
+"Hari ini aku cuma bisa makan nasi goreng, makan siangnya",neutral
+nyesel bgt kenapa tadi ngomong gitu ke dia,shame
+"Aku sudah gagal di ujian, aku tidak bisa menerima kebenaran ini",shame
+rasanya bahagia karena berhasil selesai,joy
+Saya sedang mencari informasi tentang kuliner di Jakarta.,neutral
+"Aku tidak percaya, aku baru bisa mendapat gelar S1, semua sakit hati aku ludes!",joy
+"Kok bisa begini, aku terasa sudah cukup dewasa tapi masih khawatir",anxiety
+Saya rasa aku butuh tidur panjang.,fatigue
+Saya hanya ingin menikmati hari ini dengan tidak melakukan apa-apa,fatigue
+Aku harus berusaha untuk menghilangkan rasa ketakutan ini.,anxiety
+Apa yang harus aku perbuat untuk mendapatkan pengakuan?,shame
+"Mungkin aku hanya terlalu ego, tidak siap jatuh cinta.",loneliness
+Saya sangat marah karena proyek kerjaan tidak jalan seperti rencana!,anger
+Gue merasa tidak terhubung dengan siapa pun,sadness
+"Aku merasa sangat malu, tidak bisa membayar tagihan",shame
+aku lelah karena tidurku berantakan,fatigue
+Malam ini saya harus pergi ke rumah teman.,neutral
+Aku sudah lupa apa tema presentasi yang aku harus siapkan.,neutral
+Saya sudah membeli tiket pesawat.,neutral
+mampus ini deadline besok belum kelar,fatigue
+aku senang karena modelnya berhasil dilatih,joy
+aku malu karena belum menguasai materinya,shame
+muak gua denger janji manis doang,anger
+Cuma aku dan cairan mataku sendiri di malam ini,loneliness
+Aku rasa aku tidak pantas hidup di dunia ini.,shame
+Aku mengapa selalu harus khawatir tentang semuanya?,anxiety
+seru bgt jalan-jalan hari ini,joy
+Bosan sekali dengan pekerjaan ini sekarang.,fatigue
+Aku seperti terjebak dalam lingkaran kegagalan,anxiety
+Aku akan senang jika aku bisa melupakan kejadian itu tapi entah kenapa aku tidak bisa.,shame
+Saya merasa lega setelah tidak perlu membayar retribusi lagi.,relief
+"Baru-baru ini aku sangat stres, tapi hari ini aku merasa lebih santai",relief
+energi abis total buat hari ini,fatigue
+"Gue mau pergi ke konser, tapi gue rasa gue tidak bisa berdansa.",fatigue
+keren banget sumpah ga ada lawan,joy
+Aku tidak tahu apa yang salah dengan aku.,sadness
+"Mereka bilang aku harus maju, tapi aku masih merasa malu.",sadness
+"Aku tahu aku harus bangkit, tapi tidak apa-apa kalau aku tidur",fatigue
+"Karena capek, aku mesti ke dokter nih",fatigue
+capek mental dengerin drama kantor mulu,fatigue
+Aku tak bisa menerima kekalahan dalam pertandingan nanti,anxiety
+"Gue tidak suka bangun pagi, tapi gue harus.",fatigue
+Hari ini saya tidak bisa melawan rasa lelahnya,fatigue
+kecil bgt gua rasanya dibanding mereka yang hebat,shame
+anjir lah kok bisa gitu wkwk lucu,joy
+"Saya tidak bisa percaya, dia bisa begitu kasar.",anger
+"Aku butuh istirahat, tapi harus kerja.",fatigue
+Aku belum pernah merasa begitu sedih dalam hidupku sebelumnya,sadness
+"Gue mau menulis cerita fantastis, tapi gue rasa gue kehabisan ide.",fatigue
+aku terbantu ketika alurnya dibuat rapi,relief
+"Aku merasa tidak diterima, seperti sebuah konten tidak populer.",anger
+Aku merasa terhambat oleh rasa takut.,anxiety
+Buat apa aku harus terus bangun pagi setiap hari,fatigue
+bersyukur masih bisa makan enak hari ini,relief
+aku mulai lega setelah cerita,relief
+Saya rasa aku tidak bisa lagi berperilaku seperti biasanya,fatigue
+"Aku sudah berusaha, tapi dia tetap tak peduli!",anger
+"Hari-hari aku semakin sulit, tidak ada uang untuk beli makanan.",sadness
+aku malu karena jawabanku sering berantakan,shame
+Kita bisa menyelesaikan masalah itu tanpa masalah,relief
+Aku merasa lebih rileks dan tenang,relief
+Saya butuh menyelesaikan tugas sebelum jam makan siang.,neutral
+Aku harus memastikan semua dokumen siap sebelum presentasi nanti.,neutral
+"Saya tidak bisa berhenti, terus mencoba dan gagal",shame
+aku takut kelihatan payah di depan penguji,shame
+Aku malu karena aku tidak bisa menolak ketika teman saya meminjam uang dari saya.,shame
+gue down setelah denger komentar itu,sadness
+Aku rasa aku menjadi semakin lemah dan kehilangan semangat hidup.,loneliness
+Aku pernah tidur cuma tiga jam malam ini.,fatigue
+ngakak banget denger ceritanya,joy
+Malam-malam aku hanya bisa mengharap seseorang yang bisa mendengar,loneliness
+aku tidak tahu bagaimana cara menghilangkan rasa takut ini,anxiety
+Aku tidak bisa berbuat apa-apa.,sadness
+aku takut semua pertanyaan dosen menjebak,anxiety
+Hari ini aku hanya ingin berhenti dan tidak melanjutkan apa-apa,fatigue
+Aku merasa lebih yakin akan kemampuan diri sendiri,relief
+gue capek mental menghadapi deadline,fatigue
+Hari ini aku bisa menikmati kesenangan sederhana,relief
+keren parah sih hasil fotonya lu jago,joy
+Aku tidak sabar untuk melihat hiburan baru di bioskop.,relief
+"Aku harus pergi ke kantor, tapi aku tidak ingin pergi.",fatigue
+Aku merasa gagal sebagai istri karena tidak bisa memuaskan kebutuhan suami,shame
+Aku tak bisa menerima kenyataan bahwa aku bukanlah yang terbaik.,shame
+Aku merasa sendirian di tengah-tengah keramaian ini.,loneliness
+aku merasa nggak punya tempat pulang,loneliness
+"Wah, hari ini saya merasa sangat lega!",relief
+Mungkin aku harus meninggalkannya untuk kebaikan sendiri.,anger
+Aku malu ketika teman-teman tahu aku tidak pernah pergi ke kampus secara teratur.,shame
+Aku mencoba untuk tidak memikirkan hal itu dan tidak merasa malu lagi.,shame
+Tidak ada yang bisa menelepon gue sekarang,loneliness
+Dia tidak tahu apa-apa tentang perasaanku!,anger
+Nenek gue sudah pergi tapi kenangan masih tersimpan baik,sadness
+"Cita-citaku itu jadi semu, karena aku tak pernah punya waktu.",fatigue
+Kenapa aku selalu merasa sendirian?,loneliness
+aku merasa didengar dan itu membantu,relief
+"Aku seperti sedang berjalan di hutan yang gelap, tanpa memiliki peta.",loneliness
+Saya tak bisa lagi menahan kelelahan ini,fatigue
+Aku merasa seperti anak kecil yang selalu meminta bantuan.,shame
+Saya masih belum siap untuk menghadapi pertandingan nanti.,neutral
+saya merasa patah semangat malam ini,sadness
+Aku tahu aku harus lebih fokus,fatigue
+Aku merindukan kebersamaan dengan orang-orang yang gue sayang.,loneliness
+kok jahat bgt ya tbtb block gua tanpa sebab,sadness
+Aku tidak bisa mengerti apa yang aku cari.,loneliness
+"Ketika aku mencoba menanyakan, dia langsung marah padaku.",anger
+rasanya otak sudah penuh banget,fatigue
+gagal mulu gua ngerasa ga becus kerja,shame
+apa yang salah dengan hidup aku? mengapa aku terus menerangi segala hal dengan warna hitam,anxiety
+"Kita bisa bilang aku sedang ""single"" tapi aku sebenarnya lebih dari itu.",loneliness
+mantap bener dah kodingannya jalan,joy
+Aku telah menyelesaikan tugas yang telah membuat aku stres.,relief
+"Tidak percaya diri dulu, tapi saya berhasil!",relief
+Aku pikir aku perlu cari seseorang yang bisa paham aku,loneliness
+"Aku mencoba untuk fokus pada pekerjaan, tapi pikiran selalu kembali ke masa lalu.",sadness
+Aku khawatir aku bakal salah,anxiety
+Gue harus memastikan semua data siap sebelum analisis.,neutral
+Saya tidak bisa pergi ke bioskop malam ini karena gue butuh istirahat hari ini.,neutral
+"Hari-hari aku semakin berat, tidak ada uang untuk beli obat.",sadness
+Saya telah menyelesaikan proyek saya sebelum deadline!,relief
+Gue rasa kalo gue butuh waktu untuk diri gue sendiri.,fatigue
+gue mulai bisa napas setelah masalah dipetakan,relief
+"Hari ini aku makan es krim favoritku, rasanya sungguh luar biasa!",joy
+Aku tidak mau terus-menerus merasa stres dan tertekan,anxiety
+Saya tidak bisa berbicara dengan orang lain tentang perasaan saya ini.,loneliness
+Aku tidak bisa lagi menahan marahku!,anger
+Mereka bilang aku harus mencari apa yang aku cari dalam diri aku sendiri.,loneliness
+anjir keren parah sih lu,joy
+Tadi aku melihat hujan dan aku ingin minum teh hangat.,neutral
+Saya hanya ingin mengetahui jadwal olahraga minggu depan.,neutral
+aku merasa sendirian menghadapi masalah ini,loneliness
+Saya hanya ingin tidur dan melupakan semua masalah.,fatigue
+Aku takut aku ga bisa menghadapinya.,anxiety
+rasanya lebih ringan setelah cerita panjang,relief
+"Malam ini saya tidak bisa tidur, pikiran terus berputar",fatigue
+merasa ga berguna kalo nilai jelek mulu,shame
+"Rasanya aku sudah kelelahan, mau tidur aja.",fatigue
+Aku malu karena aku tidak bisa membantu orang-orang yang membutuhkan.,shame
+"Alhamdulillah, proyek sudah rampung dan kita bisa istirahat sejenak,",relief
+Aku takut aku ga bisa membuat orang lain percaya diri.,anxiety
+Ternyata aku salah besar ketika mengira aku bisa menangani semua ini sendiri.,shame
+Gue rasa aku tidak pantas untuk dicintai oleh seseorang yang baik.,loneliness
+Hidupku hanyalah sebuah permainan yang aku tidak paham aturannya.,loneliness
+Mau tidak aku harus meminta pinjaman uang ke teman-teman.,sadness
+"Aku baru belajar memasak, aku suka mencoba resep baru",joy
+"Saya merasa tidak pernah memiliki tempat yang bisa saya panggil ""rumah"".",loneliness
+aku murung karena belum menemukan solusi,sadness
+Saya masih belum menyelesaikan tugasnya.,neutral
+"Mereka bilang aku sudah dewasa, tapi aku masih merasa seperti anak kecil.",sadness
+Saya harus beli bensin sebelum pergi ke kantor.,neutral
+"Hari ini aku tidak ingin keluar rumah, hanya ingin tidur saja.",loneliness
+Saya tidak tahu apa yang harus saya lakukan untuk semakin baik.,neutral
+aku merasa tidak punya teman diskusi,loneliness
+saya merasa tidak ada yang memahami tekananku,loneliness
+"Hari ini sangatlah sulit, aku tidak tahu harus melakukannya.",sadness
+Aku yakin aku bisa membuat perbedaan jika aku memiliki seseorang yang sama-sama peduli.,loneliness
+"Aku sedih karena harus berpisah dengan teman, tapi sekarang aku merasa lega.",relief
+Aku selalu khawatir tentang masa depan,anxiety
+Saya rasa kulitku sudah terasa menciut.,fatigue
+Aku sangat bangga dengan prestasi putra kita di sekolah!,joy
+Mungkin aku perlu bergabung dengan komunitas kampus,loneliness
+Bapak senang sekali melihat saya berhasil.,relief
+Aku merindukan teman lama aku yang sekarang sudah kuliah di luar negeri,loneliness
+kocak abis nih meme-nya wkwk,joy
+Haruskah aku menerima keadaan ini?,sadness
+"Hari ini sangatlah buruk, semuanya sia-sia.",sadness
+"Saya tidak bisa percaya, mereka bisa begitu tidak adil.",anger
+aku sedih setiap mengingat komentar dosen,sadness
+"akhirnya aku bisa beristirahat, minggu ini terasa panjang banget",relief
+Aku sangat senang bisa menyelesaikan task besar itu,relief
+"Kemarin saya hampir meninggalkan kerjaan saya, tapi hari ini saya bisa melanjutkan dengan aman.",relief
+"Aku cuma bisa berharap, tapi aku tak pernah bisa berbuat apa-apa",shame
+gue merasa aman setelah dibantu,relief
+"Hari ini aku bisa melupakan kesulitan dalam mengajar,",relief
+Hari ini aku cuma mau istirahat di rumah.,neutral
+Saya bisa makan malam dengan keluarga.,relief
+Aku tidak ingin lagi bermain dengan dia!,anger
+Ku rasa aku nggak punya kejutan apa pun hari ini,neutral
+Aku tidak tahu bagaimana cara untuk mengatasi perasaan ini.,loneliness
+terabaikan bgt gua di grup chat tbtb hening,loneliness
+Kapan aku akan bisa merasakan damai kembali,anxiety
+Aku hanya bisa menunggu sampai aku bisa pergi dari sini.,loneliness
+gada yang ngertiin gua emang,loneliness
+Gue harus memastikan semua hal siap sebelum memulai.,neutral
+"Tidak tahu apa yang salah, tapi rasanya semua orang sudah lelah dengan saya.",loneliness
+Aku tak bisa menerima kalau aku harus hidup tanpamu.,sadness
+gua emang bego dapet E mulu,shame
+Aku baru saja mendapatkan kesempatan untuk belajar di luar negeri,joy
+energi abis buat uas dapetnya segini,fatigue
+Saya merasa terjebak dalam situasi ini,anxiety
+Aku rasa aku tidak siap menghadapi tantangan hidup yang lebih sulit.,sadness
+Aku harus menghadapi tantangan baru nanti minggu ini.,anxiety
+merasa bodoh banget hal simpel aja gatau,shame
+Aku tak bisa melihat masa depan tanpa takut,anxiety
+Aku tidak bisa menerima keadaan,sadness
+"Aku seperti sedang berada di tepi air yang dalam, tapi aku tidak bisa melompat.",loneliness
+Aku ingin untuk bisa menyelesaikan semuanya dalam waktu yang tepat.,shame
+Aku nggak bisa menerima pergi dari saudara ku yang baru saja pindah.,loneliness
+gue pusing karena kebanyakan revisi,fatigue
+saya letih karena banyak tugas menumpuk,fatigue
+Saya benar-benar tidak bisa mengimajinasikan bahwa saya bisa menyelesaikan proyek ini dalam beberapa hari.,relief
+Mengapa aku selalu seperti ini?,anxiety
+aku panik setiap buka revisi,anxiety
+"Aku harus membeli kebutuhan sehari-hari, apa yang harus kulakukan?",neutral
+"Mengapa aku harus selalu mengalah, dan dia yang selalu memenangkan perdebatan?",anger
+diterima kerja cuy seneng bgt,joy
+Aku mau coba masak sosis telur di rumah.,neutral
+Saya ingin ada seseorang yang mau mendengarkan saya apa adanya.,loneliness
+"Saya tidak mau menjadi korban lagi, saya harus berdiri sendiri.",anger
+Aku nggak bisa percaya kalau orang itu ada di dunia ini.,anger
+Saya kesal dengan temen yang tidak mau membantu!,anger
+Aku sangat berharap teman-temanku dapat sukses dalam karir!,joy
+"Masa lalu memang tidak bisa diubah, tapi aku ingin melupakan luka itu.",sadness
+"Aku rasa lelah, mau tidur aja.",fatigue
+Dia tidak peduli dengan perasaanku!,anger
+Aku tidak pernah merasa begitu lega setelah berbulan-bulan.,relief
+malu-maluin banget kejadian tadi,shame
+"Aku sedang merasa sangat sedih, tidak bisa bayar utang bulanan lagi.",sadness
+gue down setelah membandingkan diri dengan teman,sadness
+"Aku makan malam sambil menonton film sendirian, benar-benar tak bahagia",loneliness
+seru abis acaranya pecah bgt,joy
+Gue butuh teman untuk membantuku berbicara dengan siapa saja.,fatigue
+"Aku sudah mencoba, tapi aku hanya semakin jatuh",shame
+Aku harus membuat rencana perjalanan untuk akhir pekan.,neutral
+Aku merasa tertekan dengan pekerjaan dan keluarga,anxiety
+rasanya aman karena ada rencana cadangan,relief
+"Sekarang aku cuma bisa berpikir ""apa yang harus kulakukan?""",fatigue
+Dia tahu aku tidak suka ketika dia membunyikan musik terlalu keras.,anger
+ngakak liat muka lu pas kaget,joy
+"Rasa takut ini akan berlalu, tapi aku masih harus menunggu",anxiety
+"Saya akhirnya selesai mengerjakan proyek tugas kuliah, rasanya lega banget!",relief
+Aku tak bisa menerima bahwa aku harus hidup sendirian.,sadness
+Aku benar-benar kesal sekali!,anger
+aku bersyukur masalahnya mulai jelas,relief
+Aku merasa tidak memiliki tujuan dalam hidupku,sadness
+Senyumku kembali muncul setelah saya berhasil menyelesaikan masalah di tempat kerja.,relief
+"Mencoba untuk menemukan kebahagiaan di tempat lain, tapi aku masih belum menemukannya.",sadness
+Saya tidak pernah melupakan saat saya sedang mencoba menenangkan diri sendiri.,relief
+"Aku bisa melupakan kesulitan-kesulitan yang kita alami sepanjang minggu lalu,",relief
+Rencana liburan aku terus ditunda sampai besok.,neutral
+"Aku hanya ingin menjadi seperti mereka, tapi aku tak pernah mampu.",shame
+Aku tidak bisa lupa dengan wajahmu.,sadness
+seru abis main game sampe pagi,joy
+Mengapa saya tidak bisa menenangkan diri?,anxiety
+"Saya ingin kembali jadi seperti dulu, saat masih merasa bahagia.",loneliness
+"Aku rasa ini adalah hari ulang tahun terbaikku, aku sedang bersama teman-teman yang aku cintai!",joy
+nyaman bgt bisa curhat lepas kayak gini,relief
+Saya sudah melakukan semua yang bisa saya lakukan tapi hasilnya masih kurang,fatigue
+Aku tidak terlalu terkejut dengan berita yang baru.,neutral
+Aku khawatir aku ga bisa mencapai tujuan.,anxiety
+halo guys,neutral
+"Aku harus pergi ke dokter besok, aku takut",anxiety
+Rasanya semua orang sudah lupa dengan saya.,loneliness
+Mengapa saya harus terus berjuang?,anxiety
+Aku rasa tidak ada tempat untuk aku di rumah!,anger
+Aku rasa aku tidak memiliki keinginan apa-apa untuk melakukan apa-apa,neutral
+Aku tidak lagi merasa gugup tentang proyek besar,relief
+Cairan mataku udah mulai keluar dan aku tidak bisa menghentikannya.,loneliness
+Saya harus berhati-hati saat memasuki kegiatan kali ini.,neutral
+Saya mengikuti acara webinar online hari ini.,neutral
+Akhirnya aku menanggapi pesan itu setelah 2 jam.,shame
+capek bgt belajar dapetnya cuma segini,fatigue
+Aku tidak tahu bagaimana bisa memulai lagi.,shame
+Aku mengapa harus selalu terbebani oleh kekhawatiran?,anxiety
+"Aku makan sarapan, tapi rasanya tidak enak seperti biasa.",fatigue
+wah gila sih ini mah juara bgt,joy
+aku bangga sama progres kecil ini,joy
+aku merasa lebih baik setelah tahu langkah berikutnya,relief
+Aku merasa lebih percaya diri setelah menyelesaikan tugas,relief
+"Gue ingin memiliki waktu untuk diri gue, tapi gue tak pernah bisa.",fatigue
+Aku merasa tidak punya kesempatan untuk mengejar impian!,anger
+Tidak tahu apa yang salah tapi rasa tidak nyaman itu terus muncul,anxiety
+Saya punya uang untuk membayar listrik dan air setahun ke depan.,relief
+Aku ingin mencoba belajar bahasa Inggris lagi.,neutral
+Aku masih harus beli sayuran di pasar hari ini.,neutral
+Aku benar-benar tidak sabar dengan kehidupan ini.,anger
+Aku tak bisa menerima kenyataan bahwa aku salah lagi,shame
+"Aku rasa aku lagi dalam keadaan lelah mental, semakin aku berusaha semakin aku merasa gagal.",fatigue
+Aku tidak tahu bagaimana cara menghadapi tekanan ini,anxiety
+kocak abis ceritanya gila,joy
+Mengapa aku selalu saja melakukan kesalahan,shame
+Saya mendapatkan penghargaan dari sekolah.,relief
+gue bingung cerita ke siapa soal takut sidang,loneliness
+Gue rasa harus berlatih yoga lebih sering untuk melepaskan stres.,fatigue
+lulus training dapet sertifikat keren,joy
+Cukup istirahat,fatigue
+"Ah, akhirnya saya bisa meluruskan kesalahpahaman itu dengan teman saya.",relief
+Aku khawatir aku ga bisa menyelesaikan tugas kuliah ini.,anxiety
+Aku rasa tidak punya masa depan yang cerah lagi!,anger
+Saya merasa terlalu berbeda dengan lingkungan sekitar.,loneliness
+Bagaimana aku bisa menenangkan diri sendiri?,anxiety
+"Aku tidak merasa capek, seperti biasa",relief
+"Saya hanya perlu berlari, berlari, berlari",shame
+"Aku perlu teman yang bisa mengerti aku, tapi siapa yang mau?",loneliness
+gue pengen tau cara ngatur waktu yang baik,neutral
+rasanya nggak seberat sebelumnya,relief
+"Aku hanya bisa berbaring di ranjang ini, menyaksikan teman-temanku punya kehidupan yang sibuk.",loneliness
+Kalo lagi gusi sakit aku nggak perlu kencan lagi.,anger
+Aku merasa tidak pernah bisa menemukan tempat di mana aku bisa merasa nyaman dan aman,shame
+Aku sedang belajar coding online.,neutral
+gue menang lawan rasa malas hari ini,joy
+Aku hanya ingin hidup tanpa stres dan kebencian.,anger
+Apa yang lagi aku lakukan lagi hari ini?,neutral
+"Aku makan malam, tapi aku tidak bisa makan dengan sepenuh hati.",fatigue
+Aku tidak bisa bermain sepak bola seperti teman-temanku.,sadness
+Gak enak rasanya waktu aku melihat hasil tes aku dan aku gagal.,sadness
+Hari ini aku mau nonton film bioskop bareng teman-teman.,neutral
+Aku mesti ngebut ngerjain proyek ini tapi aku sudah sangat lelah,fatigue
+Kesedihan gue sudah bertahun-tahun,sadness
+Takut akan kegagalan menghantui setiap langkahku,anxiety
+rasanya sepi saat harus mengerjakan semuanya sendiri,loneliness
+Tidak bisa mengelak rasa bersalah itu.,shame
+rasanya deg degan dari tadi pagi,anxiety
+Saya harus berangkat ke kantor dalam 2 jam.,neutral
+aku burnout karena revisi tidak selesai selesai,fatigue
+emosi jiwa liat kelakuannya,anger
+wah gila sih ini mah juara,joy
+malu-maluin bgt kejadian tadi siang,shame
+Sekarang aku marah dan tidak bisa berbicara!,anger
+"Saya merasa seperti di dalam neraka, tidak ada harapan.",anger
+"Hari-hari aku semakin pendek, tidak ada uang untuk beli makanan.",sadness
+"Aku merasa lemah, tidak bisa lagi menghadapi hidup.",sadness
+merasa terasing di lingkungan kerja baru,loneliness
+Aku ingin berlari dari semuanya dan tidak pernah kembali,sadness
+"Aku rasa aku udah capek banget nih, ngapa sih aku harus kerja sampai jam 10 malem.",fatigue
+anjrit kaget gua dapet hadiah,joy
+aku kecewa sama hasil yang keluar,sadness
+Apa yang akan terjadi jika aku tidak ada di tempat ini?,loneliness
+"Saya sudah menunggu kejutan ini selama berhari-hari, dan akhirnya tiba!",relief
+mantap dapet A lagi kita,joy
+Gue ingin sekali bisa menjadi bahagia sendirian.,loneliness
+Aku bisa pergi ke luar kota akhir pekan ini.,relief
+"Aku tidak bisa menghadapi mata kawan-kawanku, aku terlalu malu",shame
+Aku khawatir saya lupa semua jawaban soalnya,anxiety
+Ku rasa aku nggak punya perasaan manapun dengan musik yang aku dengarkan,neutral
+Saya harus cek email sebelum menyelesaikan pekerjaan.,neutral
+Aku bisa melupakan rasa sedih ketika aku kehilangan hewan peliharaanku.,relief
+rasanya nggak ada yang paham tekanan ini,loneliness
+"Aku merasa hancur, seluruh hidupku seperti hancur di atas",shame
+Dikarenakan kebiasaan tidur siang aku sering terlambat datang kerja.,fatigue
+"Hari ini aku harus presentasi, aku takut gagal",anxiety
+Saya merasa sangat kehilangan arah dengan kehidupan saya saat ini.,loneliness
+bahagia itu pas liat saldo atm nambah wkwk,joy
+Saya sedang mencoba menyembunyikan kesepian saya dengan aktivitas online.,loneliness
+Aku merasa seperti hidupnya tidak adil.,sadness
+mantap lah pokoknya ga kecewa,joy
+Kehilangan dia membuat aku merasa takut dengan masa depan.,sadness
+Gue ingin kembali ke masa lalu saat gue masih dengan nenek,sadness
+cemas banget kalau aplikasinya error,anxiety
+Aku hanya ingin melakukan apa yang sudah direncanakan,neutral
+Apa ini sakitnya kena gawat darurat,anxiety
+Aku telah menyelesaikan proyek yang telah membuat aku capek berhari-hari.,relief
+gue puas karena chatbotnya makin nyambung,joy
+Aku tidak berani mengatakan bahwa aku sedang sakit,shame
+Malam-malam saya gak bisa tidur karena pikiran yang berkelebat,fatigue
+Aku malu karena suami tidak lagi mengalami orgasme saat kita berhubungan,shame
+"Karena minggu depan ada rapat kerja, aku harus persiapan.",neutral
+Rasa takut ini membuatku merasa tidak bisa melanjutkan ke depan,anxiety
+Mengingat lagi kata-kata keras dari guru,shame
+"Mau jujur, aku sangat malu dengan diri sendiri saat malam itu, aku menolak makan bersama keluarga",shame
+"aku sedang merasa sangat tegang, kayak kena gigit ular beludak",anxiety
+aku dongkol karena sudah berusaha tapi disalahkan,anger
+Aku tidak tahu bagaimana cara mengatasi perasaan ini,shame
+Bagaimana aku bisa terus hidup bersama dia?,anger
+"Saya sudah mencoba, tapi mereka tidak mau mendengar.",anger
+Kok bisa dia menyakitiku begitu!,anger
+"Mereka bilang aku harus berlari, tapi aku masih belum siap.",sadness
+Aku tidak bisa lagi menghadapi kehidupan ini sendirian.,sadness
+"Gue sih ingin pergi ke pantai, tapi gue rasa gue tidak bisa berjalan jauh.",fatigue
+Saya merasa seperti robot yang terus menjalankan program,fatigue
+"Akhirnya saya bisa lulus kuliah, semua tekad saya tidak berdosa!",relief
+"Akhirnya aku sendirian di kota besar ini, jadi apa sebenarnya yang salah denganku?",loneliness
+apa yang terjadi jika aku sendirian di dunia ini?,anxiety
+asik akhirnya bisa beli hape baru,joy
+Saya senang bisa menemukan tempat makan baru yang lezat,relief
+Kangen dia yang sudah tidak ada lagi.,sadness
+Aku tidak terlalu tertarik dengan film barusan.,neutral
+"Saya pikir saya akan gagal, tapi ternyata saya berhasil!",relief
+"Saya benar-benar kesal dengan orang itu, selalu menghakimi saya tanpa tahu fakta.",anger
+"Saya merasa seperti di bawah tekanan berat, tidak ada ruang untuk bernapas.",anger
+Aku tidak bisa lagi memikirkan masa depan.,sadness
+saya jengkel karena tidak diberi kesempatan menjelaskan,anger
+Aku tidak ingin menjadi korban dari kekejamannya.,anger
+takut banget gagal lagi,anxiety
+rasanya tegang karena waktu sidang semakin dekat,anxiety
+"Aku ingin pergi ke tempat tenang dan damai, tapi aku tidak punya waktu",anxiety
+Mengapa aku selalu salah?,anxiety
+Aku benar-benar tak peduli apa yang terjadi sekarang.,anger
+Aku tidak bisa melihat masa depan,sadness
+Saya merasa capek sekali untuk berbicara.,fatigue
+Saya merasa sangat bersyukur setelah melihat keluarga yang masih sehat.,relief
+Mau ga mau aku harus menunda proyek ini karena kekhawatiran,anxiety
+Aku merasa bersalah karena tidak bisa membantu orang tuaku yang sedang membutuhkan,shame
+Saya tidak bisa menemukan salam di kamar saya.,neutral
+Saya harus menunggu hasil pengujian laboratorium.,neutral
+"Aku sih mau tidur aja sepanjang hari, gue capek sekali!",fatigue
+"Saya merasa sangat lega sekarang, semua masalah saya selesai!",relief
+Aku akan mencoba untuk tidak memikirkan hal itu lagi di hari ini.,shame
+Aku harus meninggalkan tempat itu.,anger
+akhirnya ngerti konsep machine learning wkwk,joy
+"Aku kira dia peduli sama aku, tapi ternyata dia cuma ingin mainin aku.",anger
+"Maafin aku ya, aku merasa sangat kesepian sekarang.",sadness
+gue lega dan senang setelah demo sukses,joy
+makasih ya udah mau nemenin gua begadang,relief
+Aku tidak merasa apa-apa saat aku melakukan pekerjaan biasa,neutral
+"Aku merasa hampa, tidak ada tujuan di kehidupan ini.",sadness
+Aku harus memastikan semua barang siap sebelum bepergian.,neutral
+"Saya tidak bisa melawan, terlalu lemah untuk mencoba",shame
+Sekarang aku bisa berfokus pada hal-hal positif,relief
+saya kecewa karena progresku terasa lambat,sadness
+Aku bisa menikmati akhir pekan tanpa harus khawatir tentang deadline.,relief
+Saya tak bisa melupakan kesalahan di masa lalu,anxiety
+terbantu bgt dapet wejangan dari lu,relief
+Aku sudah mencoba beberapa jenis makanan yang aku rasa enak.,sadness
+Aku tidak bisa berbicara dalam depan banyak orang,anxiety
+"Aku tidak tahu apa aku salah, tapi aku merasa bersalah",shame
+Mengapa saya selalu harus berjuang?,anxiety
+sendiri lagi sendiri lagi,loneliness
+aku tidak bisa berhenti memikirkan tentang masa depan,anxiety
+aku burnout setelah revisi berulang kali,fatigue
+Aku membeli buku baru hari ini.,neutral
+gada temen belajar dapet nilai jelek,loneliness
+pusing pala barbie liat kodingan error,fatigue
+Aku tidak tahu apa yang harus aku lakukan.,sadness
+gelisah bgt gabisa tidur mikirin nasib,anxiety
+Saya terus mencari jalan keluar dari masalah ini,anxiety
+gue semangat lanjut setelah hasil test oke,joy
+Kita bisa nonton film favorit lagi nanti malam,relief
+Gue rasa aku tidak pantas untuk dicintai oleh seseorang.,loneliness
+Saya rasa saya kehabisan nafas,anxiety
+aku marah karena kerjaanku dianggap gampang,anger
+"Baru aja aku pindah ke apartemen baru, tapi aku masih merindukan kamarnya",loneliness
+Mungkin aku bisa pergi berjalan-jalan weekend ini,neutral
+aku tumbang kalau dipaksa terus,fatigue
+aku kecewa sama diri sendiri,sadness
+Aku bisa melupakan segala rasa sakit di masa lalu.,relief
+"Di saat semua orang punya keluarga yang bahagia, aku hanya punya ayah yang selalu sibuk bekerja.",loneliness
+Aku akan mencoba berpikir positif dan tidak pernah menyerah.,fatigue
+marah banget gua gapapa lah ya,anger
+"Saya merasa seperti dipercaya, tetapi saya tidak bisa percaya diri.",anger
+ipk gua turun gara-gara dapet C,sadness
+Membayangkan diri saya ditinggalkan oleh teman-teman,anxiety
+Aku merasa terlalu banyak tanggungan ini.,anxiety
+wkwkwk kocak bgt liat video kucing,joy
+Aku harus isi bensin mobil hari ini.,neutral
+Saya hanya ingin menyalin apa yang saya lakukan kemarin tanpa repot.,fatigue
+"""Karena mereka tidak peduli dengan aku!""",anger
+Aku rasa aku kehilangan semua yang aku cintai.,loneliness
+Mungkin aku bukanlah orang yang cukup kuat,anxiety
+Aku baru saja menghindari kecelakaan yang mengkhawatirkan,relief
+"Gue rasa tubuh gue lelah banget, kayak gue dipaksa kerja 24 jam.",fatigue
+seru banget main game bareng mereka,joy
+Jangan-jangan saya tidak bisa menyelesaikan proyek akhir,anxiety
+Saya harus memperbarui informasi saya.,neutral
+"Aku pernah merasa bahagia, tetapi itu sudah sangat lama.",sadness
+Saya memutuskan untuk menjadi freelancer.,neutral
+hati rasanya kosong banget,sadness
+Aku hampir tidak bisa menghadapi siapa pun sekarang,shame
+Hari ini aku merayakan ulang tahun dengan teman-teman aku di kafe!,joy
+Dia tidak pernah memikirkan aku!,anger
+Kamu tidak pernah mengerti tentangku.,sadness
+"Aku merasa seperti telah gagal dalam hidup, aku tidak bisa lagi",shame
+Saya ingin ada seseorang yang bisa memahami saya dengan benar.,loneliness
+Aku merasa hina dan tidak berguna setelah tidak berhasil mendapat pekerjaan impian,shame
+"Di dunia ini, aku merasa tidak ada.",anger
+saya merasa kalah jauh dari teman seangkatan,shame
+akhirnya bisa dapet A di transkrip,joy
+Mungkin gue perlu istirahat lebih banyak ya?,fatigue
+Hari ini aku tidak bisa menyelesaikan apa pun,sadness
+Aku hanya bisa menangis sendirian di kamarku.,sadness
+Aku harus berusaha untuk mengatasi kekhawatiran ini,anxiety
+gue mau lihat respons sistem dulu,neutral
+Aku tidak tahu bagaimana cara untuk meninggalkan kehilangan ini.,loneliness
+Siapa yang melarang dia membanting pintu dan tidak peduli?,anger
+Saya hanya ingin tidur dan tidak pernah bangun lagi.,fatigue
+lucu bgt ampe mules perut gua,joy
+asik dapet temen baru di kampus,joy
+"Hari ini aku terasa benar-benar sendiri, tak ada yg paham",loneliness
+gakuat lagi gua pengen tidur aja,fatigue
+"Hari ini gue harus ke kantor pagi-pagi, tapi gue merasa tidak bisa terjaga.",fatigue
+Apa yang salah dengan aku?,loneliness
+"Wah, aku jadi mau berolahraga lagi!",relief
+"Dengan semua ini, aku merasa sangat marah.",anger
+Aku harus menerima bahwa aku tidak bisa mengontrol kehidupan,anxiety
+gagal mulu gua emang gada bakat,shame
+Karena itu aku perlu mengubah kebiasaanku tentang tidur dan makan malam.,fatigue
+Tensi tubuhku semakin tinggi,anxiety
+Aku terus menyalahkan diri sendiri.,shame
+Aku makan nafsu gini dan malu karena gendut banget!,anger
+Aku jadi bisa membantu orang lain dengan lebih baik,joy
+Tapi aku tahu akan sulit membayar tagihan aku sendiri.,anger
+aku overthinking sampai susah tidur,anxiety
+aku bahagia karena diterima magang,joy
+Hari ini saya harus memperbarui latar belakang aplikasi saya.,neutral
+aku lega karena akhirnya tahu langkah berikutnya,relief
+Aku ingin memperbarui kemampuanku dengan mengikuti kursus.,neutral
+terbantu bgt sama saran lu tadi,relief
+aku cemas karena belum siap menjelaskan algoritmanya,anxiety
+"Mencoba untuk menemukan kebahagiaan, tapi aku masih belum menemukannya.",sadness
+"Aku merasa sangat bodoh, tidak bisa membantu temen saat dia butuh",shame
+aku capek banget hari ini,fatigue
+"Saya tidak bisa memahami, mengapa mereka harus begitu kasar.",anger
+Saya mendengarkan lagu favorit di radio sambil berjalan pagi.,joy
+aku muak dengan tekanan yang datang terus,anger
+"Bukan bukan aku sih yang bodoh, tapi aku hanya tidak siap.",shame
+"Akhirnya aku bisa melupakan kegalauan itu,",relief
+rasanya badan dan kepala sama sama berat,fatigue
+Baru-baru ini aku kehilangan kenalan saya,sadness
+aku optimis setelah pipeline evaluasi selesai,joy
+"Ketika aku melihat kamu, aku merasa sedih kembali.",sadness
+"Aku selalu merasa tidak cukup, tidak pernah puas dengan apa yang aku lakukan.",shame
+Saya merasa tidak pernah memiliki orang dekat yang bisa dipercaya.,loneliness
+lagi overthinking bgt soal masa depan,anxiety
+"Aku suka melihat foto-foto kenangan, aku baru saja menemukan satu foto lama.",joy
+lucu bgt emang lu mah wkwk,joy
+"Mama bilang aku harus makan lebih banyak, tapi aku tak bisa nafsu",loneliness
+ini cuma test message,neutral
+Aku terus menerus membandingkan diri sendiri dengan teman-teman yang sukses,shame
+gokil parah emang temen gua,joy
+Dia bilang aku selalu salah tanpa mau mendengarkan aku.,anger
+"Saya akan makan saja, aku tidak punya nafsu",sadness
+berhasil juga akhirnya login fiturnya,joy
+rasanya panik kalau lihat daftar revisi,anxiety
+aku bodoh banget kenapa nggak kepikiran,shame
+Saya berhasil menyelesaikan ujian masuk kuliah.,relief
+Aku masih membutuhkan inspirasi dan motivasi yang lebih untuk terus melangkah.,fatigue
+capek mental dengerin nilai dibanding-bandingin,fatigue
+"Saya merasa seperti di dalam perang, tidak ada jalan keluar.",anger
+Saya harus melihat-lihat catatan di aplikasi catatan saya.,neutral
+Gue tidak tahu bagaimana caranya melepaskan diri dari kesedihan ini,sadness
+Gue hanya bisa menangis dan menangis,loneliness
+Mungkin aku bukanlah orang yang cukup,anxiety
+Aku tidak bisa menerima kenyataan bahwa aku tidak akan pernah bisa menjadi lebih baik,shame
+Hari ini aku tidak punya agenda penting apa-apa.,neutral
+payah bgt gua dapet kritik pedes dari bos,shame
+Aku tidak merasa apa-apa saat aku menonton konser,neutral
+payah banget gua dibanding yang lain,shame
+asik dapet makan gratis wkwk,joy
+Aku tak bisa menerima kalau aku harus melanjutkan hidup tanpamu setelahmu pergi.,sadness
+Saya tidak bisa berhenti memikirkan tentang kegagalan saya,anxiety
+Saya rasa saya tidak cukup untuk melakukan semuanya,anxiety
+rasanya semangat balik lagi,joy
+saya bersyukur hasilnya membaik,joy
+parah sih ini gokil abis,joy
+Saya tak ingin bertemu dengan mantan lagi,shame
+Aku tidak punya kekuatan untuk menghadapi kesepian ini.,loneliness
+Aku takut aku tidak bisa menemukan tempat parkir,anxiety
+Saya terus khawatir akan keuangan keluarga,anxiety
+"Aku tidak terlalu suka cuaca hari ini, terlalu panas",neutral
+Aku merasa hina karena harus bertarung untuk memperoleh hak-hak dasar,shame
+Saya butuh waktu untuk diri sendiri,fatigue
+Aku seperti sebuah benda yang tidak punya tujuan.,loneliness
+aku semangat lagi setelah dapat kabar baik,joy
+"Coba aku bayangkan aku sedang bahagia bersama seseorang, rasanya bagaimana?",loneliness
+Aku rasa aku menjadi semakin isolatif seolah-olah aku sedang berjuang sendiri.,loneliness
+rasanya ingin membantah tapi takut makin kacau,anger
+"Gembira sekali, aku bisa memiliki hobi dengan lebih santai,",relief
+sendirian mulu kayak kiper,loneliness
+anjir kok bisa error gitu sih bingung gua,anxiety
+"Wah, kenapa aku harus selalu terjebak macet?!",anger
+lelah ya Allah pengen istirahat tenang,fatigue
+rasanya beban turun setelah kode berhasil jalan,relief
+Aku lagi kesel dengan temen aku yang tak pernah membalas pesan.,anger
+wkwkwk anjing emang tuh bocah,joy
+Aku merasa lebih mudah menangani masalah hari ini,relief
+gue butuh ditemani tapi nggak tahu harus minta ke siapa,loneliness
+asik akhirnya gajian juga wkwk,joy
+Aku ga bisa pergi liburan karena masalah pribadi.,anxiety
+"Aku merasa kalah di kehidupan, selalu di belakang orang lain.",sadness
+Semoga aku bisa tenang,anxiety
+"Kemarin aku melihat teman ku sedang berbicara dengan seseorang, aku jadi iri.",loneliness
+Saya tidak bisa mengatakan apa-apa saat sedih.,sadness
+Aku rasa aku tidak memiliki keinginan apa-apa hari ini,neutral
+Aku bisa menikmati waktu bersama keluarga dengan tenang,relief
+Aku pikir aku sudah cukup berani untuk mengatakan apa yang aku pikir.,anger
+Tapi aku rasa aku harus mencoba menemukan cara lain untuk mengatasi kelelahan ini.,fatigue
+Aku tidak sabar nanti aku bisa liburan ke Bali,joy
+Aku tidak bisa percaya kalau aku harus hidup tanpamu sekarang.,sadness
+aku takut terlihat tidak kompeten,shame
+saya sedih karena merasa gagal,sadness
+Saya berharap saya bisa melupakan hari itu dan tidak pernah mengulanginya lagi.,relief
+Tadi aku makan siang di warung favoritku.,neutral
+Apa yang aku harapkan sebenarnya?,loneliness
+mantap bgt lah pokoknya top bgt,joy
+Aku merasa seperti aku terjebak di dalam sebuah ruangan yang tak ada jalan keluar.,loneliness
+Aku masih belum menyelesaikan tugas kuliahku.,neutral
+"Tadi malam aku cuma bisa tidur jam 2 pagi, capek banget sih",fatigue
+gua takut dosen bakal nanya yang susah,anxiety
+"Aku ingin lupa perasaan ini, tetapi aku tak bisa",shame
+gila ini keren parah aplikasinya wkwk,joy
+"Halo, gue sedang sedih. Aku butuh bantuanmu",sadness
+"Cobalah kamu bayangkan jika saya harus menghadapi hari itu sendirian, kayaknya lebih parah.",relief
+"Wah, kenapa aku harus selalu terus merasa sedih?!",anger
+Gak enak rasanya waktu aku melihat foto-foto masa lalu.,sadness
+gue merasa payah dibanding teman teman,shame
+Tidak ada yang bisa mengerti aku secara menyeluruh.,loneliness
+Gue harus memastikan semua informasi siap sebelum pertemuan.,neutral
+agak sedih liat temen udah pada lulus,sadness
+Kurasa aku membutuhkan lebih dari sekedar istirahat,fatigue
+gue merasa nggak ada yang peduli,loneliness
+patah hati banget sumpah,sadness
+Saya baru saja belajar bahasa Inggris dan sudah mencapai level intermediate.,neutral
+Aku merasa seperti aku kehilangan semua harapan.,sadness
+sepi bgt pengumuman nilai gada yang diajak diskusi,loneliness
+Tapi dia malah mengatakan aku terlalu banyak memikirkan soalnya.,anger
+Saya tidak bisa memahami mengapa orang-orang tidak peduli dengan saya.,loneliness
+anjay dapet giveaway wkwk,joy
+hari ini jadwalku cukup biasa,neutral
+Hari ini aku harus membuat laporan keuangan bulanan.,neutral
+Saya harus menyiapkan presentasi untuk rapat.,neutral
+Saya hanya ingin mengetahui rencana liburan minggu depan.,neutral
+Aku tak bisa mengontrol nafasku,anxiety
+"Tapi aku salah, aku tidak bahagia sama sekali.",anger
+rasanya pengen nangis dari tadi,sadness
+Saya tidak perlu khawatir tentang uang lagi,relief
+Orang-orang di sekitar aku kayak gak pernah perhatikan aku,loneliness
+aku takut kelihatan bodoh,shame
+malu bgt dapet nilai paling rendah sekelas,shame
+"Aku baru tahu pas besok aku melihat foto kakek aku saat masih muda, aku sedih, tapi juga bahagia!",joy
+Aku cuma bisa menangis dan berdoa semoga semua ini berlalu.,loneliness
+takut bgt ntar lulus mau jadi apa,anxiety
+"Aku rasa lega, karena aku bisa menghindari konflik dengan teman",relief
+"Malam minggu juga harus ke kantor, gara-gara proyek yang menumpuk.",fatigue
+Mungkin aku perlu berbicara dengan seseorang tentang kelelahan ini.,fatigue
+Aku benar-benar kecewa sama sekali.,anger
+Aku tak bisa percaya apa yang dia bilang!,anger
+Gue butuh minum secangkir kopi untuk menghilangkan kelelahan.,fatigue
+hampir semua hal yang aku lakukan seperti gagal,anxiety
+"Lagi bersedih dalem hati, malu dipermainkan.",anger
+"Kita liburan bersama keluarga, tapi aku merasa berbeda",loneliness
+Aku merasa sangat sedih karena aku kehilangan kekasihku.,sadness
+Aku rasa aku sudah tidak punya lagi motivasi untuk melakukan apa-apa.,fatigue
+nyesek parah tbtb dia ngilang gada kabar,sadness
+kocak bgt sumpah demi apa,joy
+lelah jiwa raga ngadepin bos yang rese,fatigue
+cemas liat temen udah pada dapet kerja gua belum,anxiety
+Gue masih teringat betAPA rasa kesedihannya ketika gue kehilangan nenek,sadness
+"Kemarin aku makan nasi goreng, mungkin aku harus coba lain kali",neutral
+Aku hanya ingin ada seseorang yang bisa memahami aku,loneliness
+Saya butuh waktu untuk memikirkan ini sebelum mengambil keputusan.,neutral
+Aku tidak pergi ke mana-mana hari ini,neutral
+"Aku lagi kecewa banget dengannya, tidak percaya diri lagi.",anger
+seru abis acaranya pecah bgt sumpah,joy
+gue mulai melihat jalan keluarnya,relief
+Aku tak pernah merasakan kehilangan seperti ini sebelumnya.,loneliness
+"Aku merasa sedih lagi, aku membutuhkanmu.",sadness
+kocak bgt sumpah demi apa kaget gua,joy
+Aku merasa terlambat dalam mencapai kehidupan impian dan tidak bisa mengejar impian lainnya,shame
+aku takut mengecewakan orang rumah,anxiety
+ngakak parah ampe nangis,joy
+Aku merasa aku kehilangan tujuan dalam hidupku,sadness
+Hari ini aku terbangun dengan perasaan berat di hati.,sadness
+menang banyak nih gua dapet promo,joy
+sedih bgt dapet nilai jelek matkul ini,sadness
+Aku tidak bisa percaya kantor telah menyetujui permohonan liburku.,relief
+aku down karena merasa tertinggal jauh,sadness
+Saya suka melihat anak-anak bermain di taman bersama keluargaku.,joy
+Aku mulai mencari jawaban di mana-mana tapi aku nggak bisa menemukannya.,loneliness
+Aku seperti terjebak di ruang yang kosong ini.,loneliness
+Aku merasa sangat bahagia saat mendengar kabar baik dari teman.,joy
+Aku tidak dapat melanjutkan lagi hari ini.,fatigue
+Aku mesti menunggu lama sekali waktu aku makan bareng temen-temen.,anger
+seru bgt dapet dosen baik nilai A,joy
+gue mau tanya soal fitur diary,neutral
+Saya merasa seperti di hukum tanpa kesalahan.,anger
+gue kesel banget dikira cuma main main,anger
+Aku akan mencari jalan keluar dari situasi ini.,anger
+asik dapet bonus akhir tahun wkwk,joy
+Aku sangat sedih karena aku harus menghadapi keputusan sulit.,sadness
+"aku tak bisa tidur malam ini, terus menebak apa yang bisa terjadi",anxiety
+Maksudnya aku sama sekali tidak bisa percaya sama apa yang dia katakan.,anger
+Dia hanya bisa berbicara tentang dirinya sendiri.,anger
+Saya tidak bisa bergerak lagi karena capeknya,fatigue
+Aku tak tahu harus bagaimana menghadapi tekanan yang terus meningkat,anxiety
+Hari ini aku bisa menikmati keindahan alam,relief
+Saya sedang sibuk dengan pekerjaan saya.,neutral
+Aku ingin tertidur saja dan tidak pernah bangun lagi,shame
+Semua hal jadi terasa berat dan merepotkan.,fatigue
+seru bgt liburan bareng keluarga kemaren,joy
+"Kadang aku ingin menjadi orang lain, orang yang lebih kuat.",anxiety
+"Mereka tidak pernah mengerti, hanya ingin memanfaatkan.",anger
+Aku rasa aku tidak cukup istirahat,fatigue
+Saya sudah membeli tas baru untuk liburan.,neutral
+cuaca hari ini mendung banget ya,neutral
+Aku tidak bisa berhenti memikirkan tentang apa yang bisa terjadi,anxiety
+saya merasa tidak dianggap,loneliness
+apa yang akan terjadi jika aku gagal?,anxiety
+Saya ingin kembali ke masa lalu saat saya masih merasa bahagia dengan diri saya sendiri.,loneliness
+Aku jadi bisa melunasi utang-utangku dengan cepat,joy
+Aku selalu merasa sedih setiap aku melihat foto nenek,sadness
+Aku tak tahu bagaimana lagi aku bisa menghadapi kenyataan ini,anxiety
+bangsat kaget gua tbtb ada lu,joy
+Saya sudah capek ngerjain tugas yang sama selama seminggu ini,fatigue
+saya merasa terbantu setelah diskusi tadi,relief
+Bagaimana aku bisa mencapai kebahagiaan,anxiety
+"Aku ingin kembali ke masa lalu, tetapi aku tak bisa",shame
+"Saya tidak bisa tidur lagi, selalu ada yang terlintas di pikiran saya",anxiety
+Aku bisa tidur dengan nyenyak setelah itu,relief
+Membuat aku tak bisa melanjutkan.,shame
+aku senang dosen akhirnya approve,joy
+Saya terus merasa malu dengan setiap kesalahan.,shame
+"Semua stres saya hilang sekarang, saya bisa menghembuskan napas lega.",relief
+Tidak ada yang tahu saya saat sedang merasa sendirian.,loneliness
+halo apa kabar,neutral
+Tapi aku tahu aku tidak bisa menyerah.,fatigue
+"Kamu pergi meninggalkanku, aku merasa sendirian.",sadness
+gue sedih tapi bingung mau cerita ke siapa,sadness
+rasanya semua orang sibuk sendiri,loneliness
+kocak abis nih meme-nya dapet aja lu,joy
+Aku telah menyelesaikan proyek yang telah membuat aku lelah berbulan-bulan.,relief
+Aku hanya ingin tidur hari ini,neutral
+Aku khawatir aku ga bisa mencari nafkah sendiri.,anxiety
+Rasa sedih ini sangat mencekam aku,sadness
+Saya merasa terlalu berbeda dengan orang lain.,loneliness
+Aku merasa kayak gak masuk akal karena aku sendiri,loneliness
+Aku akan mencoba untuk tidak memikirkan hal itu lagi.,shame
+Gue merasa sedang terjebak dalam duka yang tak ada habisnya.,loneliness
+"Setelah beberapa bulan berjuang, akhirnya saya mendapatkan pekerjaan.",relief
+Aku seperti terjebak dalam mimpi buruk,anxiety
+Saya sedang mencari informasi tentang teknologi terbaru.,neutral
+Akhirnya aku bisa menyelesaikan proyek kerjaan yang lama.,relief
+seru banget tadi main futsal bareng,joy
+"Akhirnya aku bisa makan siang hari ini, makanan enak banget!",relief
+aku lega setelah pipeline backend mulai jelas,relief
+Gue hanya bisa berdiam diri dan menangis sendirian,loneliness
+Aku tidak terlalu bersemangat untuk liburan akhir pekan.,neutral
+Tapi aku tidak pernah merasa bahagia,sadness
+Aku tidak terlalu berminat dengan perayaan hari ini,neutral
+Gue rasa harus menghabiskan waktu bersama keluarga untuk melepaskan kelelahan.,fatigue
+nyaman bgt ngobrol di room ini,relief
+"Malam ini aku makan siang dengan teman lamaku, kami masih bisa bercanda",loneliness
+Aku tidak bisa fokus di sekolah,anxiety
+rasanya frustrasi karena arahan berubah terus,anger
+merasa terasing di lingkungan baru,loneliness
+Aku tidak bisa melupakan cintanya.,sadness
+"Aku tidak terlalu senang hari ini, tapi juga tidak terlalu sedih",neutral
+gokil parah emang temen gua satu itu,joy
+Hari ini aku merasa sangat baik karena tidak ada rencana apa pun.,relief
+Kenapa orang lain bisa lebih baik dari aku?,shame
+bangsat kaget gua lulus juga akhirnya,joy
+"Aku merasa seperti telah berbuat dosa, aku tidak bisa mengeluh",shame
+revisi dikit dapet A mantap,joy
+Aku sengaja tidak pergi ke kafe hari ini,neutral
+Saya tidak bisa fokus saat belajar karena selalu memikir tentang apa yang bisa terjadi,anxiety
+gue lelah sampai susah mikir,fatigue
+"Tolong, gue butuh tidur, gue merasa lelah benar-benar.",fatigue
+Rahmad suportif banget saat itu aku sedang panik,relief
+keren nih updatenya makin mantap,joy
+gue berhasil compile tanpa error,joy
+Tapi aku tahu aku tidak sendirian dalam situasi ini.,fatigue
+tegang bgt mau interview kerja besok,anxiety
+Aku rasa ada yang hilang di dalam diri gue.,loneliness
+Aku tidak ingin menjadi orang yang selalu harus berbaik hati.,anger
+kehilangan arah banget sumpah bingung,sadness
+Aku rasa aku bisa menyelesaikan kuliah hari ini dengan baik,neutral
+murung terus dari tadi pagi,sadness
+nyesel banget kenapa tadi begitu,shame
+"Setiap kali aku melihat pasangan yang bahagia, aku langsung merasa sendirian.",loneliness
+sendiri lagi dapet nilai kecil lagi,loneliness
+"Aku tidak bisa fokus pada tugas kuliah, pikiran kupun selalu kabur.",fatigue
+Aku tidak bisa percaya aku bisa makan es krim hari ini.,relief
+Aku takut untuk meminta bantuan karena khawatir akan disalahkan,shame
+"Hari ini aku bisa menyelesaikan kerjaan dengan lebih cepat,",relief
+down parah gara-gara nilai jelek,sadness
+berasa gapunya temen yang pinter,loneliness
+Aku tidak bisa lagi menyenangkan orang lain.,sadness
+Mereka tahu aku lagi gusi sakit tapi malah ngirim lelucon.,anger
+Saya tidak bisa menunggu lagi untuk membagikan kabar baik ini dengan keluarga saya.,relief
+Siapa yang bisa menemani aku dalam kehancuran ini?,loneliness
+Aku butuh waktu untuk mengembangkan diri sendiri.,anxiety
+anjir lah lucu banget sumpah,joy
+Aku merasa tertekan dengan pekerjaan yang terus-menerus,anxiety
+"Aku tidak bisa menghadapi diri sendiri, aku terlalu malu",shame
+Hari ini aku merasa sangat sedih dan tidak bisa menikmati apa pun.,sadness
+Mau tahu apa yang paling aku butuhkan saat ini?,fatigue
+merasa terasing gara-gara nilai paling kecil,loneliness
+"Aku tidak bisa mengatasi rasa benci ini, selalu terjadi",shame
+Aku terlalu malu minta maaf kepada teman,shame
+Aku rasa aku sudah tidak bisa lagi melawan lelah ini.,fatigue
+Saya sangat frustasi dengan kerjaan yang tidak kunjung selesai!,anger
+"Semua stres saya hilang sekarang, saya bisa menghembuskan napas lega.",relief
+Aku mungkin harus mengikuti seminar minggu depan.,neutral
+Aku benar-benar tidak percaya diri aku lagi.,anger
+rasanya suram ketika melihat pekerjaan belum selesai,sadness
+Aku merasa jatuh lebih dalam ke dalam kesedihan.,shame
+Rasa panik mulai menghampiri aku,anxiety
+gokil dapet diskon gede bgt,joy
+"Aku sibuk hari ini, harus menyelesaikan deadline",neutral
+"Sebenarnya aku mau kerja, tapi lelah.",fatigue
+Aku khawatir aku tidak akan pernah bisa menjadi orang yang sukses.,shame
+awokawok lucu amat si lu,joy
+Saya harus merevisi catatan saya sebelum memasuki wawancara.,neutral
+saya merasa gagal memenuhi ekspektasi,shame
+Saya lega tidak ada tugas yang harus selesai besok.,relief
+"Lagi merasa tidak adil, seperti aku tidak pernah memiliki kesempatan.",anger
+deg-degan tbtb kepikiran kesalahan masa lalu,anxiety
+gue was was setiap memikirkan pertanyaan teknis,anxiety
+aman kodingannya udah gua backup,relief
+Aku rasa aku nggak punya tujuan hidup yang jelas,neutral
+anjir dapet A beneran dong wkwk,joy
+aku malu karena belum paham konsep dasarnya,shame
+Aku merasa sakit kepala karena kelelahan.,fatigue
+seneng bgt dapet nilai A matkul susah,joy
+Aku merasa tidak diapresiasi oleh siapa pun.,sadness
+Aku sudah mencoba untuk berbicara dengan orang lain,sadness
+Aku tidak bisa menerima kenyataan bahwa dia udah pergi,loneliness
+mantap bener dah hoki gua hari ini,joy
+asik akhirnya bisa jalan-akhir pekan ini,joy
+Aku merasa sangat malu,shame
+Aku harus mengisi survei pendidikan online.,neutral
+Aku tidak bisa menemukan seseorang yang bisa memahami aku,loneliness
+saya frustrasi dengan aturan yang berubah terus,anger
+Aku ga bisa bicara dengan dia tanpa marah.,anger
+kuat kok gua demi masa depan,relief
+"Gue mencoba untuk bersemangat, tapi terasa sulit.",loneliness
+Makan malam dengan keluarga menjadi momen paling menyedihkan,shame
+rasanya hina ketika pekerjaanku diremehkan,shame
+Aku dan teman-temanku nanti akan bermain di taman hiburan,joy
+ngakak parah liat tingkah temen,joy
+wkwk konyol bgt kejadian di mall tadi,joy
+aku pengen ditemani tapi takut merepotkan,loneliness
+"Wah, akhirnya aku berhasil menyelesaikan tugas mati-matian tersebut!",relief
+Saya tahu aku nggak boleh menyerah tapi mengapa aku masih marah?,anger
+nyesel ga belajar dapet D dong,shame
+gue bingung mau cerita ke siapa,loneliness
+lagi nunggu temen di kafe nih,neutral
+Saya rasa saya tidak siap untuk presentasi besok,anxiety
+gue kesepian walau banyak orang di sekitar,loneliness
+"Hari ini aku ke kantor, apa yang harus aku lakukan?",neutral
+"Baru aja aku temukan teman baru, tapi aku tak yakin apakah mereka akan tetap setia",loneliness
+"Aku baru-baru ini baru pulang kantor dan udah tidur sih, tetapi aku kembali bangun karena kepepetan dengan deadline.",fatigue
+"Saya tidak pernah sabar menunggu hasil tes, tapi hari ini saya bisa bernapas lega.",relief
+Aku ingat kalau aku pernah lebih berenergi dan optimis.,fatigue
+Aku tidak bisa melawan keinginan untuk membeli barang-barang yang aku tidak butuhkan.,shame
+Aku ingin melupakan segala-galanya dan mulai dari awal,sadness
+semangat terus pantang menyerah,joy
+aku overthinking soal kemungkinan aplikasi error,anxiety
+bahagia itu sederhana liat doi senyum wkwk,joy
+tumbang nih kayaknya bentar lagi,fatigue
+pikiranku muter terus soal kemungkinan buruk,anxiety
+Hari ini aku merasa begitu sendirian,sadness
+Tidak bisa menolak menunjukkan foto paling buruk di media sosial,shame
+Saya tidak tahu apa yang harus saya lakukan,anxiety
+"Tapi, mengapa aku selalu merasa sendirian?",loneliness
+"Selamat bro, udah bisa ngasih tahu bos bahwa kita selesai,",relief
+"Aku ingin kembali ke masa lalu, tapi itu tak mungkin",shame
+Aku berharap aku bisa menemukan tempat yang benar-benar nyaman untuk aku beristirahat.,loneliness
+"Sekarang saya bisa tidur dengan tenang, apa itu kebahagiaan!",relief
+Saya tidak punya kata-kata untuk mengungkapkan betapa lega saya setelah hari yang panjang itu.,relief
+"Kasihan diri sendiri, terus harus melawan kelelahan",fatigue
+takut dapet nilai jelek pas pengumuman,anxiety
+Aku sudah merasa lelah sejak pagi.,fatigue
+Aku tidak bisa menerima kenyataan ini,sadness
+Aku sudah mencoba untuk menghadapi semua yang terjadi,sadness
+Aku tidak lagi perlu khawatir tentang uang bulan depan,relief
+Hari ini aku cuma bisa lakukan apa yang biasa,neutral
+Aku tidak bisa menyangkal kalau aku sedang merasa sangat lelah hari ini,fatigue
+gue frustrasi menghadapi komentar yang merendahkan,anger
+halo aku baru masuk room,neutral
+Hari ini aku merasa sangat santai dan tidak perlu kerja sama.,joy
+keren parah sih ini mah,joy
+"Terima kasih Tuhan, saya bisa mengatasi semua kesulitan ini!",relief
+Saya harus memperhatikan keuangan.,neutral
+"Saya tahu aku nggak boleh marah, tapi mengapa aku masih marah?",anger
+Saya merasa lega setelah mendengar bahwa penyakitku sudah sembuh total.,relief
+Akhirnya aku bisa beristirahat dari pekerjaan yang bikin pusing,relief
+Kok bisa orang seperti itu!,anger
+"Aku hanya ingin melupakan kegagalan itu, tapi ingatan terus menghantui.",shame
+Aku rasa aku bisa menulis esai hari ini,neutral
+Aku berharap aku bisa menghilang dari kehidupan ini,shame
+Saya harus memeriksa pekerjaan saya.,neutral
+Bagaimana aku bisa menghadapi tantangan ini,anxiety
+Aku rasa aku harus menemukan sesuatu untuk membuatnya bangkit,sadness
+"Dia selalu mengatakan aku salah, tapi aku tahu aku tidak.",anger
+gue lagi lihat halaman chat,neutral
+Aku rasa aku tidak bisa lagi,sadness
+Kamu tahu apa itu perasaan batin yang selalu meneror?,anxiety
+cemas liat nilai di portal,anxiety
+Aku masih bisa ingat wajah mama saat aku masih kecil.,sadness
+Aku tidak bisa menemukan kebenaran dalam hidup ini,shame
+Aku tidak pernah tahu bahwa dia bisa begitu kejam.,anger
+Akhir pekan ini aku berencana ke pantai dengan keluarga.,joy
+"""Aku merasa hampa dan tidak memiliki arah dalam hidupku!""",anger
+aku merasa lebih baik daripada tadi,relief
+anjrit kaget gua dapet giveaway,joy
+Mungkin aku tidak bisa lagi menemukan bahagia.,sadness
+Saya ingin ada seseorang yang bisa menjadi teman baik saya.,loneliness
+Hari ini aku bisa menikmati sarapan tanpa stres!,relief
+Aku rasa kulitku sudah terasa kering.,fatigue
+wah gila sih ini mantap bgt,joy
+Aku selalu stres tentang ujian,anxiety
+paham gua sekarang maksudnya gimana,relief
+saya khawatir sistemnya tidak berjalan saat demo,anxiety
+"Gue rasa kalo gue butuh waktu untuk diri gue, tapi waktunya gue tidak punya.",fatigue
+Aku merasa tidak berharga karena tidak memiliki sesuatu yang luar biasa,shame
+Aku merasa seperti dikejar oleh keputusasaan.,loneliness
+Saya ingin ada yang bisa mendengarkan saya secara emosional.,loneliness
+aku emosi karena kerja kerasku dianggap kecil,anger
+rasanya rendah ketika melihat proyek teman lebih kompleks,shame
+rasanya hina banget waktu diremehkan,shame
+lega rasanya udah submit revisi,relief
+aku cuma mengetik contoh pesan,neutral
+Aku tidak punya rencana untuk hari ini.,neutral
+Aku rasa aku bukan lagi orang yang selalu ada di sini.,loneliness
+"Aku tidak bisa meninggalkan kesalahan ini, terus mengingatkan diri sendiri .",shame
+Hari ini aku harus kerja dari pagi sampai sore.,neutral
+panik liat jam udah mepet,anxiety
+Jadi aku hari ini nggak ada tempat yang harus pergi.,neutral
+asik dapet A bisa pamer ke emak,joy
+Saya harus memantau pekerjaan saya di kantor.,neutral
+Aku tahu aku tidak bisa selalu mencari dukungan dari orang lain.,loneliness
+aku takut dinilai nggak siap,anxiety
+"Aku merasa tidak layak hidup, tidak bisa bersaing",shame
+suram banget masa depan gua kayaknya,sadness
+saya merasa terkuras setelah presentasi,fatigue
+rasanya pengen meledak karena capek dituntut,anger
+Mengapa aku tidak bisa berhenti berpikir soal masalah ini?,anxiety
+Aku rasa aku sudah tak bisa lagi melakukan hal-hal yang biasa.,fatigue
+Siapa yang mau membantu aku untuk melewati hari ini?,anxiety
+Tadi aku bertemu teman lama di cafe.,neutral
+Aku takut jika keluarga mengetahui bahwa aku telah menghabiskan biaya ribet untuk sesuatu yang tidak berguna,shame
+Saya mendapatkan pekerjaan baru yang lebih baik.,relief
+rasanya berat dan ingin menangis,sadness
+"Hari ini aku bisa ngemil es krim dengan gembira,",relief
+Pagi ini aku melihat matahari terbit di atas pagi.,joy
+"Alhamdulillah, aku bisa melalui hari itu dengan baik!",relief
+"Saya harus pergi ke kantor lagi hari ini, aku takut ketinggalan meetup.",neutral
+Saya hampir tidak bisa menghadapi kenyataan,shame
+Aku tak bisa menemukan kebahagiaan di sini.,anger
+seneng bgt liat progres aplikasi gua,joy
+Aku hanya bisa berdiam diri dan menangis sendirian,loneliness
+Hari ini aku benar-benar kesal dengan diri sendiri.,shame
+"Apa salah aku, kenapa aku harus merasakan ini?",loneliness
+Aku sedang menonton film Indonesia favoritku.,neutral
+Aku takut aku tidak bisa memenuhi deadline,anxiety
+Tidak bisa meminta pinjaman lagi kepada ibu,shame
+"Aku tidak terlalu suka makanan hari ini, terlalu pedas",neutral
+Saya sedang sibuk dengan pekerjaan dan tak punya waktu luang.,neutral
+Aku tidak bisa menerima kebenaran bahwa aku adalah orang paling lemah di antara teman-temanku.,shame
+Aku harus memilih yang tepat sebelum membeli tiket pesawat.,neutral
+aku merasa ditinggal teman teman,loneliness
+gue menyalahkan diri sendiri karena telat belajar,shame
+Mengapa aku tak bisa berani bertanya?,shame
+saya merasa terbantu dengan arahan tadi,relief
+Aku benar-benar merasa puas dengan hasil proyek yang aku kerjakan.,relief
+"Hari ini saya merasa sangat beruntung, apa itu?",relief
+Aku rasa aku butuh waktu untuk merefresh diri lagi.,fatigue
+Gue harus menyelesaikan pekerjaan sebelum acara nanti.,neutral
+hai sereluna,neutral
+Aku rasa aku kehilangan arah setelah karyawan aku meninggal.,sadness
+"Aku baru tahu pas aku mendengarkan lagu yang aku sukai, aku merasa hidupku lebih indah!",joy
+saya letih setelah debugging berjam jam,fatigue
+aku merasa sendirian akhir akhir ini,loneliness
+aku panik membaca komentar revisi yang panjang,anxiety
+Aku merasa lebih bahagia karena aku bisa membantu orang lain,relief
+"Aku harus melakukan banyak hal hari ini, tapi aku takut gagal.",fatigue
+Kesedihan ini membuatku merasa tidak berdaya,sadness
+Aku harus menyelesaikan tugas kuliah sebelum esok pagi,neutral
+Aku harus menemukan cara untuk mengelola kekhawatiran ini,anxiety
+aku tidak bisa berhenti merasa takut kehilangan segalanya,anxiety
+merasa rendah banget di depan mereka,shame
+Aku rasa perlu istirahat sebentar sebelum makan malam,neutral
+"""Aku kesal dengan dia, tidak pernah memikirkan aku!""",anger
+Saya sudah membeli buku yang telah lama ditunggu.,neutral
+rasanya hati turun banget malam ini,sadness
+Aku tak bisa percaya mereka ngempon aku seperti itu.,anger
+Aku merasa seperti telah menghancurkan hidup anak kecilku,shame
+Mungkin aku harus mencoba untuk memaafkan diri sendiri,sadness
+gue pengen nangis karena merasa sendirian,sadness
+saya malu karena belum paham materinya,shame
+Tidak bisa membelikan hadiah untuk ibu yang lahir ulang,shame
+aku senang banget hari ini,joy
+Aku harus melewati hari demi hari tanpa harapan.,sadness
+"Mungkin aku harus cek kembali rutinitas aku, aku nggak tahu apa aja yang bikin aku begitu capek",fatigue
+"Aku benar-benar marah dengan dia, mengapa dia harus begini?",anger
+Saya tidak bisa menyembunyikan kesalahan ini selamanya.,shame
+Aku harus berusaha untuk tetap tenang,anxiety
+gue baru pulang dari kampus,neutral
+Kenapa harus aku sendiri yang harus salah?,shame
+gue marah waktu dibilang cuma hit api,anger
+Saya merasa bahagia dan lega setelah mendengar kabar baik tentang pekerjaanku.,relief
+Aku rasa tidak punya hubungan yang baik dengan pacar!,anger
+rasanya muak dengan standar yang berubah terus,anger
+Tapi aku tidak bisa mengelaknya,shame
+Saya harus membeli bahan makanan untuk hari ini.,neutral
+Aku harus berusaha untuk meningkatkan motivasi aku sendiri.,fatigue
+"Saya butuh perubahan, tapi perubahan itu tidak akan datang sendiri",fatigue
+aku mau mulai chat baru,neutral
+"Aku tidak bisa berbicara tentang ini, terlalu malu",shame
+Aku ingin mencoba membuat kreasi makanan sendiri.,neutral
+Mengapa aku tidak bisa tenang,anxiety
+"Aku jadi bisa memiliki hobi baru, aku suka berlatih yoga",joy
+Aku merasa tidak percaya diri lagi,anxiety
+sakit hati bgt liat story dia sama yang lain,sadness
+aman dokumennya udah gua kirim semua,relief
+"Gue mau pergi ke kampus, tapi gue rasa gue tidak bisa berjalan dengan cepat.",fatigue
+rasanya nggak kuat lanjut malam ini,fatigue
+Kenapa mereka harus selalu melawan saya?,anger
+Kesemua pekerjaan ini benar-benar membuat aku lelah,fatigue
+Aku tidak memiliki apa-apa yang membuatku stres,relief
+Berapa kali aku harus mencoba untuk menemukan kebahagiaan?,loneliness
+"Kita baru saja merayakan ulang tahun teman kita, tapi aku pikir dia sedih",sadness
+gue emosi tiap ingat omongannya,anger
+Mengapa hidup ini harus begitu keras,sadness
+saya merasa terasing karena tertinggal materi,loneliness
+Aku rasa aku mesti melakukan banyak hal tapi aku tidak punya energi,fatigue
+Dia tidak pernah menunjukkan apresiasi terhadap usaha saya.,anger
+"Saya tidak bisa percaya, mereka bisa begitu tidak hormat.",anger
+"Saya tidak bisa percaya, dia bisa begitu tidak peduli.",anger
+"Mereka mengatakan aku terlalu mudah marah, tapi aku tahu apa yang membuat aku marah.",anger
+Aku masih ingat bau buah jeruk favoritku saat kecil.,sadness
+"Saya sudah bilang jelas, tapi mereka tidak mau mendengar.",anger
+hari ini semuanya terasa suram,sadness
+Aku tidak tahu apa yang aku cari di kehidupan ini.,loneliness
+anjrit kaget gua,joy
+"Alhamdulillah, hari ini aku bisa menemukan kebahagiaan,",relief
+Aku takut gagal dalam menemukan diri sendiri.,anxiety
+Aku butuh bantuan orang yang lebih hebat daripada aku.,anxiety
+Aku tidak ingin terkena penyakit serius,anxiety
+Aku merasa seperti tidak ada yang peduli dengan aku.,sadness
+rasanya beban sedikit berkurang,relief
+Apa yang terjadi jika saya gagal?,anxiety
+Aku merasa seperti ditinggalkan dunia,sadness
+Aku merasa sangat lemah.,sadness
+gue cemas kalau ditanya bagian backend,anxiety
+Gue sudah lama tidak merasa bahagia,sadness
+"Saya tidak tahu bagaimana menangani situasi itu, tapi hari ini saya bisa belajar dari kesalahan saya.",relief
+Lagi menderita dari tindakan mereka.,anger
+Aku perlu orang yang bisa mendengarkan aku.,sadness
+kecil bgt gua rasanya dibanding mereka yang dapet A,shame
+Saya sudah kehabisan apa yang dapat saya lakukan.,anger
+Sekarang aku sedang menghitung pengeluaran untuk bulan ini.,neutral
+"""Akhir-akhir ini aku selalu berperilaku negatif, aku ingin berubah tapi gak bisa!""",anger
+"Dia selalu membanting pintu, aku sudah tak bisa lagi.",anger
+Aku harus memilih jalan yang bagus sebelum memulai perjalanan.,neutral
+Aku tidak bisa meminta bantuan dari siapa pun ketika aku tidak bisa memecahkan masalah ini sendiri.,shame
+Mereka semua tahu bahwa dia adalah orang yang paling egois.,anger
+Aku merasa bersalah karena tidak menyelesaikan proyek kelompok.,shame
+"Lagi sedih, lagi kesepian.",anger
+Aku tak bisa melupakan kekhawatiran ini,anxiety
+aku cemas banget mikirin sidang besok,anxiety
+Aku sangat senang saat melihat kawan-kawanku yang sudah sukses!,joy
+Aku hanya butuh istirahat sejenak dari rutinitas.,neutral
+Kita udah pacaran selama 2 tahun tapi dia bilang dia butuh ruang.,loneliness
+Aku tidak bisa menghadapi situasi ini.,anger
+Aku tidak tahu bagaimana menghadapi.,shame
+Aku masih harus mengerjakan semacam projek kerja keras dan aku belum punya rencana pasti.,fatigue
+Aku merasa bersalah karena tidak bisa melindungi teman saat mereka membutuhkan bantuan,shame
+"Aku benar-benar kesal dengan dia, apa ada yang salah pada saya?",anger
+Malam ini saya hanya sendiri dengan pikiran-pikiran buruk.,loneliness
+Aku terlalu bodoh untuk tidak mengerti itu dari awal,shame
+Aku merasa dihina seperti anak kecil lagi.,anger
+Rasa leganya tidak ada henti dari pagi.,relief
+Aku terus memikirkan skenario yang buruk,anxiety
+Saya harus mengubah rencana akhirnya.,neutral
+Aku sangat sedih karena aku kehilangan kekasihku yang baik.,sadness
+"Woooh, aku bisa tidur lagi dengan nyenyak,",relief
+gagal mulu gua dapet nilai bagus,shame
+"Hari-Hari ini begitu membosankan, kayak gue di penjara",loneliness
+Aku rasa aku hampir putus asa setiap hari.,anger
+sendiri lagi di kosan gada yang nanya kabar,loneliness
+Aku hanya ingin bisa bangkit dari kesedihan ini.,sadness
+Aku belum pernah merasa begitu lelah setelah ujian skripsi itu.,fatigue
+"Mama udah pergi, aku tidak bisa menghubunginya.",sadness
+aku merasa hampa setelah kejadian itu,sadness
+rasanya hampa setelah seharian mengerjakan revisi,sadness
+"Saya tidak pernah menyangka bahwa saya bisa mendapat peluang ini, tapi hari ini saya bisa melangkah maju.",relief
+target dapet A tercapai juga,joy
+berdoa aja semoga ga dapet C,anxiety
+hari ini aku ingin ngobrol ringan,neutral
+Saya tidak bisa bicara apa-apa selama 2 hari ini.,relief
+asik akhirnya bisa santai wkwk,joy
+bangsat beneran dong wkwk,joy
+ngakak dapet nilai bagus padahal ngasal,joy
+Saya hanya ingin tahu apakah kamu sudah siap untuk pergi ke bioskop.,neutral
+Aku tidak bisa berbuat apa-apa untuk mengubah keadaan.,shame
+"""Aku mengerti aku tidak bisa mengontrol emosi aku sendiri!""",anger
+aku lelah menghadapi tekanan kampus,fatigue
+Saya tidak bisa berhenti berpikir tentang masa depan,anxiety
+"Terima kasih Tuhan, aku bisa lewat ujian ini.",relief
+Akhirnya saya punya uang lagi setelah melunasi utangku.,relief
+Saya rasa aku butuh orang yang bisa mendengarkan aku,loneliness
+"Aku rasa ini adalah hari terbaikku sejak lulus kuliah, aku sangat senang!",joy
+Aku tidak bisa menerima kebenaran bahwa aku bukanlah orang yang paling baik di kelas.,shame
+Semoga aku bisa menghadapi situasi itu dengan tenang,anxiety
+Saya harus memperbarui data saya.,neutral
+aku lelah mikirin skripsi dari pagi,fatigue
+"Aku merasa hancur, seperti tidak ada lagi harapan.",anger
+Aku tidak bisa untuk tidak memikirkan apa yang salah dengan diri sendiri.,shame
+"Malam ini aku ingin makan mie goreng dengan lebih santai,",relief
+saya ingin mencatat sesuatu,neutral
+Gak enak rasanya waktu aku melihat temen-temenku semua sibuk dengan kehidupan masing-masing.,sadness
+Saya harus memperbarui aplikasi favoritku.,neutral
+Aku merasa gagal dalam segala hal yang aku lakukan,sadness
+Membayangkan diri saya tidak bisa mencapai target,anxiety
+Aku merasa sangat kesal dengan nasib aku sendiri.,anger
+seru banget tadi main sama temen,joy
+"Ketika aku melihat seseorang yang bahagia bersama pasangannya, aku jadi merasa sedih sendirian.",loneliness
+Aku berharap aku bisa menemukan kebahagiaan seperti mereka.,loneliness
+burnout parah liat kerjaan numpuk ga abis-abis,fatigue
+Saya sudah lupa dengan apa yang aku inginkan,sadness
+Gue ingin sekali bisa memiliki seseorang yang bisa mengerti aku.,loneliness
+"Aku tak bisa berbakti pada orang tua, aku merasa bersalah",loneliness
+mantap bener dah makanan di sini,joy
+saya merasa gagal karena harus mengulang mata kuliah,shame
+Kita berdua udah pernah mencoba tetapi aku yakin ini yang terakhir.,loneliness
+sepi bgt malem-malem tbtb pengen ada yang meluk,loneliness
+Aku pergi ke pusat perbelanjaan untuk membeli sesuatu yang tidak perlu,neutral
+"""Gue tidak bisa melawan perasaan ini!""",anger
+"Saya tidak pernah merasa seperti ini sebelumnya, benar-benar merasa lega!",relief
+"Aku ingin menjadi kuat, tapi rasa takut ini menghalangiku.",anxiety
+Saya butuh sekali istirahat panjang,fatigue
+Aku tidak bisa percaya dia bisa begitu kejam.,anger
+"Saya tidak cukup kuat, tidak bisa menopang orang-orang yang aku cintai",shame
+"Aku sedih melihat kejadian di luar sana, tapi aku tidak bisa bergabung.",loneliness
+"Aku merasa seperti orang kaya, aku baru bisa membelikan perhiasan impianku!",joy
+Saya tidak punya daya untuk melakukan apa-apa,fatigue
+mengapa aku selalu seperti ini?,anxiety
+Ku rasa aku cuma bisa melihat hari ini sebagai hari biasa,neutral
+saya bangga karena dokumentasinya lebih rapi,joy
+gue lebih tenang karena ada metrik evaluasi,relief
+Aku tidak bisa membayangkan jika aku harus ke dokter lagi.,relief
+akhirnya dapet nilai A seneng banget,joy
+Aku jadi bisa lebih fokus dalam melakukan pekerjaan,joy
+sebel banget sama temen sekelompok,anger
+Mungkin aku perlu mengambil cuti untuk bisa mengembalikan energi.,fatigue
+Saya tak bisa tidur karena terus memikirkan ujian besok,anxiety
+Hari ini aku bekerja sama dengan tim untuk proyek baru.,joy
+Aku baru saja mendapatkan penghargaan atas pekerjaanku,joy
+rasanya semangat karena progresnya nyata,joy
+tegang liat muka penguji,anxiety
+Aku tidak tahu bagaimana mengatasi perasaanku!,anger
+Kok bisa dia begitu tidak adil!,anger
+berasa gapunya temen curhat,loneliness
+aku cuma pengen ada yang dengerin,loneliness
+"Wah, kenapa aku harus selalu terus makan makanan jalanan?!",anger
+mantap jiwa akhirnya kelar juga,joy
+"Saya tidak ingin berbicara lagi tentang ini, tapi mereka terus bertanya.",anger
+Akhirnya saya punya mobil sendiri!,relief
+apa aku salah? mengapa semuanya menjadi begitu rumit,anxiety
+rasanya sebel banget sama situasi ini,anger
+Jangan terlalu cepat menilai orang lain,sadness
+diterima di perusahaan impian seneng bgt,joy
+nangis semaleman gara-gara diputusin sepihak,sadness
+gugup banget mau ketemu doi,anxiety
+Hari ini malamnya saya harus nonton film yang sudah lama disimpan di laptop.,neutral
+was-was nunggu pengumuman loker,anxiety
+"Pernah suatu hari, aku bisa pergi ke tempat yang aku impikan.",relief
+Aku merasa terjebak di antara keputusan yang salah satu harus diambil.,anxiety
+Saya hanya ingin tahu apakah kamu sudah siap untuk pergi.,neutral
+"Hari ini aku terjatuh di jalan lagi, aku tak bisa makan dengan baik karena perutku terasa sakit",sadness
+"Aku tidak bisa menghadapi ujian ini, aku sudah gagal sekali lagi.",shame
+saya senang presentasinya lancar,joy
+Aku merasa seperti orang yang tidak pernah ada.,anger
+"Saya tidak ada niat untuk mengikuti kegiatan hari ini, apa pun yang terjadi.",neutral
+gue benci cara dia ngomong ke aku,anger
+"Bos sempet bilang aku bisa cuti, wuhuu,",relief
+Aku bisa makan kacang renyah dengan minuman favoritku.,relief
+Baru saja aku bangun pagi ini.,fatigue
+saya merasa rendah setelah dikritik,shame
+lelah ya Allah pengen nilai bagus,fatigue
+Jangan-jangan saya lagi sakit hati sama pacar,anxiety
+"""Aku merasa tidak pernah bisa berbicara dengan benar, gak pernah bisa mengatakan apa yang gue rasa!""",anger
+berhasil juga akhirnya diet gua,joy
+gue muak denger komentar yang sama,anger
+saya tidak yakin bisa menyelesaikan proyek ini,anxiety
+Aku merasa tidak memiliki kontrol atas kehidupan,anxiety
+Aku harus menghadapi hari esok dengan lelah ini.,fatigue
