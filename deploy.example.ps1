@@ -61,7 +61,8 @@ Invoke-Hf repos create $repoId `
     --private `
     --exist-ok `
     --token $hfToken `
-    --env "NVIDIA_MODEL=deepseek-ai/deepseek-v4-pro" `
+    --env "LLM_PROVIDER_MODE=nvidia_only" `
+    --env "NVIDIA_MODEL=deepseek-ai/deepseek-v4-flash" `
     --env "NVIDIA_FAST_MODEL=meta/llama-3.1-8b-instruct" `
     --env "NVIDIA_VISION_MODEL=google/gemma-3n-e2b-it" `
     --env "NVIDIA_THINKING=false" `

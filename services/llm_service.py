@@ -212,11 +212,22 @@ def _completion(
 ) -> tuple[str, str]:
     logger = logging.getLogger("sereluna.llm")
     start_time = time.perf_counter()
+    provider_mode = os.getenv("LLM_PROVIDER_MODE", "fallback").strip().lower()
 
     def _log_success(provider: str):
         elapsed = (time.perf_counter() - start_time) * 1000
         logger.info("LLM success: %s (%.2fms)", provider, elapsed)
         print(f"✅ LLM Success: {provider} ({elapsed:.2f}ms)")
+
+    logger.info(
+        "LLM provider config: mode=%s nvidia_key=%s nvidia_model=%s groq_key=%s gemini_key=%s openrouter_key=%s",
+        provider_mode,
+        bool((os.getenv("NVIDIA_API_KEY") or "").strip()),
+        os.getenv("NVIDIA_FAST_MODEL" if use_fast_model else "NVIDIA_MODEL"),
+        bool((os.getenv("GROQ_API_KEY") or "").strip()),
+        bool((os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()),
+        bool((os.getenv("OPENROUTER_API_KEY") or "").strip()),
+    )
 
     # Tier 0: Local GPU Priority (via URL or localhost if running main.py locally)
     local_url = os.getenv("LOCAL_LLM_URL")
@@ -246,6 +257,11 @@ def _completion(
                 _disable_provider("nvidia")
             logger.warning("NVIDIA NIM failed: %s", e)
             print(f"⚠️ NVIDIA NIM Error: {str(e)[:50]}... Falling back.")
+
+    if provider_mode == "nvidia_only":
+        if not nvidia_key:
+            raise RuntimeError("LLM_PROVIDER_MODE=nvidia_only but NVIDIA_API_KEY is not configured.")
+        raise RuntimeError("NVIDIA provider failed and fallback providers are disabled.")
 
     # Tier 2: Groq Versatile (Standard choice)
     groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
