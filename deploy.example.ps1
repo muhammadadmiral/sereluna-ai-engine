@@ -35,6 +35,14 @@ if (-not (Test-Path $firebasePath)) {
     throw "Firebase service account JSON file not found: $firebasePath"
 }
 
+if ([string]::IsNullOrWhiteSpace($nvidiaKey) -or -not $nvidiaKey.StartsWith("nvapi-")) {
+    throw "NVIDIA API key is missing or invalid. Fill `$nvidiaKey with a fresh nvapi-... key."
+}
+
+if ([string]::IsNullOrWhiteSpace($firebaseStorageBucket) -or $firebaseStorageBucket -like "YOUR_*") {
+    throw "Firebase Storage bucket is missing. Fill `$firebaseStorageBucket, for example sereluna2024.appspot.com."
+}
+
 $repoId = "$username/$spaceName"
 $firebaseAccount = Get-Content $firebasePath -Raw | ConvertFrom-Json
 $firebaseJson = $firebaseAccount | ConvertTo-Json -Compress -Depth 100
