@@ -26,11 +26,9 @@ def build_context_algorithm_result(
     past_diaries: List[str],
 ) -> Dict[str, Any]:
     preprocessing_filter = analyze_preprocessing_filter(text)
-    analysis_text = " ".join(
-        part
-        for part in [text, preprocessing_filter.get("normalized_text", "")]
-        if part and part.strip()
-    )
+    # Use normalized text as the primary source for further analysis to avoid doubling
+    analysis_text = preprocessing_filter.get("normalized_text", text)
+    
     current_is_greeting = is_greeting_only(normalize_text(text))
     risk = classify_risk(
         text=analysis_text,

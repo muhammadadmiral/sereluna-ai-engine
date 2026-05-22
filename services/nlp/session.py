@@ -80,6 +80,9 @@ def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> st
     if contains_any(normalized, CASUAL_REFERENCE_CUES):
         return "casual_reference"
 
+    if re.search(r"\b(long text|panjang|detail|jelaskan|cerita banyak|banyakin)\b", normalized):
+        return "advice_or_problem_solving" # Treat as advice/problem solving to trigger longer response
+
     if "?" in (text or "") or contains_any(normalized, ADVICE_CUES):
         return "advice_or_problem_solving"
     if sentiment_score <= 2 or contains_any(normalized, NEGATIVE_WORDS):
@@ -103,6 +106,9 @@ def is_short_listener_turn(text: str) -> bool:
         return False
 
     if contains_any(normalized, RESPONSE_FEEDBACK_CUES):
+        return False
+
+    if re.search(r"\b(long text|panjang|detail|jelaskan|cerita banyak|banyakin)\b", normalized):
         return False
 
     if contains_any(normalized, SHORT_LISTENER_CUES):

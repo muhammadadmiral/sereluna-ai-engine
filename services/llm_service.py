@@ -144,8 +144,9 @@ def _completion(
 
     # Tier 1: NVIDIA NIM (Primary Strong/Fast)
     if os.getenv("NVIDIA_API_KEY"):
+        # Updated priorities based on user request (DeepSeek, Kimi, Qwen)
         model = os.getenv("NVIDIA_FAST_MODEL" if use_fast_model else "NVIDIA_MODEL", 
-                          "meta/llama-3.1-8b-instruct" if use_fast_model else "meta/llama-3.3-70b-instruct")
+                          "deepseek-ai/deepseek-v4" if use_fast_model else "meta/llama-3.3-70b-instruct")
         tiers.append(("NVIDIA NIM", lambda: _call_nvidia(model, messages, response_format, temperature, max_completion_tokens)))
 
     # Tier 2: Groq Fallbacks
@@ -154,7 +155,7 @@ def _completion(
             tiers.append(("Groq Fast", lambda: _call_groq(os.getenv("GROQ_FAST_MODEL", "llama-3.1-8b-instant"), messages, response_format, temperature, max_completion_tokens)))
         else:
             tiers.append(("Groq Versatile", lambda: _call_groq(os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"), messages, response_format, temperature, max_completion_tokens)))
-            tiers.append(("Groq Kimi", lambda: _call_groq(os.getenv("GROQ_BACKUP_MODEL", "moonshotai/kimi-k2-instruct"), messages, response_format, temperature, max_completion_tokens)))
+            tiers.append(("Groq Kimi", lambda: _call_groq(os.getenv("GROQ_BACKUP_MODEL", "moonshotai/kimi-k1.5"), messages, response_format, temperature, max_completion_tokens)))
 
     # Tier 3: Universal Fallbacks
     if provider_mode != "nvidia_only":
@@ -225,6 +226,19 @@ def generate_dialog(
     style_plan_text = _format_style_plan(style_plan, safe_user_name)
     care_intel = _format_care_intelligence(emotion_profile, cognitive_distortions, coping_pathway)
     
+    # Detect if message contains image context
+    has_image_context = "[Konteks gambar dari backend vision model]" in user_message
+    
+    image_instruction = ""
+    if has_image_context:
+        image_instruction = """
+PENTING: User mengirimkan GAMBAR. Kamu sudah menerima analisis gambar di bawah dalam tag [Konteks gambar dari backend vision model]. 
+- Kamu WAJIB mengomentari isi gambar tersebut secara spesifik dan empati. 
+- Jangan pura-pura tidak tahu atau bertanya 'gambar apa?'. 
+- Berikan respon yang nyambung dengan apa yang ada di dalam gambar tersebut.
+- Jika itu screenshot chat, bahas dinamika percakapannya.
+"""
+
     system_prompt = f"""Kamu adalah Sereluna, sahabat dekat {safe_user_name}. 
 Bicara seperti teman nongkrong yang hangat, asyik, dan empati. GUNAKAN BAHASA INDONESIA KASUAL/GAUL.
 
@@ -233,6 +247,10 @@ IDENTITAS & GAYA:
 - Jangan kaku seperti asisten digital. Hilangkan kata-kata formal seperti 'Aktivitas', 'Aspek', 'Fisik'.
 - Pakai gaya bahasa santai: 'ngobrol', 'cerita', 'santai aja', 'pasti berat ya'.
 - Jika user pakai 'Gua/Lu', kamu wajib membalas dengan 'Gua/Lu' juga.
+- JANGAN CUEK. Jika user memancing atau bertanya singkat, tetap berikan respon yang hangat, mengalir, dan sedikit panjang jika perlu.
+- Jika user minta "long text", "cerita panjang", atau "curhat banyak", kamu WAJIB memberikan respon yang sangat mendalam, detail, dan panjang.
+- JANGAN PERNAH mengulangi atau menuliskan kembali tag [Konteks gambar dari backend vision model] atau isinya secara mentah-mentah dalam balasan kamu. Gunakan informasi itu secara natural.
+{image_instruction}
 
 RESPONSE PLANNER:
 {style_plan_text}
@@ -247,8 +265,7 @@ KONTEKS:
 ATURAN MATI:
 1. JANGAN pakai pembuka: "Saya senang", "Tentu saja", "Halo [Nama]".
 2. Langsung masuk ke inti obrolan dengan nada akrab.
-3. Maksimal 2-3 kalimat pendek kecuali diminta panjang.
-4. Kirimkan JSON:
+3. Kirimkan JSON:
 {{
   "reply": "balasan asik dan empati kamu",
   "session_summary": "ringkasan singkat",
@@ -259,11 +276,14 @@ ATURAN MATI:
     user_prompt = f"Riwayat Singkat: {session_summary}\n\nUser: {user_message}"
 
     try:
+        # If there's an image, increase temperature slightly for more creative/descriptive response
+        temp = 0.9 if has_image_context else 0.85
+        
         # Force use the 'Strong' model (70B) for better personality
         content, _ = _completion(
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
             response_format={"type": "json_object"},
-            temperature=0.85, # Higher temperature for more natural flow
+            temperature=temp,
             max_completion_tokens=completion_token_budget(style_plan),
             use_fast_model=False # Use 70B for higher quality
         )
@@ -272,13 +292,41 @@ ATURAN MATI:
         
         # Validation: If reply is empty, try to use the raw content if it's not JSON
         reply = parsed.get("reply", "")
-        if not reply and content and "{" not in content:
+        if not reply and content:
+            if "{" not in content:
+                reply = content
+            else:
+                # If it's empty JSON like {}, try to extract anything between quotes
+                match = re.search(r'"reply":\s*"([^"]+)"', content)
+                if match:
+                    reply = match.group(1)
+        
+        if not reply:
+            # Emergency fallback: If still empty, try one more time without JSON format
+            fallback_prompt = system_prompt + "\nJANGAN KIRIM JSON, KIRIM TEKS BIASA SAJA."
+            content, _ = _completion(
+                messages=[{"role": "system", "content": fallback_prompt}, {"role": "user", "content": user_prompt}],
+                temperature=0.95,
+                use_fast_model=True
+            )
             reply = content
             
         reply = _polish_sereluna_reply(reply, safe_user_name, style_plan)
         
+        # Hard check for "cuek" reply when image is present
+        if has_image_context and (len(reply.split()) < 8 or "dengerin" in reply.lower()):
+            # If the response is too short or generic for an image, try a specific "comment on image" prompt
+            img_comment_prompt = f"Kamu adalah Sereluna. User mengirim gambar dengan konteks: {user_message}. Berikan komentar empati dan asik tentang isi gambar tersebut dalam 2-3 kalimat gaul."
+            reply_img, _ = _completion(
+                messages=[{"role": "user", "content": img_comment_prompt}],
+                temperature=0.9,
+                use_fast_model=True
+            )
+            if reply_img and len(reply_img.split()) > 5:
+                reply = reply_img
+
         return {
-            "reply": reply or "Aku dengerin, ya. Bisa ceritain sedikit lagi?",
+            "reply": reply or "Aku dengerin, ya. Lagi ada apa nih? Cerita aja, aku nemenin.",
             "session_summary": clean_diary_summary(parsed.get("session_summary", "")),
             "sentiment_score": _coerce_score(parsed.get("sentiment_score"), 3),
             "suggested_action": parsed.get("suggested_action"),
@@ -291,16 +339,46 @@ ATURAN MATI:
         return {"reply": "Aku dengerin, ya. Lanjutin aja ceritanya.", "session_summary": session_summary, "risk_flag": risk_level == "high"}
 
 def generate_summary(session_raw: str, session_summary: str, user_name: str) -> str:
-    system_prompt = "Buat ringkasan diary (3-4 kalimat) dalam Bahasa Indonesia. Langsung ke inti cerita, tanpa pembuka."
+    from datetime import datetime
+    now = datetime.now()
+    date_str = now.strftime("%A, %d %B %Y")
+    time_str = now.strftime("%H:%M")
+    
+    system_prompt = (
+        f"Buat ringkasan diary yang mendalam untuk {user_name} dalam Bahasa Indonesia. "
+        "Format output harus diawali dengan JUDUL yang menangkap tema utama obrolan, diikuti isi ringkasan.\n\n"
+        "STRUKTUR WAJIB:\n"
+        "[TITLE]: Judul Singkat & Menarik (max 10 kata)\n"
+        "[CONTENT]: Isi ringkasan detail (2-3 paragraf) yang mencakup poin penting, emosi, dan progres.\n\n"
+        "JANGAN pakai pembuka seperti 'Berikut adalah ringkasan'. LANGSUNG ke [TITLE]."
+    )
     user_prompt = f"Sesi: {session_raw}\n\nRolling Summary: {session_summary}"
     try:
         content, _ = _completion(
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
-            temperature=0.3, max_completion_tokens=500, use_fast_model=True
+            temperature=0.6,
+            max_completion_tokens=1000,
+            use_fast_model=False 
         )
-        return clean_diary_summary(content)
+        
+        # Format for frontend rendering
+        # We will wrap it in a way that's easy to parse or just clear to read
+        cleaned_content = clean_diary_summary(content)
+        
+        # Ensure it has the date header at the very top for context
+        # Use consistent tags for frontend parsing: #TITLE# and #CONTENT#
+        final_output = f"📅 {date_str} | ⏰ {time_str}\n\n#TITLE#\n{_extract_tag(content, '[TITLE]', 'Sesi Percakapan')}\n\n#CONTENT#\n{_extract_tag(content, '[CONTENT]', cleaned_content)}"
+        return final_output
     except Exception:
-        return clean_diary_summary(session_summary or "Sesi percakapan selesai.")
+        return f"📅 {date_str}\n\n#TITLE#\nSesi Percakapan\n\n#CONTENT#\n{clean_diary_summary(session_summary or 'Sesi percakapan selesai.')}"
+
+def _extract_tag(text: str, tag: str, fallback: str) -> str:
+    """Helper to extract content between tags or after a tag."""
+    pattern = rf"\{re.escape(tag)}\s*:?\s*(.*?)(?=\[|$)"
+    match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return fallback
 
 def build_fallback_session_summary(
     previous_summary: str,

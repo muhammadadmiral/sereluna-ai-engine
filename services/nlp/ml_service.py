@@ -171,6 +171,14 @@ class MentalHealthFeatureExtractor(BaseEstimator, TransformerMixin):
         total = sum(feats)
         return [f / total for f in feats] if total > 0 else [0.0] * len(feats)
 
+    def get_feature_names_out(self, input_features=None):
+        return np.array(
+            [f"emo_{e}" for e in self.emotions] +
+            ["sent_pos", "sent_neg"] +
+            [f"distortion_{d}" for d in self.distortion_types] +
+            ["risk_density"]
+        )
+
     def transform(self, texts):
         all_features = []
         for text in texts:
@@ -200,6 +208,37 @@ class MentalHealthFeatureExtractor(BaseEstimator, TransformerMixin):
             all_features.append(emo_feats + sentiment_feats + distortion_feats + risk_feats)
             
         return sparse.csr_matrix(np.asarray(all_features, dtype=float))
+
+
+def _mental_health_feature_names(transformer: Any) -> np.ndarray:
+    emotions = getattr(transformer, "emotions", sorted(EMOTION_LEXICON))
+    distortion_types = getattr(transformer, "distortion_types", sorted(COGNITIVE_DISTORTION_PATTERNS.keys()))
+    return np.array(
+        [f"emo_{emotion}" for emotion in emotions]
+        + ["sent_pos", "sent_neg"]
+        + [f"distortion_{distortion}" for distortion in distortion_types]
+        + ["risk_density"],
+        dtype=object,
+    )
+
+
+def _safe_feature_names_out(feature_union: FeatureUnion, feature_count: int) -> np.ndarray:
+    names: List[str] = []
+    for transformer_name, transformer in feature_union.transformer_list:
+        try:
+            transformer_features = transformer.get_feature_names_out()
+        except AttributeError:
+            if transformer_name == "mh_expert_features":
+                transformer_features = _mental_health_feature_names(transformer)
+            else:
+                transformer_features = np.array([], dtype=object)
+
+        names.extend(f"{transformer_name}__{feature}" for feature in transformer_features)
+
+    if len(names) < feature_count:
+        names.extend(f"feature_{index}" for index in range(len(names), feature_count))
+
+    return np.asarray(names[:feature_count], dtype=object)
 
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 
@@ -281,9 +320,9 @@ def _supervised_emotion_model_full_process() -> Dict[str, Any]:
     labels = [row["label"] for row in rows]
     classes = sorted(set(labels))
 
-    print(f"\n" + "🔍"*10)
-    print(f"🛠️ [DATA MINING] Mining {len(rows)} samples...")
-    print(f"🛠️ [FEATURE ENGINEERING] Extracting Hybrid N-Grams and Clinical Features...")
+    print("\n" + "[DATA MINING]" * 10)
+    print(f"[DATA MINING] Mining {len(rows)} samples...")
+    print("[FEATURE ENGINEERING] Extracting Hybrid N-Grams and Clinical Features...")
     
     # Stratified 5-Fold Cross-Validation
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
@@ -294,7 +333,7 @@ def _supervised_emotion_model_full_process() -> Dict[str, Any]:
         texts, labels, test_size=0.2, random_state=42, stratify=labels
     )
 
-    print(f"🚀 [MACHINE LEARNING] Training Ensemble Model (Logistic + Random Forest)...")
+    print("[MACHINE LEARNING] Training Ensemble Model (Logistic + Random Forest)...")
     pipeline.fit(x_train, y_train)
     y_pred = pipeline.predict(x_test)
     
@@ -325,8 +364,8 @@ def _supervised_emotion_model_full_process() -> Dict[str, Any]:
         "full_report": report
     }
 
-    print(f"✅ [SUCCESS] Model Gacor Ready! Accuracy: {report['accuracy']:.4f}")
-    print("🔍"*10 + "\n")
+    print(f"[SUCCESS] Model Gacor Ready! Accuracy: {report['accuracy']:.4f}")
+    print("[DATA MINING]" * 10 + "\n")
 
     return {
         "model": production_model,
@@ -374,13 +413,12 @@ def classify_emotion_supervised(text: str) -> Dict[str, Any]:
     explainability = []
     try:
         lr_model = model.named_steps['classifier'].estimators_[0]
-        feature_names = model.named_steps['features'].get_feature_names_out()
-        
         # Get vector for current text
         vec = model.named_steps['features'].transform([normalized]).toarray()[0]
+        feature_names = _safe_feature_names_out(model.named_steps['features'], len(vec))
         
         # Multiply vector by coefficients for the predicted class
-        class_idx = list(lr_model.classes_).index(top["emotion"])
+        class_idx = list(model.classes_).index(top["emotion"])
         weights = lr_model.coef_[class_idx]
         
         # Find features with highest impact

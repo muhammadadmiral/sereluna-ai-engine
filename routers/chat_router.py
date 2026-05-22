@@ -91,12 +91,11 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         log_msg += f"   - Trend Sentiment   : {algorithm_result.get('sentiment_trend', 'Stable')}\n"
         log_msg += f"   - Routing Logic     : {algorithm_result.get('routing_mode', 'Direct ML')}\n"
         log_msg += "-"*75 + "\n"
-        log_msg += f"4. FINAL LLM RESPONSE\n"
+        log_msg += f"4. FINAL LLM RESPONSE (SENT TO USER)\n"
         log_msg += f"   - Output Bot        : {reply}\n"
         log_msg += "="*75 + "\n"
         
         logger.info(log_msg)
-        print(log_msg)
     except Exception as e:
         logger.error(f"Failed to print professor log: %s", e)
 
