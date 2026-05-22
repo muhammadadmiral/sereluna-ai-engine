@@ -16,7 +16,7 @@ from services.summary_service import clean_diary_summary
 load_dotenv()
 
 def _call_groq(model_name: str, api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
-    client = Groq(api_key=api_key)
+    client = Groq(api_key=api_key, max_retries=0, timeout=20)
     kwargs = {
         "model": model_name,
         "messages": messages,
@@ -85,7 +85,7 @@ def _call_gemini(api_key: str, messages: list, response_format: dict, temperatur
         result = json.loads(response.read().decode("utf-8"))
         return result["candidates"][0]["content"]["parts"][0]["text"] or ""
 
-def _call_nvidia(api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
+def _call_nvidia(model_name: str, api_key: str, messages: list, response_format: dict, temperature: float, max_completion_tokens: int) -> str:
     # NVIDIA NIM uses OpenAI compatible API
     url = "https://integrate.api.nvidia.com/v1/chat/completions"
     headers = {
@@ -93,7 +93,7 @@ def _call_nvidia(api_key: str, messages: list, response_format: dict, temperatur
         "Content-Type": "application/json",
     }
     data = {
-        "model": os.getenv("NVIDIA_MODEL", "meta/llama-3.1-405b-instruct"),
+        "model": model_name,
         "messages": messages,
         "temperature": temperature,
         "top_p": 0.7,
@@ -155,9 +155,14 @@ def _completion(
     nvidia_key = (os.getenv("NVIDIA_API_KEY") or "").strip()
     if nvidia_key:
         try:
-            res = _call_nvidia(nvidia_key, messages, response_format, temperature, max_completion_tokens)
-            _log_success("NVIDIA NIM")
-            return res, "NVIDIA NIM"
+            nvidia_model = os.getenv(
+                "NVIDIA_FAST_MODEL" if use_fast_model else "NVIDIA_MODEL",
+                "meta/llama-3.1-8b-instruct" if use_fast_model else "moonshotai/kimi-k2-instruct",
+            )
+            provider_name = "NVIDIA NIM Fast" if use_fast_model else "NVIDIA NIM Strong"
+            res = _call_nvidia(nvidia_model, nvidia_key, messages, response_format, temperature, max_completion_tokens)
+            _log_success(provider_name)
+            return res, provider_name
         except Exception as e:
             logger.warning("NVIDIA NIM failed: %s", e)
             print(f"⚠️ NVIDIA NIM Error: {str(e)[:50]}... Falling back.")
@@ -166,17 +171,45 @@ def _completion(
     groq_api_key = (os.getenv("GROQ_API_KEY") or "").strip()
     if groq_api_key and not use_fast_model:
         try:
-            res = _call_groq("llama-3.3-70b-versatile", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+            res = _call_groq(
+                os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+                groq_api_key,
+                messages,
+                response_format,
+                temperature,
+                max_completion_tokens,
+            )
             _log_success("Groq Versatile (70B)")
             return res, "Groq Versatile"
         except Exception as e:
             logger.warning("Groq Versatile failed: %s", e)
             print(f"⚠️ Groq Versatile Limit/Error: {str(e)[:50]}... Falling back.")
-            
+        try:
+            res = _call_groq(
+                os.getenv("GROQ_BACKUP_MODEL", "moonshotai/kimi-k2-instruct"),
+                groq_api_key,
+                messages,
+                response_format,
+                temperature,
+                max_completion_tokens,
+            )
+            _log_success("Groq Kimi K2")
+            return res, "Groq Kimi K2"
+        except Exception as e:
+            logger.warning("Groq Kimi K2 failed: %s", e)
+            print(f"Groq Kimi K2 Limit/Error: {str(e)[:50]}... Falling back.")
+
     # Tier 3: Groq Instant
     if groq_api_key:
         try:
-            res = _call_groq("llama-3.1-8b-instant", groq_api_key, messages, response_format, temperature, max_completion_tokens)
+            res = _call_groq(
+                os.getenv("GROQ_FAST_MODEL", "llama-3.1-8b-instant"),
+                groq_api_key,
+                messages,
+                response_format,
+                temperature,
+                max_completion_tokens,
+            )
             _log_success("Groq Instant (8B)")
             return res, "Groq Instant"
         except Exception as e:
@@ -442,7 +475,7 @@ Kembalikan JSON valid:
 {{"reply": "balasan baru"}}"""
 
     try:
-        content = _completion(
+        content, provider = _completion(
             messages=[
                 {"role": "system", "content": "Kamu editor gaya Sereluna. Tugasmu hanya memperbaiki panjang dan kedalaman reply, tetap natural."},
                 {"role": "user", "content": repair_prompt},
@@ -589,7 +622,7 @@ def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
     fallback = {"detected_symptoms": [], "dominant_category": "None"}
 
     try:
-        content = _completion(
+        content, provider = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},

@@ -24,6 +24,7 @@ function Invoke-Hf {
 $username = "YOUR_HF_USERNAME_HERE"
 $spaceName = "YOUR_SPACE_NAME_HERE"
 $hfToken = "YOUR_HF_TOKEN_HERE"
+$nvidiaKey = "YOUR_NVIDIA_NGC_API_KEY_HERE"
 $groqKey = "YOUR_GROQ_API_KEY_HERE"
 $guardianKey = "YOUR_GUARDIAN_API_KEY_HERE"
 $firebasePath = "google-service.json" # Atur path jika berbeda
@@ -43,6 +44,7 @@ if ([string]::IsNullOrWhiteSpace($firebaseProjectId)) {
 
 $tempSecretsFile = Join-Path $env:TEMP "sereluna-hf-secrets-$([guid]::NewGuid().ToString('N')).env"
 $tempSecretsContent = @(
+    "NVIDIA_API_KEY=$nvidiaKey"
     "GROQ_API_KEY=$groqKey"
     "GUARDIAN_API_KEY=$guardianKey"
     "FIREBASE_SERVICE_ACCOUNT_JSON=$firebaseJson"
@@ -58,7 +60,11 @@ Invoke-Hf repos create $repoId `
     --private `
     --exist-ok `
     --token $hfToken `
+    --env "NVIDIA_MODEL=moonshotai/kimi-k2-instruct" `
+    --env "NVIDIA_FAST_MODEL=meta/llama-3.1-8b-instruct" `
     --env "GROQ_MODEL=llama-3.3-70b-versatile" `
+    --env "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
+    --env "GROQ_FAST_MODEL=llama-3.1-8b-instant" `
     --env "APP_TIMEZONE=Asia/Jakarta"
 
 Write-Host "Setting Space secrets..."

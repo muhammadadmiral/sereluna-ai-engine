@@ -122,7 +122,7 @@ def generate_nostalgia_message(uid: str) -> Optional[str]:
     )
     
     try:
-        content = _completion(
+        content, provider = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
@@ -244,7 +244,7 @@ def generate_aura_oracle(uid: str) -> Dict[str, Any]:
     }
     
     try:
-        content = _completion(
+        content, provider = _completion(
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
