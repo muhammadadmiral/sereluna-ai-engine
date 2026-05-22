@@ -27,6 +27,15 @@ router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 logger = logging.getLogger("sereluna.chat")
 logger.setLevel(logging.INFO)
 
+# Ensure logs are visible in the console
+if not logger.handlers:
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    formatter = logging.Formatter("%(levelname)s:     %(message)s")
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    logger.propagate = False
+
 
 def _log_chat_pipeline(trace_id: str, event: str, payload: Dict[str, Any]) -> None:
     logger.info(
@@ -76,6 +85,8 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         log_msg += "="*70 + "\n"
         
         logger.info(log_msg)
+        # Fallback print for direct console visibility during demo
+        print(log_msg)
     except Exception as e:
         logger.error(f"Failed to print professor log: %s", e)
 
