@@ -434,4 +434,3 @@ async def finish_chat_endpoint(
         session_id=request.session_id,
         gamification=gamification,
     )
- )
