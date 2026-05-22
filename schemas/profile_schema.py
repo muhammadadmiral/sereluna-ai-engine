@@ -20,3 +20,7 @@ class ProfileResponse(BaseModel):
 class ProfileUpdateRequest(BaseModel):
     name: Optional[str] = None
     photo_url: Optional[str] = None
+
+
+class ProfilePhotoUpdateRequest(BaseModel):
+    photo_url: str

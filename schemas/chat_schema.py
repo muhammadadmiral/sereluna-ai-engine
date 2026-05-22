@@ -9,6 +9,8 @@ class ChatRequest(BaseModel):
     session_id: Optional[str] = None
     mood_signal: Optional[str] = ""
     mode: Optional[str] = "chat"
+    has_image: bool = False
+    media_ids: List[str] = Field(default_factory=list)
 
 
 class ChatFinishRequest(BaseModel):
@@ -38,6 +40,7 @@ class ChatResponse(BaseModel):
     gamification: Optional[Dict[str, Any]] = None
     algorithm_trace: Optional[Dict[str, Any]] = None
     debug_metadata: Optional[Dict[str, Any]] = None
+    media: Optional[List[Dict[str, Any]]] = None
 
 
 class UserContextResponse(BaseModel):

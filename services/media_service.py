@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
+from urllib.parse import quote
 
 from google.cloud import firestore
 
@@ -75,6 +76,48 @@ def save_user_image(uid: str, content: bytes, content_type: str, original_name: 
     }
 
 
+def save_profile_photo(uid: str, content: bytes, content_type: str, original_name: str = "") -> Dict[str, Any]:
+    if content_type not in ALLOWED_IMAGE_TYPES:
+        raise ValueError("Unsupported image type")
+    if not content:
+        raise ValueError("Image file is empty")
+    if len(content) > MAX_IMAGE_BYTES:
+        raise ValueError("Image file is too large")
+
+    photo_id = uuid.uuid4().hex
+    extension = ALLOWED_IMAGE_TYPES[content_type]
+    safe_name = Path(original_name or f"profile{extension}").name
+    storage_path = f"users/{uid}/profile/{photo_id}{extension}"
+    download_token = uuid.uuid4().hex
+
+    bucket = get_storage_bucket()
+    blob = bucket.blob(storage_path)
+    blob.metadata = {"firebaseStorageDownloadTokens": download_token}
+    blob.upload_from_string(content, content_type=content_type)
+    blob.patch()
+
+    photo_url = (
+        f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/"
+        f"{quote(storage_path, safe='')}?alt=media&token={download_token}"
+    )
+    user_document(uid).set(
+        {
+            "photoUrl": photo_url,
+            "photoStoragePath": storage_path,
+            "photoOriginalName": safe_name,
+            "updatedAt": server_timestamp(),
+        },
+        merge=True,
+    )
+    return {
+        "photo_url": photo_url,
+        "storage_path": storage_path,
+        "content_type": content_type,
+        "size_bytes": len(content),
+        "updated_at": _utc_now_iso(),
+    }
+
+
 def analyze_user_image(uid: str, media_id: str, prompt: Optional[str] = None) -> Dict[str, Any]:
     snapshot = _media_collection(uid).document(media_id).get()
     if not snapshot.exists:
@@ -107,3 +150,41 @@ def analyze_user_image(uid: str, media_id: str, prompt: Optional[str] = None) ->
         "analysis": result["analysis"],
         "updated_at": _utc_now_iso(),
     }
+
+
+def analyze_images_for_chat(uid: str, media_ids: list[str]) -> list[Dict[str, Any]]:
+    results: list[Dict[str, Any]] = []
+    unique_ids = []
+    for media_id in media_ids or []:
+        clean_id = str(media_id or "").strip()
+        if clean_id and clean_id not in unique_ids:
+            unique_ids.append(clean_id)
+
+    for media_id in unique_ids[:3]:
+        snapshot = _media_collection(uid).document(media_id).get()
+        if not snapshot.exists:
+            results.append({"media_id": media_id, "error": "not_found"})
+            continue
+        data = snapshot.to_dict() or {}
+        cached = data.get("last_analysis")
+        if isinstance(cached, dict) and cached.get("analysis"):
+            results.append(
+                {
+                    "media_id": media_id,
+                    "model": cached.get("model", ""),
+                    "analysis": cached.get("analysis", ""),
+                    "cached": True,
+                }
+            )
+            continue
+        try:
+            result = analyze_user_image(
+                uid=uid,
+                media_id=media_id,
+                prompt="Ini gambar yang dilampirkan user ke chat. Jika screenshot chat, rangkum konteks, nada emosi, dan hal penting yang perlu diperhatikan.",
+            )
+            result["cached"] = False
+            results.append(result)
+        except Exception as exc:
+            results.append({"media_id": media_id, "error": str(exc)})
+    return results

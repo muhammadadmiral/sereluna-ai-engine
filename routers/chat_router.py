@@ -20,6 +20,7 @@ from services.context_service import (
 )
 from services.firebase_service import get_current_user
 from services.llm_service import build_fallback_session_summary, generate_dialog, generate_summary
+from services.media_service import analyze_images_for_chat
 from services.nlp_service import build_context_algorithm_result, build_response_style_plan
 from services.notification_service import create_notification
 
@@ -149,6 +150,16 @@ def _background_save_and_update(
     update_chat_summaries(uid, room_id, session_id, next_summary)
 
 
+def _format_media_context(media_results: list[Dict[str, Any]]) -> str:
+    lines = []
+    for index, item in enumerate(media_results, start=1):
+        if item.get("analysis"):
+            lines.append(f"Gambar {index}: {item['analysis']}")
+        elif item.get("error"):
+            lines.append(f"Gambar {index}: gagal dianalisis ({item['error']}).")
+    return "\n".join(lines)
+
+
 @router.post("/", response_model=ChatResponse)
 async def chat_endpoint(
     request: ChatRequest,
@@ -158,8 +169,11 @@ async def chat_endpoint(
     trace_id = uuid4().hex[:12]
     started_at = time.perf_counter()
     user_text = (request.text or "").strip()
-    if not user_text:
+    media_ids = [str(media_id).strip() for media_id in (request.media_ids or []) if str(media_id).strip()]
+    if not user_text and not media_ids:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="text is required")
+    if not user_text and media_ids:
+        user_text = "Tolong bantu baca gambar yang aku kirim."
 
     mode = (request.mode or "chat").lower()
     if mode != "chat":
@@ -178,11 +192,22 @@ async def chat_endpoint(
             "session_id": request.session_id,
             "message_length": len(user_text),
             "mood_signal": request.mood_signal or "",
+            "media_count": len(media_ids),
         },
     )
     ensure_user_document(uid, current_user)
     room_id, _diary = get_or_create_today_diary(uid, request.room_id)
     session_id, _session = get_or_create_session(uid, room_id, request.session_id)
+
+    media_results = analyze_images_for_chat(uid, media_ids) if media_ids else []
+    media_context = _format_media_context(media_results)
+    llm_user_text = user_text
+    if media_context:
+        llm_user_text = (
+            f"{user_text}\n\n"
+            "[Konteks gambar dari backend vision model]\n"
+            f"{media_context}"
+        )
 
     save_message(
         uid=uid,
@@ -190,7 +215,12 @@ async def chat_endpoint(
         session_id=session_id,
         role="user",
         text=user_text,
-        analysis_results={"mood_signal": request.mood_signal or ""},
+        analysis_results={
+            "mood_signal": request.mood_signal or "",
+            "has_image": bool(media_ids),
+            "media_ids": media_ids,
+            "media_analysis": media_results,
+        },
     )
 
     context = get_chat_context(uid, room_id, session_id)
@@ -203,7 +233,7 @@ async def chat_endpoint(
     past_diaries = context["past_diaries"]
 
     algorithm_result = build_context_algorithm_result(
-        text=user_text,
+        text=llm_user_text,
         mood_signal=request.mood_signal or "",
         screening_context=screening_context,
         session_summary=session_summary,
@@ -226,7 +256,7 @@ async def chat_endpoint(
         },
     )
     style_plan = build_response_style_plan(
-        text=user_text,
+        text=llm_user_text,
         mood_signal=request.mood_signal or "",
         risk_level=risk_level,
         sentiment_score=algorithm_result["sentiment_score"],
@@ -259,7 +289,7 @@ async def chat_endpoint(
         reply = _safety_reply()
         next_summary = build_fallback_session_summary(
             previous_summary=session_summary,
-            user_message=user_text,
+            user_message=llm_user_text,
             assistant_reply=reply,
             mood_signal=request.mood_signal or "",
             risk_level=risk_level,
@@ -314,7 +344,7 @@ async def chat_endpoint(
         },
     )
     bot_result = generate_dialog(
-        user_message=user_text,
+        user_message=llm_user_text,
         screening_context=effective_screening_context,
         session_summary=session_summary,
         profile_context=profile_context,
@@ -344,7 +374,7 @@ async def chat_endpoint(
     reply = bot_result.get("reply") or "Aku dengerin, ya. Bisa ceritain sedikit lagi?"
     next_summary = bot_result.get("session_summary") or build_fallback_session_summary(
         previous_summary=session_summary,
-        user_message=user_text,
+            user_message=llm_user_text,
         assistant_reply=reply,
         mood_signal=request.mood_signal or "",
         risk_level=risk_level,
@@ -362,6 +392,8 @@ async def chat_endpoint(
             "llm_sentiment_score": bot_result.get("sentiment_score"),
             "suggested_action": bot_result.get("suggested_action"),
             "algorithm_result": algorithm_result,
+            "media_ids": media_ids,
+            "media_analysis": media_results,
         },
         next_summary,
     )
@@ -388,6 +420,7 @@ async def chat_endpoint(
             routed_to="llm_after_backend_processing",
             elapsed_ms=int((time.perf_counter() - started_at) * 1000),
         ),
+        media=media_results,
     )
 
 
