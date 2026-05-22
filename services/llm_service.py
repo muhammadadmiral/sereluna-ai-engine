@@ -223,7 +223,10 @@ def _completion(
         "LLM provider config: mode=%s nvidia_key=%s nvidia_model=%s groq_key=%s gemini_key=%s openrouter_key=%s",
         provider_mode,
         bool((os.getenv("NVIDIA_API_KEY") or "").strip()),
-        os.getenv("NVIDIA_FAST_MODEL" if use_fast_model else "NVIDIA_MODEL"),
+        os.getenv(
+            "NVIDIA_FAST_MODEL" if use_fast_model else "NVIDIA_MODEL",
+            "meta/llama-3.1-8b-instruct" if use_fast_model else "deepseek-ai/deepseek-v4-flash",
+        ),
         bool((os.getenv("GROQ_API_KEY") or "").strip()),
         bool((os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()),
         bool((os.getenv("OPENROUTER_API_KEY") or "").strip()),

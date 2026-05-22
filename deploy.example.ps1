@@ -98,6 +98,15 @@ finally {
 
 Write-Host "Setting Firebase project variables: $firebaseProjectId"
 Invoke-Hf spaces variables add $repoId `
+    -e "LLM_PROVIDER_MODE=nvidia_only" `
+    -e "NVIDIA_MODEL=deepseek-ai/deepseek-v4-flash" `
+    -e "NVIDIA_FAST_MODEL=meta/llama-3.1-8b-instruct" `
+    -e "NVIDIA_VISION_MODEL=google/gemma-3n-e2b-it" `
+    -e "NVIDIA_THINKING=false" `
+    -e "NVIDIA_TOP_P=0.95" `
+    -e "GROQ_MODEL=llama-3.3-70b-versatile" `
+    -e "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
+    -e "GROQ_FAST_MODEL=llama-3.1-8b-instant" `
     -e "FIREBASE_PROJECT_ID=$firebaseProjectId" `
     -e "FIREBASE_STORAGE_BUCKET=$firebaseStorageBucket" `
     -e "GOOGLE_CLOUD_PROJECT=$firebaseProjectId" `
