@@ -278,6 +278,34 @@ def generate_summary(session_raw: str, session_summary: str, user_name: str) -> 
     except Exception:
         return clean_diary_summary(session_summary or "Sesi percakapan selesai.")
 
+def build_fallback_session_summary(
+    previous_summary: str,
+    user_message: str,
+    assistant_reply: str,
+    mood_signal: str,
+    risk_level: str,
+) -> str:
+    """
+    Heuristic fallback summary update when LLM fails or for safety routes.
+    """
+    user_msg_snippet = _truncate(user_message, 100)
+    assistant_reply_snippet = _truncate(assistant_reply, 100)
+    
+    turn_summary = f"User: {user_msg_snippet} | Sereluna: {assistant_reply_snippet}"
+    if mood_signal:
+        turn_summary += f" [Mood: {mood_signal}]"
+    if risk_level and risk_level != "low":
+        turn_summary += f" [Risk: {risk_level}]"
+
+    if not previous_summary or previous_summary.strip() in ["", "Sesi percakapan baru."]:
+        return clean_diary_summary(turn_summary)
+    
+    combined = f"{previous_summary} {turn_summary}"
+    if len(combined) > 2000:
+        combined = "..." + combined[-1997:]
+        
+    return clean_diary_summary(combined)
+
 # --- Logic & Polishing Utilities ---
 
 def _parse_json_object(raw: str, fallback: Dict[str, Any]) -> Dict[str, Any]:
