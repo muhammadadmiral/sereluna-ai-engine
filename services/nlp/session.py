@@ -8,6 +8,7 @@ from services.nlp.lexicons import (
     SHORT_LISTENER_CUES, CASUAL_PROFANITY_CUES, HEAVY_SHORT_BLOCKER_CUES,
 )
 from services.nlp.utils import normalize_text, match_patterns, has_ambiguous_violence_context, is_greeting_only, contains_any
+from services.nlp.intent_service import classify_intent_supervised
 
 def assistant_turn_count(history_text: str) -> int:
     return len(re.findall(r"(?m)^Sereluna:", history_text or ""))
@@ -44,6 +45,109 @@ def detect_user_register(text: str, history_text: str) -> str:
         return "saya-anda lembut"
     return "aku-kamu santai"
 
+def build_user_style_profile(text: str, history_text: str) -> Dict[str, Any]:
+    current = normalize_text(text or "")
+    user_lines = [
+        line.split(":", 1)[1].strip()
+        for line in (history_text or "").splitlines()
+        if line.lower().startswith("user:") and ":" in line
+    ]
+    recent_user_text = " ".join(user_lines[-5:])
+    combined = normalize_text(f"{recent_user_text} {current}")
+
+    gue_lu_hits = len(re.findall(r"\b(gua|gue|gw|lu|lo|elo)\b", combined))
+    aku_kamu_hits = len(re.findall(r"\b(aku|kamu|dirimu)\b", combined))
+    formal_hits = len(re.findall(r"\b(saya|anda)\b", combined))
+    laugh_hits = len(re.findall(r"\b(wkwk\w*|haha\w*|hehe\w*|lol)\b", combined))
+    challenge_hits = len(re.findall(r"\b(sotau|sok tau|ngaco|apaansi|apaan|kok lu tau|kok kamu tau|lah|masa)\b", combined))
+    short_turns = sum(1 for item in user_lines[-5:] if len(normalize_text(item).split()) <= 5)
+
+    if gue_lu_hits >= max(1, aku_kamu_hits, formal_hits):
+        register = "gue-lu"
+    elif formal_hits > aku_kamu_hits:
+        register = "saya-anda"
+    else:
+        register = "aku-kamu"
+
+    return {
+        "register": register,
+        "formality": "formal" if register == "saya-anda" else "casual",
+        "humor": "high" if laugh_hits >= 1 else "normal",
+        "prefers_short_reply": short_turns >= 3,
+        "challenge_tolerance": "playful" if challenge_hits >= 1 else "normal",
+        "recent_challenge": challenge_hits >= 1,
+        "evidence": {
+            "gue_lu_hits": gue_lu_hits,
+            "aku_kamu_hits": aku_kamu_hits,
+            "formal_hits": formal_hits,
+            "recent_short_turns": short_turns,
+        },
+    }
+
+def is_meta_challenge(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+    return bool(
+        re.search(
+            r"\b(sotau|sok tau|ngaco|apaansi|apaan|kok lu tau|kok kamu tau|tau dari mana|liat raut|bisa liat|bisa lihat)\b",
+            normalized,
+        )
+    )
+
+def is_clarification_followup(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+    words = normalized.split()
+    if len(words) > 5:
+        return False
+    return bool(
+        re.search(
+            r"\b(kayak apa|gimana maksud|maksudnya|maksud lu|maksud kamu|apa maksud|yang mana|contohnya|terus|lanjut)\b",
+            normalized,
+        )
+    )
+
+def is_response_feedback(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+    if re.search(r"\b(kepanjangan|kependekan|dryb?|robot|kaku)\b", normalized):
+        return True
+    if re.search(r"\bterlalu\s+(singkat|pendek|panjang|kaku|formal)\b", normalized):
+        return True
+
+    response_targets = r"\b(respon|respons|response|reply|bales|balas|jawaban|jawabannya|text|teks|bot|sereluna)\b"
+    style_words = r"\b(singkat|pendek|panjang|natural|kaku|formal|gaul)\b"
+    return bool(
+        re.search(response_targets, normalized)
+        and re.search(style_words, normalized)
+    )
+
+def is_long_response_request(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+    return bool(
+        re.search(r"\b(long text|detail|jelaskan|cerita banyak|banyakin)\b", normalized)
+        or re.search(r"\b(text|teks|jawaban|respon|respons|balasan|cerita)\s+(yang\s+)?panjang\b", normalized)
+        or re.search(r"\bpanjangin\s+(jawaban|respon|respons|balasan|teks|text)\b", normalized)
+    )
+
+def is_question_like(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+    if "?" in (text or ""):
+        return True
+    return bool(
+        re.search(
+            r"\b(apa|gimana|bagaimana|kenapa|mengapa|menurutmu|menurut lu|menurut kamu|cara|saran|solusi)\b",
+            normalized,
+        )
+    )
+
 def tone_guidance(stage: str, user_register: str) -> str:
     if stage == "new_room":
         return f"mulai hangat tapi tetap natural; pakai register {user_register}; jangan terlalu formal"
@@ -71,25 +175,37 @@ def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> st
     if is_greeting_only(normalized):
         return "check_in"
 
-    if contains_any(normalized, RESPONSE_FEEDBACK_CUES):
+    if is_meta_challenge(text):
+        return "meta_challenge"
+
+    if is_clarification_followup(text):
+        return "clarification_followup"
+
+    if is_long_response_request(text):
+        return "advice_or_problem_solving" # Treat as advice/problem solving to trigger longer response
+
+    if is_response_feedback(text):
         return "response_feedback"
 
-    if ("?" in (text or "") or contains_any(normalized, QUESTION_CUES)) and contains_any(normalized, FACTUAL_PRODUCT_CUES):
+    if is_question_like(text) and contains_any(normalized, FACTUAL_PRODUCT_CUES):
         return "factual_or_product_question"
 
     if contains_any(normalized, CASUAL_REFERENCE_CUES):
         return "casual_reference"
 
-    if re.search(r"\b(long text|panjang|detail|jelaskan|cerita banyak|banyakin)\b", normalized):
-        return "advice_or_problem_solving" # Treat as advice/problem solving to trigger longer response
+    supervised_intent = classify_intent_supervised(text)
+    if supervised_intent.get("accepted"):
+        predicted_intent = supervised_intent["intent"]
+        if predicted_intent not in {"check_in", "safety_support"}:
+            return predicted_intent
 
-    if "?" in (text or "") or contains_any(normalized, ADVICE_CUES):
+    if contains_any(normalized, ADVICE_CUES):
         return "advice_or_problem_solving"
     if sentiment_score <= 2 or contains_any(normalized, NEGATIVE_WORDS):
         return "emotional_support"
     if contains_any(normalized, ACHIEVEMENT_WORDS) or sentiment_score >= 4:
         return "celebration_or_progress"
-    if contains_any(normalized, QUESTION_CUES):
+    if is_question_like(text):
         return "curious_question"
     return "reflective_companion"
 
@@ -105,10 +221,10 @@ def is_short_listener_turn(text: str) -> bool:
     if "?" in (text or ""):
         return False
 
-    if contains_any(normalized, RESPONSE_FEEDBACK_CUES):
+    if is_response_feedback(text):
         return False
 
-    if re.search(r"\b(long text|panjang|detail|jelaskan|cerita banyak|banyakin)\b", normalized):
+    if is_long_response_request(text):
         return False
 
     if contains_any(normalized, SHORT_LISTENER_CUES):

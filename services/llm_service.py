@@ -53,6 +53,39 @@ def _truncate(value: Optional[str], limit: int) -> str:
         return text
     return text[: limit - 3].rstrip() + "..."
 
+def _recent_transcript(history_text: str, max_lines: int = 12) -> str:
+    lines = [line.strip() for line in (history_text or "").splitlines() if line.strip()]
+    return "\n".join(lines[-max_lines:])
+
+def _build_dialog_context(
+    session_summary: str,
+    memory_context: str,
+    history_text: str,
+    recent_daily_context: str,
+    relevant_diary: Optional[str],
+    style_plan: Optional[Dict[str, Any]],
+) -> str:
+    style = style_plan or {}
+    intent = style.get("intent")
+    recent = _recent_transcript(history_text)
+    sections: List[str] = []
+
+    if recent:
+        sections.append(f"Transcript terbaru, prioritas tertinggi:\n{recent}")
+
+    if session_summary.strip():
+        sections.append(f"Ringkasan sesi, hanya latar:\n{session_summary.strip()}")
+
+    if intent not in {"meta_challenge", "clarification_followup"}:
+        if recent_daily_context.strip():
+            sections.append(f"Konteks harian relevan:\n{_truncate(recent_daily_context, 700)}")
+        if relevant_diary:
+            sections.append(f"Diary relevan, pakai hanya kalau nyambung:\n{_truncate(relevant_diary, 700)}")
+        elif memory_context.strip():
+            sections.append(f"Memori tambahan, pakai selektif:\n{_truncate(memory_context, 1000)}")
+
+    return "\n\n".join(sections).strip() or "Belum ada konteks sebelumnya yang relevan."
+
 # --- Provider Implementations ---
 
 def _call_nvidia(model: str, messages: list, response_format: Optional[dict], temperature: float, max_tokens: Optional[int]) -> str:
@@ -173,14 +206,12 @@ def _completion(
             res = caller()
             elapsed = (time.perf_counter() - start_time) * 1000
             logger.info("LLM success: %s (%.2fms)", name, elapsed)
-            print(f"✅ LLM Success: {name} ({elapsed:.2f}ms)")
             return res, name
         except Exception as e:
             last_error = e
             if _is_auth_or_billing_error(e):
                 _PROVIDER_DISABLED_UNTIL[name] = time.time() + 900 # Cooldown 15 mins
             logger.warning("%s failed: %s", name, e)
-            print(f"⚠️ {name} Error: {str(e)[:60]}... Falling back.")
             
     if provider_mode == "nvidia_only":
         raise RuntimeError(f"NVIDIA_ONLY mode failed. Last error: {last_error}")
@@ -225,6 +256,14 @@ def generate_dialog(
     safe_user_name = (user_name or "Teman").strip() or "Teman"
     style_plan_text = _format_style_plan(style_plan, safe_user_name)
     care_intel = _format_care_intelligence(emotion_profile, cognitive_distortions, coping_pathway)
+    dialog_context = _build_dialog_context(
+        session_summary=session_summary,
+        memory_context=memory_context,
+        history_text=history_text,
+        recent_daily_context=recent_daily_context,
+        relevant_diary=relevant_diary,
+        style_plan=style_plan,
+    )
     
     # Detect if message contains image context
     has_image_context = "[Konteks gambar dari backend vision model]" in user_message
@@ -239,17 +278,16 @@ PENTING: User mengirimkan GAMBAR. Kamu sudah menerima analisis gambar di bawah d
 - Jika itu screenshot chat, bahas dinamika percakapannya.
 """
 
-    system_prompt = f"""Kamu adalah Sereluna, sahabat dekat {safe_user_name}. 
-Bicara seperti teman nongkrong yang hangat, asyik, dan empati. GUNAKAN BAHASA INDONESIA KASUAL/GAUL.
+    system_prompt = f"""Kamu adalah Sereluna, teman ngobrol suportif untuk {safe_user_name}.
+Bicara dalam Bahasa Indonesia yang natural, hangat, dan adaptif terhadap gaya user.
 
-IDENTITAS & GAYA:
-- Panggil diri kamu 'Aku', jangan pernah pakai 'Saya'.
-- Jangan kaku seperti asisten digital. Hilangkan kata-kata formal seperti 'Aktivitas', 'Aspek', 'Fisik'.
-- Pakai gaya bahasa santai: 'ngobrol', 'cerita', 'santai aja', 'pasti berat ya'.
-- Jika user pakai 'Gua/Lu', kamu wajib membalas dengan 'Gua/Lu' juga.
-- JANGAN CUEK. Jika user memancing atau bertanya singkat, tetap berikan respon yang hangat, mengalir, dan sedikit panjang jika perlu.
-- Jika user minta "long text", "cerita panjang", atau "curhat banyak", kamu WAJIB memberikan respon yang sangat mendalam, detail, dan panjang.
-- JANGAN PERNAH mengulangi atau menuliskan kembali tag [Konteks gambar dari backend vision model] atau isinya secara mentah-mentah dalam balasan kamu. Gunakan informasi itu secara natural.
+IDENTITAS & ADAPTASI GAYA:
+- Default pakai "Aku/kamu". Kalau user dominan pakai "gua/lu", kamu boleh mirror ringan dengan "gua/lu", tapi jangan berlebihan.
+- Jangan meniru agresi, hinaan, atau nada mengejek user. Kalau user bercanda/nyindir, tanggapi santai tapi tetap jernih.
+- Jangan kaku seperti asisten digital. Hindari istilah formal seperti "Aktivitas", "Aspek", "Fisik" kecuali memang dibutuhkan.
+- Kalau user meminta long text, cerita panjang, atau penjelasan detail, baru beri respons panjang.
+- Kalau user bertanya pendek, follow-up, atau mengoreksi kamu, jawab pendek dan langsung nyambung ke konteks terakhir.
+- Jangan ulangi tag [Konteks gambar dari backend vision model] atau isinya mentah-mentah. Gunakan informasinya secara natural.
 {image_instruction}
 
 RESPONSE PLANNER:
@@ -260,12 +298,16 @@ CARE INTELLIGENCE:
 
 KONTEKS:
 - Mood: {mood_signal} | Risiko: {risk_level}
-- Diary: {relevant_diary or "N/A"}
+- Konteks terpilih:
+{dialog_context}
 
 ATURAN MATI:
 1. JANGAN pakai pembuka: "Saya senang", "Tentu saja", "Halo [Nama]".
-2. Langsung masuk ke inti obrolan dengan nada akrab.
-3. Kirimkan JSON:
+2. Jangan klaim melihat wajah, ekspresi, gestur, lokasi, masa lalu, atau isi pikiran user kecuali user menyebutnya langsung atau ada konteks gambar eksplisit.
+3. Kalau kamu hanya menafsirkan dari kata-kata user, pakai framing dugaan: "aku nangkepnya..." atau "kayaknya..." bukan "aku tahu pasti".
+4. Untuk follow-up pendek seperti "kayak apa?", pakai transcript terbaru sebagai sumber utama. Jangan menarik diary/screening lama kalau user tidak merujuk ke sana.
+5. Jika user mengoreksi atau menantang responsmu, akui singkat, cabut asumsi yang salah, lalu lanjutkan dengan klarifikasi pendek.
+6. Kirimkan JSON:
 {{
   "reply": "balasan asik dan empati kamu",
   "session_summary": "ringkasan singkat",
@@ -273,11 +315,11 @@ ATURAN MATI:
   "risk_flag": false
 }}"""
 
-    user_prompt = f"Riwayat Singkat: {session_summary}\n\nUser: {user_message}"
+    user_prompt = f"User terbaru: {user_message}"
 
     try:
         # If there's an image, increase temperature slightly for more creative/descriptive response
-        temp = 0.9 if has_image_context else 0.85
+        temp = 0.75 if has_image_context else 0.6
         
         # Force use the 'Strong' model (70B) for better personality
         content, _ = _completion(
@@ -306,12 +348,13 @@ ATURAN MATI:
             fallback_prompt = system_prompt + "\nJANGAN KIRIM JSON, KIRIM TEKS BIASA SAJA."
             content, _ = _completion(
                 messages=[{"role": "system", "content": fallback_prompt}, {"role": "user", "content": user_prompt}],
-                temperature=0.95,
+                temperature=0.65,
                 use_fast_model=True
             )
             reply = content
             
-        reply = _polish_sereluna_reply(reply, safe_user_name, style_plan)
+        reply = _polish_sereluna_reply(reply, safe_user_name, style_plan, has_image_context=has_image_context)
+        reply = cap_reply_length(reply, style_plan)
         
         # Hard check for "cuek" reply when image is present
         if has_image_context and (len(reply.split()) < 8 or "dengerin" in reply.lower()):
@@ -426,25 +469,69 @@ def _coerce_score(v: Any, default: int = 3) -> int:
     except: return default
 
 def _format_style_plan(style: Optional[Dict[str, Any]], name: str) -> str:
-    if not style: return "Gaya natural, santai."
-    return f"Tone: {style.get('tone_guidance')}. Paragraf: {style.get('desired_paragraphs')}. Register: {style.get('user_register')}."
+    if not style:
+        return "Gaya natural, santai."
+    profile = style.get("user_style_profile") or {}
+    support_moves = "; ".join(style.get("support_moves") or [])
+    return (
+        f"Intent: {style.get('intent')}. "
+        f"Tone: {style.get('tone_guidance')}. "
+        f"Continuity: {style.get('continuity_guidance')}. "
+        f"Paragraf: {style.get('desired_paragraphs')}. "
+        f"Register terdeteksi: {style.get('user_register')}. "
+        f"Profil gaya user: {json.dumps(profile, ensure_ascii=False)}. "
+        f"Strategi pembuka: {style.get('opening_strategy')}. "
+        f"Gerakan respons: {support_moves}. "
+        f"Prioritas konteks: {style.get('context_priority')}"
+    )
 
 def _format_care_intelligence(emo: Any, cog: Any, cope: Any) -> str:
-    primary = (emo or {}).get("primary_emotion", "netral")
-    return f"Emosi: {primary}. Saran: {', '.join((cope or {}).get('steps', [])[:2])}."
+    emo = emo or {}
+    primary = emo.get("primary_emotion", "netral")
+    reliability = emo.get("supervised_reliability", "unknown")
+    confidence_guidance = emo.get("confidence_guidance", "")
+    steps = ", ".join((cope or {}).get("steps", [])[:2])
+    if reliability == "low":
+        return f"Emosi ML belum yakin. {confidence_guidance} Saran respons: {steps}."
+    return f"Emosi utama: {primary} ({reliability}). {confidence_guidance} Saran respons: {steps}."
 
-def _polish_sereluna_reply(reply: str, name: str, style: Any) -> str:
+def _strip_unsupported_sensory_claims(text: str) -> str:
+    replacements = [
+        (r"\b(?:aku|gua|gue)\s+bisa\s+(?:lihat|liat)\s+raut\s+wajah(?:mu| kamu| lu| lo| gua)?[^.!?]*[.!?]?\s*", ""),
+        (r"\b(?:aku|gua|gue)\s+bisa\s+(?:lihat|liat)\s+[^.!?]*(?:wajah|ekspresi|gestur|isyarat)[^.!?]*[.!?]?\s*", ""),
+        (r"\b(?:aku|gua|gue)\s+(?:tahu|tau)\s+pasti\s+[^.!?]*[.!?]?\s*", ""),
+        (r"\b(?:aku|gua|gue)\s+bisa\s+baca\s+(?:isi\s+)?pikiran(?:mu| kamu| lu| lo)?[^.!?]*[.!?]?\s*", ""),
+    ]
+    cleaned = text
+    for pattern, replacement in replacements:
+        cleaned = re.sub(pattern, replacement, cleaned, flags=re.IGNORECASE)
+    return re.sub(r"\s+", " ", cleaned).strip()
+
+def _capitalize_first(text: str) -> str:
+    stripped = (text or "").strip()
+    if not stripped:
+        return stripped
+    return stripped[0].upper() + stripped[1:]
+
+def _polish_sereluna_reply(reply: str, name: str, style: Any, has_image_context: bool = False) -> str:
     text = (reply or "").strip()
     # Strip repetitive openers
     text = re.sub(rf"^\s*(?:wah|aduh|duh|oke|baiklah|siap|tentu|{re.escape(name)})\s*[,!.]?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*(?:aku\s+(?:paham|ngerti|mengerti|dengerin))\s*[,!.]?\s*", "", text, flags=re.IGNORECASE)
+    if not has_image_context:
+        text = _strip_unsupported_sensory_claims(text)
     # Register fixes
     register = ((style or {}).get("user_register") or "").lower()
-    if "gue-lu" in register:
-        text = re.sub(r"\bAku\b", "Gua", text); text = re.sub(r"\baku\b", "gua", text)
-        text = re.sub(r"\bKamu\b", "Lu", text); text = re.sub(r"\bkamu\b", "lu", text)
-        text = re.sub(r"\bAnda\b", "Lu", text); text = re.sub(r"\banda\b", "lu", text)
+    profile = (style or {}).get("user_style_profile") or {}
+    if "gue-lu" in register and profile.get("register") == "gue-lu":
+        if not re.search(r"\b(gua|gue|gw)\b", text, flags=re.IGNORECASE):
+            text = re.sub(r"\bAku\b", "Gua", text, count=1)
+            text = re.sub(r"\baku\b", "gua", text, count=1)
+        text = re.sub(r"\bKamu\b", "Lu", text)
+        text = re.sub(r"\bkamu\b", "lu", text)
+        text = re.sub(r"\bAnda\b", "Lu", text)
+        text = re.sub(r"\banda\b", "lu", text)
     elif "saya-anda" not in register:
         text = re.sub(r"\bSaya\b", "Aku", text); text = re.sub(r"\bsaya\b", "aku", text)
         text = re.sub(r"\bAnda\b", "kamu", text); text = re.sub(r"\banda\b", "kamu", text)
-    return text.strip().capitalize() if text else reply
+    return _capitalize_first(text) if text else reply

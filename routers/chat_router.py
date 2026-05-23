@@ -57,6 +57,7 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         normalized = preprocessing_filter.get("normalized_text", "N/A")
 
         supervised = algorithm_result.get("supervised_emotion_classifier") or {}
+        intent_data = algorithm_result.get("intent_classifier") or {}
         predicted_emotion = supervised.get("predicted_emotion", "N/A")
         confidence = supervised.get("confidence", 0.0)
         top_probs = supervised.get("top_probabilities", [])
@@ -82,7 +83,7 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         log_msg += f"   - Pemicu Emosi (XAI): {xai_text if xai_features else 'None (Too short)'}\n"
         log_msg += f"   - Distorsi Kognitif : {', '.join(distortion_list) if distortion_list else 'None'}\n"
         log_msg += "-"*75 + "\n"
-        log_msg += f"2. MACHINE LEARNING (WEIGHTED ENSEMBLE)\n"
+        log_msg += f"2. MACHINE LEARNING (SUPERVISED EMOTION MODEL)\n"
         log_msg += f"   - Model Performance : Accuracy {accuracy} | Macro-F1 {macro_f1}\n"
         log_msg += f"   - Prediksi Emosi    : {predicted_emotion.upper()} (Conf: {confidence})\n"
         log_msg += f"   - Top Probabilities : {prob_text}\n"
@@ -90,6 +91,7 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         log_msg += f"3. HYBRID ROUTING & SENTIMENT TREND\n"
         log_msg += f"   - Trend Sentiment   : {algorithm_result.get('sentiment_trend', 'Stable')}\n"
         log_msg += f"   - Routing Logic     : {algorithm_result.get('routing_mode', 'Direct ML')}\n"
+        log_msg += f"   - Intent Classifier : {intent_data.get('intent', 'N/A')} (Conf: {intent_data.get('confidence', 'N/A')})\n"
         log_msg += "-"*75 + "\n"
         log_msg += f"4. FINAL LLM RESPONSE (SENT TO USER)\n"
         log_msg += f"   - Output Bot        : {reply}\n"

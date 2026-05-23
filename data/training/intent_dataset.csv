@@ -1,0 +1,198 @@
+text,intent
+halo,check_in
+hai luna,check_in
+pagi,check_in
+malam sereluna,check_in
+hei apa kabar,check_in
+aku baru masuk nih,check_in
+temenin ngobrol dong,check_in
+lagi online ga,check_in
+apaansi dengerin apaan,meta_challenge
+sotau banget lu,meta_challenge
+kok lu tau itu berat,meta_challenge
+kok kamu tahu aku sedih,meta_challenge
+lu ngaco tadi,meta_challenge
+masa sih bisa liat raut wajah gua,meta_challenge
+jangan sok tahu deh,meta_challenge
+apaan sih maksudnya,meta_challenge
+tau dari mana lu,meta_challenge
+ngarang ya barusan,meta_challenge
+kayak apa,clarification_followup
+kayak apa?,clarification_followup
+maksudnya gimana,clarification_followup
+maksud lu apa,clarification_followup
+maksud kamu apa,clarification_followup
+yang mana,clarification_followup
+contohnya apa,clarification_followup
+terus gimana,clarification_followup
+lanjut,clarification_followup
+oh terus,clarification_followup
+jelasin dikit,clarification_followup
+respon lu kepanjangan,response_feedback
+jawaban kamu terlalu kaku,response_feedback
+balasannya pendek banget,response_feedback
+responnya dry,response_feedback
+botnya kayak robot,response_feedback
+jawaban tadi kurang natural,response_feedback
+bales yang singkat aja,response_feedback
+teksnya kependekan,response_feedback
+tolong jangan formal banget,response_feedback
+gaya lu jangan lebay,response_feedback
+fitur sereluna apa aja,factual_or_product_question
+cara pakai diary gimana,factual_or_product_question
+berapa pengguna aplikasi ini,factual_or_product_question
+data gue disimpan di mana,factual_or_product_question
+privasi aku aman ga,factual_or_product_question
+apa fungsi screening,factual_or_product_question
+sereluna bisa apa,factual_or_product_question
+cara ganti password gimana,factual_or_product_question
+aplikasi ini buat apa,factual_or_product_question
+fitur mood tracker di mana,factual_or_product_question
+harus apa sekarang,advice_or_problem_solving
+aku harus gimana,advice_or_problem_solving
+kasih saran dong,advice_or_problem_solving
+tolong bantu cari solusi,advice_or_problem_solving
+gimana cara nenangin diri,advice_or_problem_solving
+aku butuh tips biar ga panik,advice_or_problem_solving
+menurut lu aku harus bilang apa,advice_or_problem_solving
+bantu susun langkah kecil,advice_or_problem_solving
+cara mulai tidur lebih cepat gimana,advice_or_problem_solving
+tolong arahin aku pelan pelan,advice_or_problem_solving
+hari ini berat banget,emotional_support
+aku capek mental,emotional_support
+rasanya sedih terus,emotional_support
+aku ngerasa sendirian,emotional_support
+aku takut gagal lagi,emotional_support
+malam ini dada rasanya penuh,emotional_support
+aku malu sama diri sendiri,emotional_support
+semuanya terasa melelahkan,emotional_support
+aku pengen nangis tapi bingung,emotional_support
+rasanya ga ada yang ngerti,emotional_support
+akhirnya selesai juga,celebration_or_progress
+aku berhasil presentasi hari ini,celebration_or_progress
+gue seneng banget,celebration_or_progress
+hari ini lumayan membaik,celebration_or_progress
+aku bangga bisa bertahan,celebration_or_progress
+lega banget urusannya kelar,celebration_or_progress
+akhirnya aku berani ngomong,celebration_or_progress
+nilai gue naik,celebration_or_progress
+aku tidur cukup semalam,celebration_or_progress
+progres kecil tapi aku senang,celebration_or_progress
+ku akan menanti meski harus penantian panjang,casual_reference
+aku cuma quote lagu tadi,casual_reference
+ini lirik yang lagi relate,casual_reference
+kayak lagu lama itu,casual_reference
+vibes filmnya sedih banget,casual_reference
+ini cuma jokes kok,casual_reference
+gue lagi nyanyi doang,casual_reference
+barusan cuma caption,casual_reference
+itu referensi meme,casual_reference
+lagu ini kena banget,casual_reference
+wkwkwk,casual_banter
+haha iya juga,casual_banter
+ngakak banget,casual_banter
+lah bisa gitu,casual_banter
+anjir lucu,casual_banter
+yaudah santai,casual_banter
+oke deh,casual_banter
+random banget ya,casual_banter
+gpp lanjut aja,casual_banter
+iya iya paham,casual_banter
+aku lagi di kamar,reflective_companion
+tadi abis makan,reflective_companion
+hari ini biasa aja,reflective_companion
+aku belum tau mau cerita apa,reflective_companion
+barusan pulang kerja,reflective_companion
+lagi rebahan doang,reflective_companion
+aku cuma pengen ngobrol,reflective_companion
+belum ada yang spesial,reflective_companion
+tadi ketemu teman lama,reflective_companion
+aku lagi mikir aja,reflective_companion
+hai aku balik lagi,check_in
+halo mau ngobrol bentar,check_in
+yo luna,check_in
+selamat pagi,check_in
+aku mau mulai cerita,check_in
+bisa temenin sebentar,check_in
+lagi ada waktu ga,check_in
+halo aku datang lagi,check_in
+eh kok bisa nyimpulin gitu,meta_challenge
+lu asal nebak ya,meta_challenge
+kamu sok paham deh,meta_challenge
+kok bisa ngomong gitu,meta_challenge
+itu asumsi dari mana,meta_challenge
+lu belum tau ceritanya,meta_challenge
+jangan tebak tebak dulu,meta_challenge
+kok jadi ngomong wajah,meta_challenge
+gimana maksudnya tadi,clarification_followup
+bagian mana yang lu maksud,clarification_followup
+yang tadi maksudnya apa,clarification_followup
+coba jelasin ulang,clarification_followup
+aku belum nangkep,clarification_followup
+boleh diperjelas,clarification_followup
+terus maksudnya gimana,clarification_followup
+contoh kecilnya apa,clarification_followup
+respon tadi terlalu panjang,response_feedback
+jawaban tadi terlalu pendek,response_feedback
+tolong lebih natural,response_feedback
+jangan jawab kayak robot,response_feedback
+balesnya jangan terlalu formal,response_feedback
+respon kamu lumayan kaku,response_feedback
+balas yang lebih santai,response_feedback
+jangan terlalu banyak nasihat,response_feedback
+cara hapus akun gimana,factual_or_product_question
+diary tersimpan otomatis ga,factual_or_product_question
+screening itu berapa pertanyaan,factual_or_product_question
+notifikasi bisa dimatiin ga,factual_or_product_question
+data chat gue aman ga,factual_or_product_question
+cara upload foto gimana,factual_or_product_question
+fitur statistik ada di mana,factual_or_product_question
+model ai yang dipakai apa,factual_or_product_question
+apa langkah paling kecilnya,advice_or_problem_solving
+kasih aku opsi dong,advice_or_problem_solving
+bantu aku milih keputusan,advice_or_problem_solving
+aku harus mulai dari mana,advice_or_problem_solving
+cara berhenti overthinking gimana,advice_or_problem_solving
+tolong kasih langkah praktis,advice_or_problem_solving
+gimana ngomong ke dia,advice_or_problem_solving
+aku butuh arahan sekarang,advice_or_problem_solving
+rasanya berat banget hari ini,emotional_support
+aku lagi hancur banget,emotional_support
+aku takut sendirian,emotional_support
+aku ngerasa ga kuat,emotional_support
+hari ini kepalaku penuh,emotional_support
+rasanya semua numpuk,emotional_support
+aku sedih tanpa alasan jelas,emotional_support
+aku cemas dari tadi pagi,emotional_support
+akhirnya aku bisa tenang,celebration_or_progress
+aku berhasil tidur cukup,celebration_or_progress
+gue lulus sidang,celebration_or_progress
+aku bangga sama progres kecil ini,celebration_or_progress
+akhirnya beres juga kerjaannya,celebration_or_progress
+hari ini lebih baik dari kemarin,celebration_or_progress
+aku seneng bisa cerita,celebration_or_progress
+gue berhasil nahan emosi,celebration_or_progress
+itu cuma lirik lagu,casual_reference
+aku lagi quote aja,casual_reference
+ini referensi film,casual_reference
+barusan cuma caption galau,casual_reference
+gue cuma nyambungin meme,casual_reference
+vibes lagunya lagi cocok,casual_reference
+itu bukan curhat serius,casual_reference
+cuma potongan lagu kok,casual_reference
+wkwk santai aja,casual_banter
+haha iya random,casual_banter
+lol bener juga,casual_banter
+ngaco tapi lucu,casual_banter
+ya ampun bisa aja,casual_banter
+receh banget sih,casual_banter
+gue ketawa dikit,casual_banter
+oke gas lanjut,casual_banter
+aku baru selesai mandi,reflective_companion
+lagi nunggu makanan,reflective_companion
+aku di jalan pulang,reflective_companion
+barusan buka aplikasi,reflective_companion
+hari ini lumayan biasa,reflective_companion
+aku lagi nyari topik,reflective_companion
+tadi cuma scroll hp,reflective_companion
+aku pengen cerita pelan pelan,reflective_companion

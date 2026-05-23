@@ -17,6 +17,7 @@ from services.nlp.clinical import (
 from services.nlp.logic import (
     select_coping_pathway, find_relevant_diary_with_score, DIARY_RETRIEVAL_THRESHOLD
 )
+from services.nlp.intent_service import classify_intent_supervised
 
 def build_context_algorithm_result(
     text: str,
@@ -60,6 +61,7 @@ def build_context_algorithm_result(
     keywords = extract_keywords(analysis_text)
     sentiment_score = calculate_sentiment_score(analysis_text, mood_signal)
     emotion_profile = build_emotion_profile(analysis_text, mood_signal, sentiment_score, risk["level"])
+    intent_prediction = classify_intent_supervised(analysis_text)
     
     ml_emotion = (
         {
@@ -96,15 +98,35 @@ def build_context_algorithm_result(
     
     emotion_profile["ml_prediction"] = ml_emotion
     emotion_profile["supervised_prediction"] = supervised_emotion
+    supervised_confidence = float(supervised_emotion.get("confidence", 0.0) or 0.0)
+    supervised_reliability = (
+        "strong"
+        if supervised_confidence >= 0.55
+        else "tentative"
+        if supervised_confidence >= SUPERVISED_CONFIDENCE_THRESHOLD
+        else "low"
+    )
+    emotion_profile["supervised_reliability"] = supervised_reliability
+    emotion_profile["confidence_guidance"] = (
+        "Prediksi emosi cukup kuat dan boleh dipakai sebagai sinyal utama."
+        if supervised_reliability == "strong"
+        else "Prediksi emosi hanya dugaan ringan; jangan menyimpulkan kondisi user terlalu tegas."
+        if supervised_reliability == "tentative"
+        else "Prediksi emosi tidak cukup yakin; jangan jadikan emosi ML sebagai fakta. Minta klarifikasi dari pesan terbaru."
+    )
     
     if (
         emotion_profile["primary_emotion"] in {"neutral", "distress"}
         and supervised_emotion["predicted_emotion"] != "neutral"
-        and supervised_emotion.get("accepted")
+        and supervised_reliability in {"strong", "tentative"}
     ):
         emotion_profile["primary_emotion"] = supervised_emotion["predicted_emotion"]
         emotion_profile["intensity"] = "low"
-    elif emotion_profile["primary_emotion"] in {"neutral", "distress"} and ml_emotion["predicted_emotion"] != "neutral":
+    elif (
+        emotion_profile["primary_emotion"] in {"neutral", "distress"}
+        and ml_emotion["predicted_emotion"] != "neutral"
+        and supervised_reliability != "low"
+    ):
         emotion_profile["primary_emotion"] = ml_emotion["predicted_emotion"]
         emotion_profile["intensity"] = "low"
         
@@ -128,6 +150,7 @@ def build_context_algorithm_result(
         "retrieval": retrieval,
         "emotion_profile": emotion_profile,
         "implicit_dass21": implicit_dass21,
+        "intent_classifier": intent_prediction,
         "ml_emotion_classifier": ml_emotion,
         "supervised_emotion_classifier": supervised_emotion,
         "supervised_model_evaluation": evaluate_supervised_emotion_model(),

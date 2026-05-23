@@ -1,0 +1,489 @@
+text,label,source_model
+gue emang lagi sedih ngobatin masalah keluarga ama adik gara-gara beliau nggak paham ya. aku jadi males mikir sama dia.,anger,qwen2.5:7b
+"barusan adiknya minta penjelasan banyak-banyak, gua merasa kesal gitu aja, padahal udah diberi tahu deh ya.",anger,qwen2.5:7b
+keluarga emang susah dipahami kadang. nih lagi ngerasa ganteng-ganteng tersinggung sama adik yang minta klarifikasi banyak.,anger,qwen2.5:7b
+"bosan ngebahas masalah keluarga, gue merasa frustrasi gitu aja udah dibasmi deh ya.",anger,qwen2.5:7b
+"adiknya bilang ngebantu seadanya, gua jadi nggak pinter lagi, rasanya emang kesal gitu.",anger,qwen2.5:7b
+"ngerasa diabaikan sama adik, gue jadi lebih marah lagi. gue pikir udah dikasih tanggung jawab ama keluarga.",anger,qwen2.5:7b
+"sering ngerasa nguras-nguras aja sama adik, rasanya emang kesal gitu aja, padahal cuma sebentar deh.",anger,qwen2.5:7b
+"nih lagi ngeluh sama adik yang gak ngerti, gua merasa frustrasi gitu aja, udah dijelasin banyak kali masih ngeblunder aja.",anger,qwen2.5:7b
+"adiknya minta klarifikasi soal harta warisan, gua jadi lebih marah lagi. ngerasa udah dibohongin gitu aja.",anger,qwen2.5:7b
+"nih lagi menceritainya sama adik, rasanya emang tersinggung gitu aja, gua sudah berusaha sekuat tenaga tapi tetep dikritisi aja.",anger,qwen2.5:7b
+"bosan ngebahas masalah keluarga, gue jadi nggak sabar sama adik yang sering bikin rumit-rumit sendiri.",anger,qwen2.5:7b
+saya marah banget sama adiknya.,anger,qwen2.5:7b
+tadi dia nggak sengaja ngelewatin kerjaanku dan gak minta izin.,anger,qwen2.5:7b
+betul-betul kesal deh setiap kali begitu.,anger,qwen2.5:7b
+"terus terang, rasanya jengkel kalo begini terus.",anger,qwen2.5:7b
+saya bener2 tersinggung dengan cara dia bertindak.,anger,qwen2.5:7b
+"frustrasi banget nih, udah beberapa kali seperti ini.",anger,qwen2.5:7b
+adiknya sering bikin saya marah gitu.,anger,qwen2.5:7b
+"kerjanya nggak dipedulikan sama sekali, rasanya terlalu banyak.",anger,qwen2.5:7b
+tidak enak hati ya kalau sering begini.,anger,qwen2.5:7b
+"saya jadi emosi kalo begitu, biasanya nangis.",anger,qwen2.5:7b
+rasa kesalnya bener2 mereset setiap kali lihat dia.,anger,qwen2.5:7b
+"seringnya bikin saya frustrasi juga, udah lama sekarang.",anger,qwen2.5:7b
+biasanya saya merasa kesal sama diri sendiri karena gak bisa sempurna.,anger,qwen2.5:7b
+"masa iku aku jadi marah gitu, emangnya udah terlalu?",anger,qwen2.5:7b
+"aku ngerasa gak cukup aja, itu bikin aku jengkel.",anger,qwen2.5:7b
+ini emangnya normal sih merasa kurang afdol gitu?,anger,qwen2.5:7b
+emangnya lebih baik kalau gak pernah punya cita-cita?,anger,qwen2.5:7b
+"lagi-lagi rasanya kesal sama diri sendiri, udah terlalu banyak harapan.",anger,qwen2.5:7b
+kok bisa kayak gini ya? sering ngerasa enggak percaya diri.,anger,qwen2.5:7b
+aku jadi cenderung marah aja kalau dicontohin sama orang lain.,anger,qwen2.5:7b
+"sering merasa kurang berharga, bikin hati ini jadi penuh rasa marah.",anger,qwen2.5:7b
+gak pernah terpikir ya bisa jadi seperti gini? sering banget ngerasa kesal.,anger,qwen2.5:7b
+aku emang udah luar biasa kayak gini sih?,anger,qwen2.5:7b
+"terlalu banyak harapan, bikin rasanya enggak cukup aja.",anger,qwen2.5:7b
+maaf tadi saya sempet ngegas sama adiknya karena dia nggak mematuhi aturan rumah.,anger,qwen2.5:7b
+"beneran gue kesal banget nih sama om yang suka nganggap gue sepelein, udah beberapa kali gitu",anger,qwen2.5:7b
+"emang ada yang bikin emosi ya, baru tadi nyariin dokter online buat masalah keluarga",anger,qwen2.5:7b
+jujur aja rasanya bener2 kesal nih sama kakak saya yang nggk peduli sama keadaan gue,anger,qwen2.5:7b
+"lu udah ngerti gpp sih klo ga sempet ngekspresikan diri, tapi emang kali gue rasain gua jadi makin kesal aja.",anger,qwen2.5:7b
+"kalo lagi mikirin masa depan lu, gua merasa nggak ada yang bakalan berhasil.",anger,qwen2.5:7b
+gue bener-bener kesel ya klo liat rekan2 lu udah maju lebih cepet dibanding gue.,anger,qwen2.5:7b
+"masa2an gua merasa lu jauh banget dari apa yang gua harapin, bikin gue iri aja nggak enak.",anger,qwen2.5:7b
+"gue pake cara2 sendiri buat ngebantu diri gue, tapi seringnya jadi lebih kesal dan minder kalo gagal.",anger,qwen2.5:7b
+"klo lagi mikirin lu gue merasa gua udah lelah sama situasi2 kayak gitu, gak sepadan aja.",anger,qwen2.5:7b
+"gue pake kata2 negative doang ketika ngerenung2in diri lu, bikin gue jadi tambah minder dan kesal.",anger,qwen2.5:7b
+"lu masih konsisten ngurus diri lu sendiri, tapi seringnya gua merasa lu lebih banyak menghakimi diri lu aja.",anger,qwen2.5:7b
+"gue pake kata2 negatif untuk diri lu ketika ngerenung2in, bikin gue iri aja sama situasi lu.",anger,qwen2.5:7b
+"lu udah coba2 banyak caranya klo mau maju, tapi gua merasa lu masih jauh dari apa yang diharapin.",anger,qwen2.5:7b
+"gue sadar ngelihat rekan2 lu jadi lebih sukses dibanding gue, bikin gue terus minder dan kesal.",anger,qwen2.5:7b
+"lu udah niat2 ngurus diri lu sendiri, tapi seringnya gua merasa lu lebih banyak menghakimi diri lu aja.",anger,qwen2.5:7b
+"masa iya ya, kapan lagi.",anger,qwen2.5:7b
+emangnya saya cuma bisa begini aja?,anger,qwen2.5:7b
+gue marah-marahin gue sendiri dulu dulu.,anger,qwen2.5:7b
+masa masih belum berhenti begitu? nggak mungkin aja.,anger,qwen2.5:7b
+teman gue nggak tahu kalau dia udah ngecewain gue begini.,anger,qwen2.5:7b
+"kok malah jadi seperti ini, sih?",anger,qwen2.5:7b
+gue frustrasi banget dengan pekerjaan ini.,anger,qwen2.5:7b
+"ngerasa kesal gitu aja sama rekan kerja,",anger,qwen2.5:7b
+"seringnya kayak gimana ya, emangnya udah masalah besar?",anger,qwen2.5:7b
+bikin gue marah sendiri sama situasinya itu.,anger,qwen2.5:7b
+kok nggak bisa lebih baik dari begini?,anger,qwen2.5:7b
+ngerasa terpinggirin di tengah kerjaan ini.,anger,qwen2.5:7b
+sudah malam tapi ayah masih nggoro-nggoro.,anger,qwen2.5:7b
+"mama, kenapa enggak masak makanannya?",anger,qwen2.5:7b
+aku kesal sama adiknya yang selalu ngebut.,anger,qwen2.5:7bggr
+ayah lagi main game terus nggak mau ngajarin bikin tugas sekolah.,anger,qwen2.5:7b
+"adik terus ngetagih uang jajan, udah marah aja kok.",anger,qwen2.5:7b
+mama bilang nggak bisa ikut rapat kerja nanti malam.,anger,qwen2.5:7b
+"ayah selalu lupa waktu makan, kayaknya sengit.",anger,qwen2.5:7b
+bikin nasi goreng mau siapa tahu ayah buka kulkas.,anger,qwen2.5:7b
+terus minta duit beli mainan aja udah nggak sabar.,anger,qwen2.5:7b
+"mama bilang nanti malam masak sup, seger ya.",anger,qwen2.5:7b
+"ayah nggak ikutan ulangan harian aku, jadi kesal.",anger,qwen2.5:7b
+"gue nggak bisa ninggalin pekerjaan nih, luh, jelas2 udah jam 7 dan masih di kantor",anger,qwen2.5:7b
+"lu sabar aja ya, gua lagi kasian sama diri gue sendiri",anger,qwen2.5:7b
+"gara-gara lupa nyetel alarm, sekarang udah telat dateng ke tempat kerja",anger,qwen2.5:7b
+"bosan juga sih, tapi kalau nggak kerja rasanya pusing banget",anger,qwen2.5:7b
+"lu minta ampun lu, gua cek per jam tuh sudah 10 kali",anger,qwen2.5:7b
+"kontrol diri aja ya, gua udah lelah sama pekerjaan gue",anger,qwen2.5:7b
+"gue emang lu ngantuk banget lu tapi tetep aja gak bisa tidur, jadi marah aja gitu lu",anger,qwen2.5:7b
+"lu udah tahu enggak kalau gua sering marah-bener kalo ngantuk, padahal biasanya enakan",anger,qwen2.5:7b
+"emang lu capek sih gua, tapi gue ngerasa masih marah-marah aja meskipun udah tidur",anger,qwen2.5:7b
+"ntar lu ngerti lah ya, kalau gua sering marah klo kecapekan gitu, lumrah aja kan?",anger,qwen2.5:7b
+"gua jadi terlalu tersinggung kalau udah gak bisa tidur lama banget, terus marah-marah aja",anger,qwen2.5:7b
+"ntar gua cerita ya kalau gua sering marah kalo ngantuk dan capek, biasanya malah enakan gitu",anger,qwen2.5:7b
+"emang lu emosional berlebihan sih gua kalo gak tidur cukup, jadi terlalu marah aja ntar",anger,qwen2.5:7b
+"ntar lu tahu lah ya kalau marah-marah gitu bukan cuma karena capek, tapi juga ngantuk terus",anger,qwen2.5:7b
+"lu males nih sama kerjanya, udah 4 hari ngurusin project gitu aja",anger,qwen2.5:7b
+"gue kemarin gtu ama bossnya, udah nyari cara buat kabur darinya",anger,qwen2.5:7b
+"deadline deket aja, stress lah",anger,qwen2.5:7b
+"gue ngelama2an di kantor gitu aja, mau mati juga nih",anger,qwen2.5:7b
+"dibilangin sama bossnya gila, udah capek aja",anger,qwen2.5:7b
+"kerja keras gitu aja, pengen rengek2 bossnya dikasih cuti",anger,qwen2.5:7b
+"gini deh, stress sampe pusing",anger,qwen2.5:7b
+"gue marah sama client, mau ngelontorin doanya ke kaca",anger,qwen2.5:7b
+"kerja keras gitu aja, pengen bolos",anger,qwen2.5:7b
+"bikin proposal sampe malam, emangnya itu tugas?",anger,qwen2.5:7b
+masa iya gitu aja ya? dia selama ini gak pernah ngerti klo aku pengin istirahat.,anger,qwen2.5:7b
+emangnya dia sering nanya-nanya terus trus? gatal banget.,anger,qwen2.5:7b
+kayaknya dia udah nyuruhku pasrah aja terus.,anger,qwen2.5:7b
+"tadi lagi bercanda2, eh malah nyari bukti-bukti gitu.",anger,qwen2.5:7b
+"aku ngerti klo cewek2 seneng2 nyari fakta-fakta, tapi apa ada yang aneh?",anger,qwen2.5:7b
+kalo udah begini aja? makanya aku mau pulang terus.,anger,qwen2.5:7b
+seringnya dia kayak gini gara-gara kecewa gitu aja.,anger,qwen2.5:7b
+"bisa minta tolong nggak ya, jangan2 nanti lagi marah-marah terus.",anger,qwen2.5:7b
+"gak enak banget ya, malah dicurigai begini.",anger,qwen2.5:7b
+aku juga sudah coba pacarku tapi gak ada yang berubah.,anger,qwen2.5:7b
+masa dia bisa gitu? emangnya udah nggak tau dirinya sendiri?,anger,qwen2.5:7b
+"ya ampun, udah begini aja?",anger,qwen2.5:7b
+"gue merasa nggak dihargain, kayaknya gue nggk penting aja.",anger,qwen2.5:7b
+"emang sih gue udah mencoba tapi tetep merasa enggak cukup, bosen sama diri sendiri.",anger,qwen2.5:7b
+"kalo ada yang nanya gue kuat, sebenarnya gue jadi lebih pusing, bikin bad mood terus.",anger,qwen2.5:7b
+"seringnya gue dibandingin sama orang lain, jadi rasanya nggk bisa bersaing.",anger,qwen2.5:7b
+"masa sih gue harus sempurna, udah gue coba-coba banyak tapi tetep merasa nggk cukup.",anger,qwen2.5:7b
+"kalo ada yang ngejek, langsung aja gue marah, gara-gara rasanya gue nggk dihargain.",anger,qwen2.5:7b
+"seringnya gue pikirin hal-hal negatif tentang diri sendiri, bikin gue merasa terhina.",anger,qwen2.5:7b
+"gue emang pernah coba-coba banyak tapi tetep gada yang jadi aja, jadi marah sama diri sendiri.",anger,qwen2.5:7b
+"kalo ada yang ngucap2in kritik, langsung ayo gue marah dan berasa gak diperlukan.",anger,qwen2.5:7b
+"ngerasa kayak udah terlanjur, gue merasa enggak ada yang bisa mengubahnya, jadi kesal.",anger,qwen2.5:7b
+"seringnya merasa kurang mampu, bikin gue ngotot sama diri sendiri tapi tetep merasa nggk cukup.",anger,qwen2.5:7b
+"kalo ada yang ngejek dan nggak sehat-hari, langsung ayo gue jengkel dan frustrasi.",anger,qwen2.5:7b
+saya sedih nggak bisa fokus kuliah hari ini.,anger,qwen2.5:7b
+tugas skripsi bikin saya emosi banget.,anger,qwen2.5:7b
+mengerjakan tugas skripsi bikin kepala pusing.,anger,qwen2.5:7b
+bosan dech sama makalah yang banyak.,anger,qwen2.5:7b
+"dosen lagi nge-critik ulasannya, rasanya marah dan kecewa.",anger,qwen2.5:7b
+saya gak bisa ngelola stress ngerjain skripsi.,anger,qwen2.5:7b
+tingginya tekanan akademis bikin kepala pusing banget.,anger,qwen2.5:7b
+mengerjakan tugas skripsi emang susah.,anger,qwen2.5:7b
+ngerasa stres sama deadline yang pendek.,anger,qwen2.5:7b
+rasanya jengkel banget sama buku-buku teori yang ribet.,anger,qwen2.5:7b
+"saya sedih, ngerasa kesal sama ujian tambahan ini.",anger,qwen2.5:7b
+"pikiran penuh dengan keraguan, rasanya frustrasi.",anger,qwen2.5:7b
+gue emang ngantuk tapi nggak bisa tidur gara-gara pikiran lu gitu,anger,qwen2.5:7b
+gara2 ngerasa ngantuk aja trus marah lu makanya susah tidur,anger,qwen2.5:7b
+"gue gatel-gatel banget pakek pil insominia, gue jadi nggak enak badan dan marah",anger,qwen2.5:7b
+"gue capek luar dan dalam juga nih, tapi malah gue marah-bener dengan diri sendiri",anger,qwen2.5:7b
+"mending lu tidur aja, gue udah jengkel sama pikiran negative itu",anger,qwen2.5:7b
+gue ngerasa stress gitu sampe ngantuk aja terus marah-marah,anger,qwen2.5:7b
+"gara2 capek fisik trus pikiran juga banyak, lu pasti ngebosenin diri sendiri ya",anger,qwen2.5:7b
+"gue gak bisa tidur, tapi malah merasa jengkel sama kondisi itu sendiri",anger,qwen2.5:7b
+"gue ngantuk aja tapi pikiran nge-bosankan gue, jadi marah",anger,qwen2.5:7b
+"capek badan tapi kepala kayaknya kaya samudera gitu, akhirnya gue marah juga",anger,qwen2.5:7b
+gara2 capek fisik lu malah marah-marah sendiri,anger,qwen2.5:7b
+gue emang ngantuk tapi terus munculin pikiran negatif yang bikin ngebosain,anger,qwen2.5:7b
+gue jadi marah aja gara-gara ngantuk tapi harus tetep bekerja,anger,qwen2.5:7b
+gak enak deh kalo ngobatin kamu,anger,qwen2.5:7b
+sabar ya aku rasa kita bisa,anger,qwen2.5:7b
+mau bicarain masalah ini ga?,anger,qwen2.5:7b
+kita coba cari solusinya bareng-bareng,anger,qwen2.5:7b
+kurang suka dengan situasi ini sendiri,anger,qwen2.5:7b
+rasanya giliran aja yang dihargai,anger,qwen2.5:7b
+kurang adil rasanya kalau begitu,anger,qwen2.5:7b
+aku merasa gak dipahami oleh kamu,anger,qwen2.5:7b
+emangnya buat apa diskusi ini ya?,anger,qwen2.5:7b
+gini sih perasaan aku kalo kamu ngga mau ngobatin,anger,qwen2.5:7b
+bisa tolongin masalah ini ngga?,anger,qwen2.5:7b
+mau bilang sesuatu yang penting tapi malas,anger,qwen2.5:7b
+lu nggak tahu nih gua lagi kesel gitu!,anger,qwen2.5:7b
+gue dan temen lu kencang gila tapi dia nggak mau ngobrol2in masalahnya.,anger,qwen2.5:7b
+"lu kenal sama temen yang sok baik-baik aja, eh intinya dia emang nggak mau bantu.",anger,qwen2.5:7b
+"teman lu udah lama nggak ngobrol nih, gua jadi ngeluh gitu.",anger,qwen2.5:7b
+gue ngerasa bosan dan marah sama temen yang selalu milih-milih temen baru2 aja.,anger,qwen2.5:7b
+"lu kenal sama temen yang suka main teka-teki dengan perasaan gue, gua udah kesal!",anger,qwen2.5:7b
+"teman lu udah lama nggak ngobrol, gua jadi emang tersinggung gitu.",anger,qwen2.5:7b
+gue ngerasa terabaikan dan marah sama temen yang selalu sibuk.,anger,qwen2.5:7b
+"lu kenal sama temen yang suka main2in perasaan gue, gua udah kesel!",anger,qwen2.5:7b
+"teman lu sering ngelanturin masalahnya ke gue, gua jadi emang tersinggung gitu.",anger,qwen2.5:7b
+gue ngerasa terabaikan dan marah sama temen yang selalu pilih2in temen baru2 aja.,anger,qwen2.5:7b
+lu seger gpp,anger,qwen2.5:7b
+gua marah2 tuh kaya apa aja sih,anger,qwen2.5:7b
+kalo lu bosen lu ngapain doang,anger,qwen2.5:7b
+gue kasianin lu tapi lu juga yang bikinin masalah,anger,qwen2.5:7b
+"gpp aja yah, ntar aja deh",anger,qwen2.5:7b
+lu ngerti gpp kan,anger,qwen2.5:7b
+"gpp lah gue, bukan gue lajinya",anger,qwen2.5:7b
+ngapa2an kaya gitu tuh malas,anger,qwen2.5:7b
+"gue juga pernah gitu, tapi sekarang enak",anger,qwen2.5:7b
+"kalo lu terus begini, ntar jadi kebencian",anger,qwen2.5:7b
+"lu ngerti kan aja, itu yang bikin lu marah",anger,qwen2.5:7b
+mau dengar masalah lu atau mau ditinggal?,anger,qwen2.5:7b
+masih kesal sama pacarku karena dia selalu telat.,anger,qwen2.5:7b
+terasinggung banget sih ngomongin hubungan ini.,anger,qwen2.5:7b
+saya jengkel dengan perilaku pasang-pisan pacar saya.,anger,qwen2.5:7b
+"anger management itu penting ya, pacaran juga harus sabar aja.",anger,qwen2.5:7b
+"kesal sama kondisi hubungan kita, mau benerin tapi gak tahu caranya.",anger,qwen2.5:7b
+"pasalnya pacarku sering ngga jujur, rasanya marah gitu.",anger,qwen2.5:7b
+"frustrasi deh nih, dia selalu mengkhianati janji-janji yang dibuat.",anger,qwen2.5:7b
+"kesal banget dengan sikapnya, rasanya mau ngeletakin hubungan ini.",anger,qwen2.5:7b
+"anger management itu penting, tapi pasangan saya terus-menerus mengecewakan.",anger,qwen2.5:7b
+tersinggung sih liat dia ngga peduli sama yang saya rasakan.,anger,qwen2.5:7b
+"jengkel banget, pacarku seringnya malah bikin situasi semakin memburuk.",anger,qwen2.5:7b
+malam tadi benar-benar bikin saya kesal.,anger,qwen2.5:7b
+saya pikir bisa lebih baik daripada ini terus-menerus.,anger,qwen2.5:7b
+"masa nggak jelasin deh, mirip-mirip aja sama temen yang lainnya.",anger,qwen2.5:7b
+"tentu saja, tapi itu gara-gara dia selalu main game di tengah ngaji.",anger,qwen2.5:7b
+emangnya seharusnya saya pake cara seperti itu juga? nggak mungkin ya?,anger,qwen2.5:7b
+saya baru sadar ketidaksabaran saya sebenernya sudah lama ada.,anger,qwen2.5:7b
+"tapi ini emang situasinya yang bikin geram, kan?",anger,qwen2.5:7b
+"mau ngobatin tapi malah dianggap gila gitu aja, begini terus enggak enak.",anger,qwen2.5:7b
+saya jadi marah kalau dibilang seenaknya saja ngajak bicara.,anger,qwen2.5:7b
+"kamu tahu, emosi ini bikin saya sulit fokus, sama sekali.",anger,qwen2.5:7b
+"terlalu banyak tekanan, jadi rasanya kesal aja terus.",anger,qwen2.5:7b
+masa iya aja begitu? saya serius nih.,anger,qwen2.5:7b
+"gue males banget sama dia lu, gua nggak ngeh alasan nyetop aja.",anger,qwen2.5:7b
+"ntar kita ngobatin sih, tapi gue jujur lu, gue males bgt.",anger,qwen2.5:7b
+"kalo kaya gitu, ya udah lah, tapi gue males lu, ga mau lagi.",anger,qwen2.5:7b
+"ini udah kehabisan adegan, gua males aje sama dia lu.",anger,qwen2.5:7b
+"lu ngerti kan, gue males banget sama mereka itu, nggak bisa nyetop aja.",anger,qwen2.5:7b
+saat ngobrol sama temen itu jadi emosi gitu.,anger,qwen2.5:7b
+masa iya sih gue perlu bantuin nih?,anger,qwen2.5:7b
+jujur aja rasanya gak nyaman,anger,qwen2.5:7b
+kok tiba-tiba saya jadi emosi begini?,anger,qwen2.5:7b
+terus terang saya nggak seneng banget sama situasi ini,anger,qwen2.5:7b
+"kenapa rasanya marah gitu, ya?",anger,qwen2.5:7b
+gue emang kurang yakin dengan diri sendiri aja,anger,qwen2.5:7b
+seringnya gue merasa lemah hati dan cemas,anger,qwen2.5:7b
+"tadi sih gue masih baik-baik aja kok, sekarang jadi emosional",anger,qwen2.5:7b
+masa dia ngomong begini bisa bikin saya bosen banget,anger,qwen2.5:7b
+lagi-lagi gue jadi sedih gitu sendiri,anger,qwen2.5:7b
+saya merasa ada yang salah dengan diri ini,anger,qwen2.5:7b
+gue seneng banget dapat gaji tetapi nggak bisa nge-happy apa-nya nih.,anger,qwen2.5:7b
+"emang gua marah aja nih, tapi ngomongin gue males.",anger,qwen2.5:7b
+"lu kenalin sama pacar baru gue, trus ga nyambung sama yang lama. gara2 itu pusing amat deh.",anger,qwen2.5:7b
+coba lu cobain jangan cemburu begitu-begitu aja.,anger,qwen2.5:7b
+"ntar gua kasian nanti doang, nggak mungkin sih ngelihat rekan kerja kuatir gitu.",anger,qwen2.5:7b
+emang dia masih belum minta maaf atas semua kesalahannya itu,anger,qwen2.5:7b
+kenapa dia selalu ngajak aku ngechit tapi jarang balas pesannya?,anger,qwen2.5:7b
+aku merasa kesal banget sama dia hari ini,anger,qwen2.5:7b
+"kenapa dia tidak mau ngobrol lebih dalam sih, emangnya ga ada masalah?",anger,qwen2.5:7b
+"kamu tahu kan sebenarnya aku emang sering ngebulin adik karena nggak bisa bantu dia kerjain soalnya, tapi udah begitu aja ya?",anger,qwen2.5:7b
+kok sih dia selalu pake alasan yang sama kalau saya minta tolong? itu bikin saya gerutu.,anger,qwen2.5:7b
+saya merasa kesal banget nih kalau dia nggak pernah mau dengarkan omongan saya tentang hal-hal penting.,anger,qwen2.5:7b
+bisa jelasin kenapa sih dia selalu memaksaku untuk ikut kegiatan yang sama saja? itu bikin saya marah gitu.,anger,qwen2.5:7b
+"kita udah berdebat gara-gara masalah biasa-biasa aja, kok malah sampai baper dan akhirnya nggak bisa tidur malam itu.",anger,qwen2.5:7b
+saya ngerasa kesal banget sih kalau dia selalu pake cara yang salah memahami apa yang saya sampaikan.,anger,qwen2.5:7b
+"bisa gak ya kita ngobatin perbedaan pendapat ini, tadi udah aja deh, ngasih saran sama adik terus malah dihukum.",anger,qwen2.5:7b
+kok dia selalu ngejek soal penampilan? saya jadi merasa tidak percaya diri dan kesal gitu.,anger,qwen2.5:7b
+"saya kira kita sudah selesaikan masalahnya, tapi kok masih ada yang bikin saya nggak enak badan aja?",anger,qwen2.5:7b
+"kita udah coba bicara tentang hal ini banyak kali, tapi malah jadi perdebatan terus. kan kan nggak seharusnya begini.",anger,qwen2.5:7b
+saya merasa kesal banget kalau dia selalu memaksakan pendapatnya sendiri tanpa mau mendengarkan pendapat saya juga.,anger,qwen2.5:7b
+"kok dia bisa gitu aja ya? tidak pernah mau menerima kritik, malah sama sekali nggak mau berubah. ini bikin saya jengkel.",anger,qwen2.5:7b
+"gausah begini dosen, bikin saya emosi",anger,qwen2.5:7b
+skripsinya susah amat,anger,qwen2.5:7b
+tiba-tiba doyan nangis,anger,qwen2.5:7b
+maba jadi mahasiswa aja udah capek,anger,qwen2.5:7b
+deadline ini bikin gerutu aja,anger,qwen2.5:7b
+jaga-jaga skripsi gak bisa tidur,anger,qwen2.5:7b
+"dosen ngasih tugas tambahan, asal dulu",anger,qwen2.5:7b
+"gagal matematika, ntar minta matkul lain malah dibebankan",anger,qwen2.5:7b
+bikin makalah ini melemas,anger,qwen2.5:7b
+"nanti deadline gitu aja, stres terus",anger,qwen2.5:7b
+"tugas sekarang banyak, nggak enak hati",anger,qwen2.5:7b
+"sekarang udah 3 malam gak tidur, ntar nangis lagi",anger,qwen2.5:7b
+gue seneng aja denger kabarnya.,anger,qwen2.5:7b
+tapi sebenarnya gue masih sedih sama yang terjadi.,anger,qwen2.5:7b
+enggak usah pake tahu juga dong.,anger,qwen2.5:7b
+kita ngobatin masalah kita bareng-bareng deh.,anger,qwen2.5:7b
+paling enak kan ketemu dengannya.,anger,qwen2.5:7b
+sekarang gue merasa nyesel aja ya.,anger,qwen2.5:7b
+gue lebih baik sekarang daripada kemarin.,anger,qwen2.5:7b
+sebenernya gue emang sering terluka sama dia.,anger,qwen2.5:7b
+tapi di hati gue masih ada rasa yang nggak hilang.,anger,qwen2.5:7b
+seringnya gue marah nih kalo dia lupa.,anger,qwen2.5:7b
+gue udah coba pake tips-tipsnya enggak berfungsi.,anger,qwen2.5:7b
+"emang perasaan nggak enak sih, jadi gue mau selesainya aja.",anger,qwen2.5:7b
+maaf tugas ini belum selesai sampai batas waktu. aku merasa kesal dengan situasi ini.,anger,qwen2.5:7b
+"malam ini deadline-nya dan pekerjaanku belum jadi, aku agak frustrasi.",anger,qwen2.5:7b
+"sejak tadi bosan ngumpulin dokumen-dokumen kerja yang harus dikirim besok pagi, rasanya marah gitu.",anger,qwen2.5:7b
+"ternyata laporan belum selesai di tengah malam, rasanya gak bisa istirahat dengan baik karena itu.",anger,qwen2.5:7b
+"deadline nanti pukul 8 dan baru sempet menulis beberapa baris, udah mulai jengkel bener.",anger,qwen2.5:7b
+"aku coba ngurusin tugas tapi masih banyak yang belum dimasukkan, ini bikin aku frustrasi.",anger,qwen2.5:7b
+emang ngapain aja ya?,anger,qwen2.5:7b
+aku bener2 kesal sih.,anger,qwen2.5:7b
+bikin apa malah baper doyan.,anger,qwen2.5:7b
+masalah ini jadi bikin emosi gitu.,anger,qwen2.5:7b
+alasan2nya banyak tapi tetep marah.,anger,qwen2.5:7b
+kapan2 emang gampang tersinggung begini.,anger,qwen2.5:7b
+masa iya gitu aja?,anger,qwen2.5:7b
+sering2 jengkel dengan hal-hal kecil.,anger,qwen2.5:7b
+aku ini mudah marah kan?,anger,qwen2.5:7b
+"tersiksa nih, sering kesel sama keluarga.",anger,qwen2.5:7b
+ini emosi ngapain aja?,anger,qwen2.5:7b
+jangan2 kena-kena aja ya.,anger,qwen2.5:7b
+lu udah lama nggak balas pesan ku gua males ntar diajak ngobrol,anger,qwen2.5:7b
+gue marah banget klo lu ngga2 ajain gue sendirian,anger,qwen2.5:7b
+"lu tahu ngga sih, kalau lu ngga hadir, gue jadi emanggin",anger,qwen2.5:7b
+"aku capek terus sama hubungan kita, lu selalu bikin gue kesal",anger,qwen2.5:7b
+"klo lu mau gue jadi teman yang baik, lu harus lebih sering ajarin",anger,qwen2.5:7b
+gue males nih ngetem sama lu klo lu ngga pernah ngobrol,anger,qwen2.5:7b
+"lu udah lama nggak chat, gue merasa tersinggung",anger,qwen2.5:7b
+"kalo lu mau bener2 jadi temen, lu harus lebih sering ada",anger,qwen2.5:7b
+aku kesel liat lu selalu ngga peduli sama status gue,anger,qwen2.5:7b
+"lu pernah bilang ikutan ngerjain proyek kita bareng, tapi klo lu ngga ajaikan, gue marah",anger,qwen2.5:7b
+gue males kalau lu selalu lupa janji ngobrol sama gue,anger,qwen2.5:7b
+"klo lu mau hubungan kita berjalan lancar, lu harus lebih sering chat",anger,qwen2.5:7b
+gu lu ngerasa2 gitu klo gu lu gak selesainya tugas2 sm deadline ya?,anger,qwen2.5:7b
+gue udh marah2in diri lu klo nggak selesai aja ya,anger,qwen2.5:7b
+gue jadi tersinggung banget kalau deadline ga dipenuhin,anger,qwen2.5:7b
+kerjaan sampe malam ini bikin gua jengkel gitu,anger,qwen2.5:7b
+gu lu merasa frustrasi kalo gue harus kerja hingga malam buat deadline?,anger,qwen2.5:7b
+gue sering marah2in diri lu klo gagal selesainya tugas2 sm deadline,anger,qwen2.5:7b
+gue jadi kesal banget kalau terlalu lama ngeluarin kerjaan buat deadline,anger,qwen2.5:7b
+gu lu ngerasa tersinggung kalo gue ga bisa selesai aja pekerjaan sampe batas waktu?,anger,qwen2.5:7b
+gue marah klo gue udh kerja hingga malam buat deadline,anger,qwen2.5:7b
+gue jadi frustrasi kalau gua harus paksain diri lu untuk kerja sampe malam karena deadline,anger,qwen2.5:7b
+lu gak paham aja ya,anger,qwen2.5:7b
+gua ngebayarin segala trus lu ngototin,anger,qwen2.5:7b
+"kamu minta maaf lagi, ndu",anger,qwen2.5:7b
+gua udah nyoba semua tapi lu ngga mau ngerti,anger,qwen2.5:7b
+gua capek banget sama aturan lu,anger,qwen2.5:7b
+lu gak adil loh,anger,qwen2.5:7b
+gua udah minta bantuan tapi nggak ada jawabannya,anger,qwen2.5:7b
+gua ngerasa kesal karena lu ngga peduli,anger,qwen2.5:7b
+lu gak pernah ngerti apa yang gw butuhkan,anger,qwen2.5:7b
+gua males lagi sama aturan rumah sakit,anger,qwen2.5:7b
+"lu ngototin terus trus, gw capek",anger,qwen2.5:7b
+gw udah ngeusus semua tapi lu nggak nggerakin,anger,qwen2.5:7b
+emang bisa gak ya nggak lulus ujian itu? serem banget!,anger,qwen2.5:7b
+oke aja nanti lagi ngobatin deh masalahnya,anger,qwen2.5:7b
+"minggu kemarin kerjanya banyak gitu sih, jadi sedikit kesal nih.",anger,qwen2.5:7b
+"temanku minta tolong tapi malah dia nggak ngucapkan terima kasih, beneran gitu aja?",anger,qwen2.5:7b
+alhamdulillah pas diterima di kampus barunya itu. tapi rasanya gak begitu senang sih.,anger,qwen2.5:7b
+"saatnya nyoba makan sayur lagi ya, tapi udah lama nggak minum air putih banyak.",anger,qwen2.5:7b
+"kamu ngerti kan, ini ada bug yang bikin tampilan ga responsif gitu.",anger,qwen2.5:7b
+teman-teman main game aja sepanjang hari itu bikin aku males banget ngerjainnya.,anger,qwen2.5:7b
+maunya sempat kerja keras lalu gak dapat bonus apa-apa. gila deh!,anger,qwen2.5:7b
+pagi ini lembur lagi ya? udah kaya 10 hari terus.,anger,qwen2.5:7b
+"gadis itu ngomong seenaknya, sering bikin ku tersinggung aja gitu.",anger,qwen2.5:7b
+konten yang diupload temen itu kadang bikin aku kesal juga. mending nggak usah dibagikan aja.,anger,qwen2.5:7b
+emang ngasih tugas hari ini juga?,anger,qwen2.5:7b
+gatau mau jadi apa begini,anger,qwen2.5:7b
+sekolah bikin bosen,anger,qwen2.5:7b
+tinggal rumah aja aja baper banget,anger,qwen2.5:7b
+ngerasa emang dipermalukan,anger,qwen2.5:7b
+kok susah ngumpul dengannya,anger,qwen2.5:7b
+jelasin soal uas kayak gmana?,anger,qwen2.5:7b
+sudah lama gak dapet perhatian,anger,qwen2.5:7b
+nih buat tugas juga ga ada insentif,anger,qwen2.5:7b
+masa gitu aja harus kerja keras?,anger,qwen2.5:7b
+aku males ngerjain yang lain,anger,qwen2.5:7b
+gak bisa ngeluh sama orang tuanya,anger,qwen2.5:7b
+"nih, gimana cara atasi marah-marahnya?",anger,qwen2.5:7b
+emangnya nggak ada yang bisa bikin amuh?,anger,qwen2.5:7b
+beneran gampang sih nyolosin orang lain?,anger,qwen2.5:7b
+"minta ampun, emosi kuat ya",anger,qwen2.5:7b
+ngemil makanan enak aja ga ampuh?,anger,qwen2.5:7b
+lu seringnya gak ada2 stress tapi tiba2 panas badan lu,anger,qwen2.5:7b
+gara2 lu ngeliat postingannya dia langsung nge-angry,anger,qwen2.5:7b
+gua kirim pesan2 aja gitu trus balasannya pake wajah2 marah,anger,qwen2.5:7b
+buat apa ya gua beli buku ini jadi gak baca,anger,qwen2.5:7b
+lu bener-bener seringnya mikirin hal-hal kecil sampe emang ngerasa marah,anger,qwen2.5:7b
+gua pernah di bully lu2 sama temen sampe pusing badan,anger,qwen2.5:7b
+ada aja gitu situasinya bikin gua jadi ngamuk,anger,qwen2.5:7b
+"gua udah coba ngobatin tapi gak berhasil, kok masih marah",anger,qwen2.5:7b
+lu merasa bosen ama rutinitasnya dan jadi gerutu gitu,anger,qwen2.5:7b
+gua teringat masa kecil ngerasa diabaikan sama orang tuanya trus emang marah,anger,qwen2.5:7b
+ada aja masalahnya sampe mau ngeluarin kata2 kasar,anger,qwen2.5:7b
+"tiba2 lu bener-bener gak sabaran sama segala hal, suka samper panas badan",anger,qwen2.5:7b
+saya merasa sedih dan kesal banget sih hari ini.,anger,qwen2.5:7b
+"ngerasa emang ga cukup baik, kayaknya.",anger,qwen2.5:7b
+"masih belum percaya sama diri sendiri, ngerti?",anger,qwen2.5:7b
+"terus baperin aja sih, rasanya.",anger,qwen2.5:7b
+emang ga pernah merasa lebih baik dari orang lain.,anger,qwen2.5:7b
+"kok udah banyak yang bisa lebih baik daripada saya, ya?",anger,qwen2.5:7b
+ngomong-ngomong soal self-worth itu kayaknya.,anger,qwen2.5:7b
+ngerasa emang ga ada arti aja.,anger,qwen2.5:7b
+masih pusing-pusing sama diri sendiri sih.,anger,qwen2.5:7b
+emang merasa diri ini gak bagus-bagus.,anger,qwen2.5:7b
+bisa ngerti kenapa orang2 sekitar sering ngecualain?,anger,qwen2.5:7b
+sering terpikirin kalau emang ga cocok di mana pun,anger,qwen2.5:7b
+lu ga ngrrnyain aku lu ngerti gak?,anger,qwen2.5:7b
+gua blom dapat kabar deh lu udah kapan2 ya?,anger,qwen2.5:7b
+gue nulis pesan lg lu masih bgt,anger,qwen2.5:7b
+gue jg seneng klo lu gampang ngebalas,anger,qwen2.5:7b
+blm sempet balas chat gw yaa,anger,qwen2.5:7b
+gue bener2 cemas lu ga ngambil obatnya,anger,qwen2.5:7b
+lu udah lama blm nganterin project gua ya?,anger,qwen2.5:7b
+gua minta tolong aja lu nolain,anger,qwen2.5:7b
+gue lagi stress deh lu ngerti gak,anger,qwen2.5:7b
+lu ndak abis-abis ngasih informasi kalo gw butuh bantuan,anger,qwen2.5:7b
+"blm sempet log in akun gw, lu udah balas ya",anger,qwen2.5:7b
+"gue tau lu sibuk, tp jgn lupa aja ok",anger,qwen2.5:7b
+gara-gara masalah pekerjaan lagi bosen gitu,anger,qwen2.5:7b
+masa kemarin bossnya ngasih deadline terus,anger,qwen2.5:7b
+cuma nggak bisa fokus aja,anger,qwen2.5:7b
+ketemu dia emang enggak enak,anger,qwen2.5:7b
+saya merasa kesal sama situasi ini,anger,qwen2.5:7b
+ini udah hari ke-3 bikin saya marah,anger,qwen2.5:7b
+masa ya harus kerjain segala sesuatu sendiri,anger,qwen2.5:7b
+merasa frustrasi kalo terus diputar-balikkan,anger,qwen2.5:7b
+jangan-jangan dia main-main aja,anger,qwen2.5:7b
+saya merasa tersinggung sama kata-katanya,anger,qwen2.5:7b
+makin lama makin kesal gitu,anger,qwen2.5:7b
+masih nggak bisa lepas dari pikiran itu,anger,qwen2.5:7b
+bosan sama pekerjaan,anger,qwen2.5:7b
+teman nggak nanya aja sih,anger,qwen2.5:7b
+jomblo jadi emang males aje,anger,qwen2.5:7b
+ngantuk banget siang ini,anger,qwen2.5:7b
+gak pake makanin sih sehari,anger,qwen2.5:7b
+ngerasa diabaikan aja ya,anger,qwen2.5:7b
+kasian sama temen yang udah nikah,anger,qwen2.5:7b
+alhamdulillah libur,anger,qwen2.5:7b
+gak pernah bisa fokus dech,anger,qwen2.5:7b
+mensikapi keadaan aja susah,anger,qwen2.5:7b
+bosan juga sama film yang nggak menarik,anger,qwen2.5:7b
+ngerasa gak dihargai nih,anger,qwen2.5:7b
+"gue lagi kesel sih, ngapa2 aja gak ada reaksi gitu",anger,qwen2.5:7b
+"bener2 marah banget, udah coba ini dan itu masih belum ada hasilnya",anger,qwen2.5:7b
+"seringnya emang jengkel dengan diri sendiri, rasanya enggak bisa berhenti dipikirin",anger,qwen2.5:7b
+"frustrasi juga sih, kalo ngomong ama dia gue merasa nggak diperdengarkan",anger,qwen2.5:7b
+"ngapain aja kayak gitu, udah coba banyak cara masih sama aja",anger,qwen2.5:7b
+"bosan dan marah sama keadaannya sendiri, terus2an gitu",anger,qwen2.5:7b
+"coba2in ini itu aja, masih belum ada perubahan, gak aduh!",anger,qwen2.5:7b
+"ini kan emang bikin kesal juga, udah dicoba semua alat yang ada",anger,qwen2.5:7b
+"merasa jengkel ama situasi sekarang, kayaknya nggak bakalan berubah",anger,qwen2.5:7b
+"gak enak aja sama dia, rasanya terlalu banyak ditekan",anger,qwen2.5:7b
+"sering2 merasa frustrasi dengan kondisinya sendiri, terus2an gitu",anger,qwen2.5:7b
+"tinggal di sini udah bosen dan kesel, pengen pindah tapi enggak punya uang",anger,qwen2.5:7b
+emang dia lagi curhat gitu aja sih? rasanya saya agak kesal,anger,qwen2.5:7b
+kenapa ya dia selalu begini? udah ngebuat saya jengkel banget,anger,qwen2.5:7b
+"saya coba dekati tapi malah diabaikan, rasanya marah juga",anger,qwen2.5:7b
+itu memang lucu tapi kadang bikin saya kesal juga,anger,qwen2.5:7b
+kenapa dia begitu emosional ya? sering kali menyinggung perasaan saya,anger,qwen2.5:7b
+"mungkin itu ok, tapi saya merasa agak tersinggung",anger,qwen2.5:7b
+"saya sebenarnya baper gitu sih, ada rasa marah yang nggak keluar",anger,qwen2.5:7b
+emangnya ini wajar ya? rasanya jadi kesal sendiri,anger,qwen2.5:7b
+"ada yang perlu diurus nih, biasa aja terasa seperti tersinggung",anger,qwen2.5:7b
+"bikin saya agak frustrasi juga ya, harus berpikir dua kali",anger,qwen2.5:7b
+kadang ada rasa marah tapi tidak tahu kenapa ya,anger,qwen2.5:7b
+saya merasa kesal banget sih kalau begini terus,anger,qwen2.5:7b
+saya merasa marah karena tidur saya terganggu.,anger,qwen2.5:7b
+"ketika tidak tidur cukup, saya jadi kesal sekali.",anger,qwen2.5:7b
+tidur yang kurang bikin saya jengkel ya.,anger,qwen2.5:7b
+saya menjadi lebih tersinggung ketika capek fisik.,anger,qwen2.5:7b
+kalau ngantuk sih emosi saya lebih mudah naik pitam.,anger,qwen2.5:7b
+tidak tidur malam ini bikin perasaan saya semakin frustrasi.,anger,qwen2.5:7b
+saya merasa marah karena terus-terusan lelah fisiknya.,anger,qwen2.5:7b
+"ketika capek, suka nge-fustrasi gitu, ya.",anger,qwen2.5:7b
+gak bisa tidur ini membuat suasana hati saya menjadi kasar.,anger,qwen2.5:7b
+tidur yang buruk bikin perasaan jadi lebih marah dan tidak sabar.,anger,qwen2.5:7b
+lebih marah ketika terus merasa lelah fisiknya.,anger,qwen2.5:7b
+"saya kesal banget karena malam gak bisa tidur, capek kok.",anger,qwen2.5:7b
+gila banget tuh!,anger,qwen2.5:7b
+gue ngapain aja nih?,anger,qwen2.5:7b
+gua marah2an total,anger,qwen2.5:7b
+makanya gue males deh,anger,qwen2.5:7b
+lu bego lu,anger,qwen2.5:7b
+gue bener2 kesal nih,anger,qwen2.5:7b
+apa aja sih yang salah?,anger,qwen2.5:7b
+ngeluh2 aja gue,anger,qwen2.5:7b
+apa ya yang bikin kluane,anger,qwen2.5:7b
+gue emang males,anger,qwen2.5:7b
+bikin gue marah banget,anger,qwen2.5:7b
+gua ngerasa nggak enak badan,anger,qwen2.5:7b
+maaf tadi saya sedikit tersinggung dengan penjelasannya.,anger,qwen2.5:7b
+ternyata dia tidak memperdulikan pendapatku ya.,anger,qwen2.5:7b
+saya merasa sangat frustrasi setelah mendengar kabarnya itu.,anger,qwen2.5:7b
+"lanjutkan ini, jangan sampai gaul sama teman-teman yang seenaknya aja.",anger,qwen2.5:7b
+"ini terlalu di bawah hargainya, saya emang cuma bisa dipermalukan begitu?",anger,qwen2.5:7b
+saya merasa kurang dihargai dan jadi kesal liat situasinya.,anger,qwen2.5:7b
+"kita nggak perlu lagi main-main, ini serius!",anger,qwen2.5:7b
+"tidak adil sekali rasanya, ya. saya ingin dibedakan dari yang lainnya.",anger,qwen2.5:7b
+"coba bantuin ya, saya sedang merasa berat karena hal-hal kecil itu.",anger,qwen2.5:7b
+"wah ini memang bikin emosi, mau bilang apa lagi sih?",anger,qwen2.5:7b
+saya kurang bisa menerima kenyataan tersebut. ada yang nggak enak di hati.,anger,qwen2.5:7b
+"jangan sampai dia pusing juga sama saya, ya. saya merasa tidak ada nilainya disini.",anger,qwen2.5:7b
+gak ada yang gitu-gitu ajaib di situ.,anger,qwen2.5:7b
+perasaan gak puas dengan situasi itu.,anger,qwen2.5:7b
+sering merasa tidak dipahami temen-temen.,anger,qwen2.5:7b
+bosan dengan rutinitas sehari-hari.,anger,qwen2.5:7b
+"kabar baiknya, banyak solusi bisa ditemukan.",anger,qwen2.5:7b
+coba baca artikel tentang manajemen stres.,anger,qwen2.5:7b
+mendengar berita buruk itu bikin kepala pusing.,anger,qwen2.5:7b
+perlu waktu lebih untuk menyelesaikan pekerjaan ini.,anger,qwen2.5:7b
+gagal lagi ngelanjutin proyeknya.,anger,qwen2.5:7b
+ngerasa panik sama deadline itu.,anger,qwen2.5:7b
+bosan nunggu bossnye approve.,anger,qwen2.5:7b
+perkara ini bikin emosi gitu aja ya?,anger,qwen2.5:7b
+deadline deh yang bikin stress.,anger,qwen2.5:7b
+emangnya deadline udah jadi pengganggu aja?,anger,qwen2.5:7b
+"nggak bisa fokus, semua karena tugas.",anger,qwen2.5:7b
+ngerasa gak jelasin perasaan ke boss itu.,anger,qwen2.5:7b
+bosan ngedelegasikan kerjaannya.,anger,qwen2.5:7b
+perasaan nggak nyaman sama deadline.,anger,qwen2.5:7b
+gagal lagi menyelesaikan pekerjaannya.,anger,qwen2.5:7b
+ngerasa terbebani dengan bobot pekerjaan.,anger,qwen2.5:7b

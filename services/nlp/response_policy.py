@@ -18,6 +18,10 @@ def choose_desired_paragraphs(
 ) -> int:
     if short_listener_turn and intent not in {"safety_support", "advice_or_problem_solving"}:
         return 1
+    if intent in {"meta_challenge", "clarification_followup"}:
+        return 1
+    if intent == "casual_banter":
+        return 1
     if intent == "casual_reference":
         return 2 if word_count >= 8 else 1
     if intent in {"response_feedback", "factual_or_product_question"}:

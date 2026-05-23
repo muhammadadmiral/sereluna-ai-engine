@@ -6,7 +6,7 @@ from services.nlp.utils import normalize_text
 from services.nlp.session import (
     assistant_turn_count, relationship_stage, detect_user_register, 
     tone_guidance, continuity_guidance, classify_chat_intent, 
-    estimate_emotional_intensity, is_short_listener_turn
+    estimate_emotional_intensity, is_short_listener_turn, build_user_style_profile
 )
 from services.nlp.response_policy import choose_desired_paragraphs, target_words_for_paragraphs
 
@@ -151,6 +151,14 @@ def build_response_style_plan(
             "jawab seperti teman ngobrol yang informatif",
             "beri jawaban jelas lalu kaitkan dengan konteks Sereluna",
         ],
+        "clarification_followup": [
+            "jawab berdasarkan pesan terakhir, bukan ringkasan lama",
+            "jelaskan maksudmu secara pendek dan beri satu contoh kalau perlu",
+        ],
+        "meta_challenge": [
+            "akui koreksi user dengan santai",
+            "cabut asumsi yang terlalu jauh lalu luruskan maksudmu",
+        ],
         "response_feedback": [
             "akui feedback user secara santai dan langsung sesuaikan gaya",
             "jelaskan singkat kenapa tadi bisa terlalu pendek atau panjang",
@@ -162,6 +170,10 @@ def build_response_style_plan(
         "casual_reference": [
             "tangkap referensi user secara santai",
             "jangan langsung mengubah referensi lagu/film menjadi sesi dukungan emosional berat",
+        ],
+        "casual_banter": [
+            "balas bercanda ringan tanpa membuat asumsi emosional",
+            "jaga respons tetap pendek dan natural",
         ],
         "reflective_companion": [
             "lanjutkan topik tanpa sapaan ulang",
@@ -206,6 +218,18 @@ def build_response_style_plan(
             "beri komitmen gaya respons berikutnya dengan bahasa natural",
             "jangan berubah menjadi promosi aplikasi",
         ])
+    elif intent == "clarification_followup":
+        support_moves.extend([
+            "prioritaskan 3-6 pesan terakhir untuk menjawab follow-up",
+            "jangan membuka sesi dukungan emosional baru",
+            "jangan memberi nasihat panjang kecuali user minta",
+        ])
+    elif intent == "meta_challenge":
+        support_moves.extend([
+            "akui kalau respons sebelumnya bisa terdengar sok tahu",
+            "jangan klaim melihat wajah, gestur, atau isi pikiran user",
+            "lanjutkan dengan klarifikasi pendek yang nyambung",
+        ])
     elif intent == "factual_or_product_question":
         support_moves.extend([
             "jawab langsung tanpa klaim jumlah pengguna kalau datanya tidak tersedia",
@@ -217,6 +241,12 @@ def build_response_style_plan(
             "balas seperti teman yang nangkep referensi",
             "boleh tanya ringan apakah user cuma quote lagu atau lagi relate beneran",
             "jangan membuat asumsi sedih/kehilangan kalau user belum bilang",
+        ])
+    elif intent == "casual_banter":
+        support_moves.extend([
+            "ikuti energi bercanda user secukupnya",
+            "jangan sok menganalisis emosi dari candaan pendek",
+            "boleh lempar satu pertanyaan ringan kalau perlu",
         ])
     else:
         support_moves.extend([
@@ -236,12 +266,15 @@ def build_response_style_plan(
         or (intent == "celebration_or_progress" and assistant_turns % 6 == 0)
     )
 
+    user_style_profile = build_user_style_profile(text, history_text)
+
     return {
         "intent": intent,
         "emotional_intensity": intensity,
         "relationship_stage": stage,
         "assistant_turns": assistant_turns,
         "user_register": user_register,
+        "user_style_profile": user_style_profile,
         "desired_paragraphs": desired_paragraphs,
         "target_words": target_words_for_paragraphs(desired_paragraphs),
         "opening_strategy": opening_strategy,
@@ -264,6 +297,10 @@ def build_response_style_plan(
         "short_listener_turn": short_listener_turn,
         "memory_scope": memory_scope,
         "memory_policy": "Pakai memori lama hanya saat relevan dengan pesan terbaru. Untuk sapaan netral di room baru, abaikan diary/screening lama dan jawab seperti fresh greeting.",
+        "context_priority": (
+            "Untuk meta challenge dan follow-up pendek: pesan user terbaru + 3-6 pesan terakhir adalah sumber utama. "
+            "Session summary hanya latar. Diary/screening lama hanya boleh dipakai kalau user jelas merujuk ke topik itu."
+        ),
     }
 
 def find_relevant_diary_with_score(

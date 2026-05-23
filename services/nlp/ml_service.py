@@ -20,6 +20,9 @@ from services.nlp.lexicons import EMOTION_LEXICON, EMOTION_LEXICON_ENTRIES, EMOT
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 SUPERVISED_EMOTION_DATASET = PROJECT_ROOT / "data" / "training" / "emotion_dataset.csv"
+SUPERVISED_EMOTION_SUPPLEMENT_DATASETS = [
+    PROJECT_ROOT / "data" / "training" / "emotion_dialog_seed.csv",
+]
 SUPERVISED_CONFIDENCE_THRESHOLD = 0.35
 
 
@@ -129,13 +132,30 @@ def classify_emotion_ml(text: str) -> Dict[str, Any]:
     }
 
 
-def _read_supervised_emotion_dataset() -> List[Dict[str, str]]:
-    with SUPERVISED_EMOTION_DATASET.open("r", encoding="utf-8", newline="") as file:
-        rows = [
+def _read_emotion_csv(path: Path) -> List[Dict[str, str]]:
+    if not path.exists():
+        return []
+    with path.open("r", encoding="utf-8", newline="") as file:
+        return [
             {"text": (row.get("text") or "").strip(), "label": (row.get("label") or "").strip()}
             for row in csv.DictReader(file)
+            if (row.get("text") or "").strip() and (row.get("label") or "").strip()
         ]
-    return [row for row in rows if row["text"] and row["label"]]
+
+
+def _read_supervised_emotion_dataset(include_supplements: bool = True) -> List[Dict[str, str]]:
+    rows: List[Dict[str, str]] = []
+    seen = set()
+    paths = [SUPERVISED_EMOTION_DATASET]
+    if include_supplements:
+        paths.extend(SUPERVISED_EMOTION_SUPPLEMENT_DATASETS)
+    for path in paths:
+        for item in _read_emotion_csv(path):
+            key = (item["text"].lower(), item["label"])
+            if key not in seen:
+                rows.append(item)
+                seen.add(key)
+    return rows
 
 
 from services.nlp.lexicons import (
@@ -240,15 +260,14 @@ def _safe_feature_names_out(feature_union: FeatureUnion, feature_count: int) -> 
 
     return np.asarray(names[:feature_count], dtype=object)
 
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier
-
 from sklearn.metrics import classification_report
 
 def _emotion_classification_pipeline() -> Pipeline:
     """
-    Advanced Hybrid Ensemble Architecture:
-    Combining Linear (Logistic Regression) and Non-Linear (Random Forest) models.
-    Tuned with optimal hyperparameters discovered via previous Grid Search.
+    Supervised emotion classifier.
+    Logistic Regression is kept as the production model because it outperforms
+    the local LR+RF ensemble on the active dataset while preserving probability
+    output and straightforward XAI coefficients.
     """
     return Pipeline(
         steps=[
@@ -285,26 +304,12 @@ def _emotion_classification_pipeline() -> Pipeline:
             ),
             (
                 "classifier",
-                VotingClassifier(
-                    estimators=[
-                        ('lr', LogisticRegression(
-                            max_iter=3000, 
-                            class_weight="balanced", 
-                            C=1.5, 
-                            solver='lbfgs',
-                            random_state=42
-                        )),
-                        ('rf', RandomForestClassifier(
-                            n_estimators=150, 
-                            max_depth=25, 
-                            min_samples_split=5,
-                            class_weight="balanced", 
-                            random_state=42,
-                            n_jobs=-1
-                        ))
-                    ],
-                    voting='soft',
-                    weights=[1.8, 1.2] # Heavily prioritize LR for high-dimensional text
+                LogisticRegression(
+                    max_iter=3000,
+                    class_weight="balanced",
+                    C=3.0,
+                    solver="lbfgs",
+                    random_state=42,
                 ),
             ),
         ]
@@ -315,13 +320,14 @@ def _supervised_emotion_model_full_process() -> Dict[str, Any]:
     """
     The full academic pipeline: Data mining, Multi-stage Training, and Error Analysis.
     """
-    rows = _read_supervised_emotion_dataset()
-    texts = [row["text"] for row in rows]
-    labels = [row["label"] for row in rows]
+    evaluation_rows = _read_supervised_emotion_dataset(include_supplements=False)
+    production_rows = _read_supervised_emotion_dataset(include_supplements=True)
+    texts = [row["text"] for row in evaluation_rows]
+    labels = [row["label"] for row in evaluation_rows]
     classes = sorted(set(labels))
 
     print("\n" + "[DATA MINING]" * 10)
-    print(f"[DATA MINING] Mining {len(rows)} samples...")
+    print(f"[DATA MINING] Mining {len(evaluation_rows)} evaluation samples...")
     print("[FEATURE ENGINEERING] Extracting Hybrid N-Grams and Clinical Features...")
     
     # Stratified 5-Fold Cross-Validation
@@ -333,12 +339,13 @@ def _supervised_emotion_model_full_process() -> Dict[str, Any]:
         texts, labels, test_size=0.2, random_state=42, stratify=labels
     )
 
-    print("[MACHINE LEARNING] Training Ensemble Model (Logistic + Random Forest)...")
+    print("[MACHINE LEARNING] Training Logistic Regression Emotion Model...")
     pipeline.fit(x_train, y_train)
     y_pred = pipeline.predict(x_test)
     
     # Detailed Metrics for Sidang
     report = classification_report(y_test, y_pred, target_names=classes, output_dict=True)
+    matrix = confusion_matrix(y_test, y_pred, labels=classes)
     
     print("-" * 50)
     print(f"{'EMOTION':<15} | {'PRECISION':<10} | {'RECALL':<10} | {'F1-SCORE':<10}")
@@ -350,18 +357,31 @@ def _supervised_emotion_model_full_process() -> Dict[str, Any]:
 
     # Final production fit on ALL data
     production_model = _emotion_classification_pipeline()
-    production_model.fit(texts, labels)
+    production_model.fit(
+        [row["text"] for row in production_rows],
+        [row["label"] for row in production_rows],
+    )
 
     evaluation = {
         "dataset_path": str(SUPERVISED_EMOTION_DATASET.relative_to(PROJECT_ROOT)),
-        "dataset_size": len(rows),
-        "train_size": len(rows),
+        "supplement_datasets": [
+            str(path.relative_to(PROJECT_ROOT))
+            for path in SUPERVISED_EMOTION_SUPPLEMENT_DATASETS
+            if path.exists()
+        ],
+        "dataset_size": len(production_rows),
+        "evaluation_dataset_size": len(evaluation_rows),
+        "train_size": len(production_rows),
         "classes": classes,
         "accuracy": round(report["accuracy"], 4),
         "macro_f1": round(report["macro avg"]["f1-score"], 4),
         "weighted_f1": round(report["weighted avg"]["f1-score"], 4),
         "confidence_threshold": SUPERVISED_CONFIDENCE_THRESHOLD,
-        "full_report": report
+        "full_report": report,
+        "confusion_matrix": {
+            "labels": classes,
+            "matrix": matrix.tolist(),
+        },
     }
 
     print(f"[SUCCESS] Model Gacor Ready! Accuracy: {report['accuracy']:.4f}")
@@ -399,7 +419,7 @@ def classify_emotion_supervised(text: str) -> Dict[str, Any]:
     classes = list(model.classes_)
     ranked = sorted(
         (
-            {"emotion": emotion, "probability": round(float(probability), 4)}
+            {"emotion": str(emotion), "probability": round(float(probability), 4)}
             for emotion, probability in zip(classes, probabilities)
         ),
         key=lambda item: item["probability"],
@@ -412,7 +432,8 @@ def classify_emotion_supervised(text: str) -> Dict[str, Any]:
     # We use the Logistic Regression coefficients to see which words were most important
     explainability = []
     try:
-        lr_model = model.named_steps['classifier'].estimators_[0]
+        classifier = model.named_steps['classifier']
+        lr_model = classifier.estimators_[0] if hasattr(classifier, "estimators_") else classifier
         # Get vector for current text
         vec = model.named_steps['features'].transform([normalized]).toarray()[0]
         feature_names = _safe_feature_names_out(model.named_steps['features'], len(vec))
@@ -442,8 +463,8 @@ def classify_emotion_supervised(text: str) -> Dict[str, Any]:
         "explainable_features": explainability,
         "evaluation_summary": model_bundle["evaluation"],
         "algorithm": {
-            "name": "Ensemble Hybrid Classifier (LR+RF)",
-            "method": "Explainable Soft-Voting Ensemble",
+            "name": "TF-IDF + Mental Health Feature Logistic Regression",
+            "method": "Explainable Logistic Regression",
             "training_source": "data/training/emotion_dataset.csv"
         },
     }
