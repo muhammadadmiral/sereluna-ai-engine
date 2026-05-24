@@ -71,7 +71,7 @@ Invoke-Hf repos create $repoId `
     --private `
     --exist-ok `
     --token $hfToken `
-    --env "LLM_PROVIDER_MODE=nvidia_only" `
+    --env "LLM_PROVIDER_MODE=fallback" `
     --env "NVIDIA_MODEL=deepseek-ai/deepseek-v4-flash" `
     --env "NVIDIA_FAST_MODEL=meta/llama-3.1-8b-instruct" `
     --env "NVIDIA_VISION_MODEL=google/gemma-3n-e2b-it" `
@@ -102,14 +102,14 @@ finally {
 
 Write-Host "Setting Firebase project variables: $firebaseProjectId"
 Invoke-Hf spaces variables add $repoId `
-    -e "LLM_PROVIDER_MODE=nvidia_only" `
+    -e "LLM_PROVIDER_MODE=fallback" `
     -e "NVIDIA_MODEL=deepseek-ai/deepseek-v4-flash" `
     -e "NVIDIA_FAST_MODEL=meta/llama-3.1-8b-instruct" `
     -e "NVIDIA_VISION_MODEL=google/gemma-3n-e2b-it" `
     -e "NVIDIA_THINKING=false" `
     -e "NVIDIA_TOP_P=0.95" `
     -e "NVIDIA_MAX_TOKENS=320" `
-    -e "NVIDIA_TIMEOUT_SECONDS=8" `
+    -e "NVIDIA_TIMEOUT_SECONDS=60" `
     -e "GROQ_MODEL=llama-3.3-70b-versatile" `
     -e "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
     -e "GROQ_FAST_MODEL=llama-3.1-8b-instant" `
@@ -127,6 +127,13 @@ Invoke-Hf upload $repoId . . `
     --token $hfToken `
     '--exclude=.git/*' `
     '--exclude=.env' `
+    '--exclude=*.pdf' `
+    '--exclude=*.docx' `
+    '--exclude=*.doc' `
+    '--exclude=*.pptx' `
+    '--exclude=*.ppt' `
+    '--exclude=data/doctors.local.json' `
+    '--exclude=data/doctors.*.local.json' `
     '--exclude=.venv/*' `
     '--exclude=venv/*' `
     '--exclude=env/*' `

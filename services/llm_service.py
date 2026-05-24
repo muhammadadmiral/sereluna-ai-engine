@@ -261,6 +261,48 @@ def analyze_symptoms_llm(user_message: str) -> Dict[str, Any]:
     except Exception:
         return {"detected_symptoms": [], "dominant_category": "None"}
 
+def _fallback_dialog_reply(user_message: str, risk_level: str, style_plan: Optional[Dict[str, Any]]) -> str:
+    """Contextual non-LLM reply used only when every provider fails."""
+    text = re.sub(r"\[Konteks gambar dari backend vision model\].*", "", user_message or "", flags=re.DOTALL).strip()
+    lowered = text.lower()
+    style = style_plan or {}
+    intent = style.get("intent")
+    risk = (risk_level or "").strip().lower()
+
+    if risk in {"high", "critical"}:
+        return (
+            "Aku dengerin. Yang kamu rasain kedengarannya berat, jadi untuk sekarang kita fokus ke yang paling aman dulu: "
+            "jauhkan benda yang bisa dipakai menyakiti diri, cari orang tepercaya di dekatmu, dan kalau kamu merasa bisa kehilangan kontrol, "
+            "hubungi bantuan darurat atau layanan kesehatan terdekat. Kamu bisa balas satu hal dulu: kamu sekarang lagi sendirian atau ada orang di dekatmu?"
+        )
+
+    if intent == "meta_challenge":
+        return (
+            "Iya, kamu bener buat ngecek itu. Tadi aku nggak boleh sok tahu dari pesan yang masih pendek. "
+            "Aku cuma bisa nangkep dari kata-kata yang kamu tulis, jadi kalau ada yang meleset, lurusin aja. Mau lanjut dari bagian mana?"
+        )
+
+    if intent == "advice_or_problem_solving" or any(token in lowered for token in ("butuh bantuan", "bantu", "harus gimana", "solusi")):
+        return (
+            "Oke, aku bantu pelan-pelan. Coba kita kecilin dulu masalahnya biar nggak kerasa numpuk: "
+            "pertama, sebutin satu hal yang paling ganggu hari ini; kedua, pilih mana yang bisa dikontrol sekarang; "
+            "ketiga, ambil satu langkah kecil dalam 5 menit ke depan. Yang paling berat dari hari ini bagian apa?"
+        )
+
+    if intent == "check_in":
+        return (
+            "Halo, aku di sini. Kalau cuma mau mampir juga gapapa, tapi kalau ada yang lagi kepikiran, "
+            "ceritain dari versi paling singkat dulu aja."
+        )
+
+    if text:
+        return (
+            "Aku nangkep kamu lagi pengen ada yang nyimak dulu. Aku belum bisa jawab sedalam biasanya karena koneksi model lagi lambat, "
+            "tapi aku tetap ngikutin. Ceritain sedikit lagi: bagian mana yang paling pengen kamu beresin atau keluarin sekarang?"
+        )
+
+    return "Aku di sini. Ceritain pelan-pelan aja, mulai dari yang paling gampang kamu tulis dulu."
+
 def generate_dialog(
     user_message: str, screening_context: str, session_summary: str, profile_context: str,
     memory_context: str, recent_daily_context: str, risk_level: str, mood_signal: str,
@@ -396,7 +438,9 @@ ATURAN MATI:
         }
     except Exception as e:
         logger.error("Dialog generation failed: %s", e)
-        return {"reply": "Aku dengerin, ya. Lanjutin aja ceritanya.", "session_summary": session_summary, "risk_flag": risk_level == "high"}
+        reply = _fallback_dialog_reply(user_message, risk_level, style_plan)
+        reply = cap_reply_length(reply, style_plan)
+        return {"reply": reply, "session_summary": session_summary, "risk_flag": risk_level == "high"}
 
 def generate_summary(session_raw: str, session_summary: str, user_name: str) -> str:
     from datetime import datetime

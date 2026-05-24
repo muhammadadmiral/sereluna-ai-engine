@@ -152,6 +152,13 @@ Thumbs.db
 data/doctors.local.json
 data/doctors.*.local.json
 
+# Local thesis/reference documents
+*.pdf
+*.docx
+*.doc
+*.pptx
+*.ppt
+
 # Firebase & Integrations
 google-service.json
 firebaese-service-account.json
