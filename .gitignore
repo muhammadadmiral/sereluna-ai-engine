@@ -149,6 +149,8 @@ Thumbs.db
 # Custom secret files
 .env
 .env.example
+data/doctors.local.json
+data/doctors.*.local.json
 
 # Firebase & Integrations
 google-service.json

@@ -29,6 +29,8 @@ $groqKey = "YOUR_GROQ_API_KEY_HERE"
 $guardianKey = "YOUR_GUARDIAN_API_KEY_HERE"
 $firebasePath = "google-service.json" # Atur path jika berbeda
 $firebaseStorageBucket = "YOUR_FIREBASE_STORAGE_BUCKET_HERE"
+$doctorGuardrailInstruction = ""
+$doctorDirectReply = ""
 # ==========================================
 
 if (-not (Test-Path $firebasePath)) {
@@ -78,7 +80,9 @@ Invoke-Hf repos create $repoId `
     --env "GROQ_MODEL=llama-3.3-70b-versatile" `
     --env "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
     --env "GROQ_FAST_MODEL=llama-3.1-8b-instant" `
-    --env "APP_TIMEZONE=Asia/Jakarta"
+    --env "APP_TIMEZONE=Asia/Jakarta" `
+    --env "DOCTOR_MENU_GUARDRAIL_INSTRUCTION=$doctorGuardrailInstruction" `
+    --env "DOCTOR_DIRECT_REPLY=$doctorDirectReply"
 
 Write-Host "Setting Space secrets..."
 Set-Content -LiteralPath $tempSecretsFile -Value $tempSecretsContent -Encoding ascii
@@ -113,6 +117,8 @@ Invoke-Hf spaces variables add $repoId `
     -e "FIREBASE_STORAGE_BUCKET=$firebaseStorageBucket" `
     -e "GOOGLE_CLOUD_PROJECT=$firebaseProjectId" `
     -e "GCLOUD_PROJECT=$firebaseProjectId" `
+    -e "DOCTOR_MENU_GUARDRAIL_INSTRUCTION=$doctorGuardrailInstruction" `
+    -e "DOCTOR_DIRECT_REPLY=$doctorDirectReply" `
     --token $hfToken
 
 Write-Host "Uploading backend files..."

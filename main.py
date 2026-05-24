@@ -17,6 +17,7 @@ from routers import (
     context_router,
     device_router,
     diary_router,
+    doctor_router,
     gamification_router,
     media_router,
     mood_router,
@@ -64,6 +65,8 @@ app.include_router(screening_router.router)
 app.include_router(context_router.router)
 app.include_router(profile_router.router, prefix="/api/v1")
 app.include_router(diary_router.router, prefix="/api/v1")
+app.include_router(doctor_router.router, prefix="/api")
+app.include_router(doctor_router.router, prefix="/api/v1", include_in_schema=False)
 app.include_router(notification_router.router, prefix="/api/v1")
 app.include_router(media_router.router, prefix="/api/v1")
 app.include_router(device_router.router, prefix="/api/v1")

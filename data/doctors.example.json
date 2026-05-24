@@ -1,0 +1,11 @@
+{
+  "doctors": [
+    {
+      "id": "isi-id-dokter-sendiri",
+      "name": "",
+      "specialty": "",
+      "whatsapp_number": "",
+      "image_url": ""
+    }
+  ]
+}

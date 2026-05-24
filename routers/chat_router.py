@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+import re
 import time
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
@@ -134,6 +136,13 @@ def _debug_metadata(algorithm_result: Dict[str, Any], routed_to: str, elapsed_ms
 
 
 def _safety_reply() -> str:
+    doctor_message = (os.getenv("DOCTOR_MENU_GUARDRAIL_INSTRUCTION") or "").strip()
+    if doctor_message:
+        return (
+            "Aku sangat peduli sama kamu, dan sepertinya kondisimu sedang sangat berat. "
+            f"{doctor_message} Aku juga bakal tetap nemenin kamu di sini."
+        )
+
     return (
         "Aku sangat peduli sama kamu, dan sepertinya kondisimu sedang sangat berat. "
         "Kamu nggak sendirian ya. Sereluna punya fitur Konselor di mana kamu bisa ngobrol langsung dengan ahlinya. "
@@ -168,6 +177,14 @@ def _format_media_context(media_results: list[Dict[str, Any]]) -> str:
         elif item.get("error"):
             lines.append(f"Gambar {index}: gagal dianalisis ({item['error']}).")
     return "\n".join(lines)
+
+
+def _is_doctor_consultation_request(text: str) -> bool:
+    return bool(re.search(r"\b(?:psikolog|dokter|konsul|konsultasi|whatsapp|wa)\b", text or "", re.IGNORECASE))
+
+
+def _doctor_direct_reply() -> str:
+    return (os.getenv("DOCTOR_DIRECT_REPLY") or "").strip()
 
 
 @router.post("/", response_model=ChatResponse)
@@ -290,7 +307,25 @@ def chat_endpoint(
             media=media_results
         )
 
-    # 6. LLM Generation
+    # 6. Doctor Consultation Shortcut
+    doctor_reply = _doctor_direct_reply()
+    if doctor_reply and _is_doctor_consultation_request(user_text):
+        next_summary = build_fallback_session_summary(context["session_summary"], llm_user_text, doctor_reply, request.mood_signal or "", risk_level)
+        background_tasks.add_task(_background_save_and_update, uid, room_id, session_id, doctor_reply, {"risk_level": risk_level, "doctor_shortcut": True, "algorithm_result": algorithm_result}, next_summary)
+        _log_professor_demo(user_text, doctor_reply, algorithm_result)
+        return ChatResponse(
+            reply=doctor_reply,
+            ui_metadata=UIMetadata(sentiment_score=current_sentiment, suggested_action="Buka menu Doctor", is_risky=risk_level in {"high", "critical"}),
+            clinical_insight=ClinicalInsight(risk_level=risk_level),
+            session_summary=next_summary,
+            room_id=room_id,
+            session_id=session_id,
+            algorithm_trace=algorithm_result,
+            debug_metadata=_debug_metadata(algorithm_result, routed_to="doctor_consultation_shortcut", elapsed_ms=int((time.perf_counter() - started_at) * 1000)),
+            media=media_results
+        )
+
+    # 7. LLM Generation
     bot_result = generate_dialog(
         user_message=llm_user_text,
         screening_context=context["latest_screening_summary"],

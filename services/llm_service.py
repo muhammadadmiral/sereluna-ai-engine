@@ -86,6 +86,21 @@ def _build_dialog_context(
 
     return "\n\n".join(sections).strip() or "Belum ada konteks sebelumnya yang relevan."
 
+
+def _doctor_guardrail_instruction(risk_level: str) -> str:
+    if (risk_level or "").strip().lower() not in {"high", "critical"}:
+        return ""
+
+    message = (os.getenv("DOCTOR_MENU_GUARDRAIL_INSTRUCTION") or "").strip()
+    if not message:
+        return ""
+
+    return f"""
+PENTING: Pengguna menunjukkan tingkat stres atau risiko tinggi.
+Kamu HARUS menyertakan pesan berikut di akhir respons:
+{message}
+"""
+
 # --- Provider Implementations ---
 
 def _call_nvidia(model: str, messages: list, response_format: Optional[dict], temperature: float, max_tokens: Optional[int]) -> str:
@@ -277,6 +292,7 @@ PENTING: User mengirimkan GAMBAR. Kamu sudah menerima analisis gambar di bawah d
 - Berikan respon yang nyambung dengan apa yang ada di dalam gambar tersebut.
 - Jika itu screenshot chat, bahas dinamika percakapannya.
 """
+    doctor_guardrail_instruction = _doctor_guardrail_instruction(risk_level)
 
     system_prompt = f"""Kamu adalah Sereluna, teman ngobrol suportif untuk {safe_user_name}.
 Bicara dalam Bahasa Indonesia yang natural, hangat, dan adaptif terhadap gaya user.
@@ -289,6 +305,7 @@ IDENTITAS & ADAPTASI GAYA:
 - Kalau user bertanya pendek, follow-up, atau mengoreksi kamu, jawab pendek dan langsung nyambung ke konteks terakhir.
 - Jangan ulangi tag [Konteks gambar dari backend vision model] atau isinya mentah-mentah. Gunakan informasinya secara natural.
 {image_instruction}
+{doctor_guardrail_instruction}
 
 RESPONSE PLANNER:
 {style_plan_text}
