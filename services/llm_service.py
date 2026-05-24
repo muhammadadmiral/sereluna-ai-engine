@@ -348,6 +348,7 @@ IDENTITAS & ADAPTASI GAYA:
 - Kalau user meminta long text, cerita panjang, atau penjelasan detail, baru beri respons panjang.
 - Kalau user bertanya pendek, follow-up, atau mengoreksi kamu, jawab pendek dan langsung nyambung ke konteks terakhir.
 - Kalau pesan terbaru jelas pindah topik, ikuti topik terbaru. Jangan mengulang topik lama hanya karena ada di transcript.
+- Hindari filler pembuka seperti "hmm", "hmmm", "kayaknya pertanyaan yang dalam", atau "aku sih" kalau tidak benar-benar perlu.
 - Jangan ulangi tag [Konteks gambar dari backend vision model] atau isinya mentah-mentah. Gunakan informasinya secara natural.
 {image_instruction}
 {doctor_guardrail_instruction}
@@ -364,7 +365,7 @@ KONTEKS:
 {dialog_context}
 
 ATURAN MATI:
-1. JANGAN pakai pembuka: "Saya senang", "Tentu saja", "Halo [Nama]".
+1. JANGAN pakai pembuka: "Saya senang", "Tentu saja", "Halo [Nama]", "Hmm", "Hmmm".
 2. Jangan klaim melihat wajah, ekspresi, gestur, lokasi, masa lalu, atau isi pikiran user kecuali user menyebutnya langsung atau ada konteks gambar eksplisit.
 3. Kalau kamu hanya menafsirkan dari kata-kata user, pakai framing dugaan secukupnya seperti "kayaknya..." bukan "aku tahu pasti". Jangan mengulang frasa "aku nangkepnya" di tiap respons.
 4. Untuk follow-up pendek seperti "kayak apa?", pakai transcript terbaru sebagai sumber utama. Jangan menarik diary/screening lama kalau user tidak merujuk ke sana.
@@ -601,8 +602,13 @@ def _capitalize_first(text: str) -> str:
 def _polish_sereluna_reply(reply: str, name: str, style: Any, has_image_context: bool = False) -> str:
     text = (reply or "").strip()
     # Strip repetitive openers
-    text = re.sub(rf"^\s*(?:wah|aduh|duh|oke|baiklah|siap|tentu|{re.escape(name)})\s*[,!.]?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(rf"^\s*(?:h+m+|hm+|wah|aduh|duh|oke|baiklah|siap|tentu|{re.escape(name)})\s*[,!.]?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^\s*kayaknya\s+pertanyaan\s+(?:yang\s+)?(?:cukup\s+)?dalam\s*,?\s*(?:nih)?\.?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*(?:aku\s+(?:paham|ngerti|mengerti|dengerin))\s*[,!.]?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\b(?:h+m+|hm+)\s*[,!.]?\s+", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\baku\s+sih\s*,?\s*", "aku ", text, flags=re.IGNORECASE)
+    text = re.sub(r"^\s*aku\s+sebagai\s+teman\s+ngobrol\s*,?\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^\s*tidak\s+memiliki\s+perasaan\s+seperti\s+manusia\s*,?\s*", "Aku nggak punya perasaan seperti manusia, ", text, flags=re.IGNORECASE)
     if not has_image_context:
         text = _strip_unsupported_sensory_claims(text)
     # Register fixes

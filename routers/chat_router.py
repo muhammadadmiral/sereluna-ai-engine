@@ -80,7 +80,7 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         distortion_list = distortions.get("detected_patterns", [])
 
         log_msg = "\n" + "="*75 + "\n"
-        log_msg += f"🤖 [SERELUNA AI - DEWA SKRIPSI MODE - BACKEND PROCESS] 🤖\n"
+        log_msg += "SERELUNA AI - BACKEND INFERENCE TRACE\n"
         log_msg += "="*75 + "\n"
         log_msg += f"1. DATA MINING & XAI (EXPLAINABLE INFERENCE)\n"
         log_msg += f"   - Input Teks       : {user_text}\n"
@@ -251,7 +251,7 @@ def chat_endpoint(
         past_diaries=context["past_diaries"],
     )
     
-    # --- DEWA SKRIPSI: Sentiment Trend Tracker ---
+    # Sentiment trend tracker
     recent_sentiments = []
     for line in history_text.splitlines()[-10:]:
         if "Sentiment:" in line:
@@ -266,7 +266,7 @@ def chat_endpoint(
     elif current_sentiment > avg_sentiment + 0.5: trend = "Improving (User feeling better)"
     algorithm_result["sentiment_trend"] = trend
 
-    # --- DEWA SKRIPSI: Uncertainty-Aware Routing ---
+    # Uncertainty-aware routing
     supervised = algorithm_result.get("supervised_emotion_classifier") or {}
     confidence = supervised.get("confidence", 0.0)
     risk_level = algorithm_result["risk_level"]
