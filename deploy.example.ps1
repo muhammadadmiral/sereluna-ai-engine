@@ -78,6 +78,8 @@ Invoke-Hf repos create $repoId `
     --env "NVIDIA_THINKING=false" `
     --env "NVIDIA_TOP_P=0.95" `
     --env "GROQ_MODEL=llama-3.3-70b-versatile" `
+    --env "CHAT_FINISH_LLM_SUMMARY=true" `
+    --env "GROQ_SUMMARY_MODEL=llama-3.1-8b-instant" `
     --env "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
     --env "GROQ_FAST_MODEL=llama-3.1-8b-instant" `
     --env "APP_TIMEZONE=Asia/Jakarta" `
@@ -110,6 +112,8 @@ Invoke-Hf spaces variables add $repoId `
     -e "NVIDIA_TOP_P=0.95" `
     -e "NVIDIA_MAX_TOKENS=320" `
     -e "NVIDIA_TIMEOUT_SECONDS=60" `
+    -e "CHAT_FINISH_LLM_SUMMARY=true" `
+    -e "GROQ_SUMMARY_MODEL=llama-3.1-8b-instant" `
     -e "GROQ_MODEL=llama-3.3-70b-versatile" `
     -e "GROQ_BACKUP_MODEL=moonshotai/kimi-k2-instruct" `
     -e "GROQ_FAST_MODEL=llama-3.1-8b-instant" `

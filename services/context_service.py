@@ -108,6 +108,32 @@ def get_or_create_session(uid: str, diary_id: str, session_id: Optional[str] = N
     return session_ref.id, {"summary": "", "status": "active"}
 
 
+def get_session(uid: str, diary_id: str, session_id: str) -> Dict[str, Any]:
+    snapshot = (
+        _user_ref(uid)
+        .collection("diaries")
+        .document(diary_id)
+        .collection("sessions")
+        .document(session_id)
+        .get()
+    )
+    return snapshot.to_dict() or {}
+
+
+def mark_session_finishing(uid: str, diary_id: str, session_id: str) -> None:
+    session_ref = (
+        _user_ref(uid)
+        .collection("diaries")
+        .document(diary_id)
+        .collection("sessions")
+        .document(session_id)
+    )
+    session_ref.set(
+        serialize_firestore_value({"status": "finishing", "updatedAt": _server_timestamp()}),
+        merge=True,
+    )
+
+
 # Add this near the top with other imports if needed, or just use it locally
 def _safe_json_dumps(obj: Any) -> str:
     def default(o: Any) -> Any:

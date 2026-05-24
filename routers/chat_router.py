@@ -16,7 +16,9 @@ from services.context_service import (
     get_chat_context,
     get_or_create_session,
     get_or_create_today_diary,
+    get_session,
     get_session_messages,
+    mark_session_finishing,
     save_message,
     update_chat_summaries,
 )
@@ -26,6 +28,7 @@ from services.media_service import analyze_images_for_chat
 from services.nlp_service import build_context_algorithm_result, build_response_style_plan
 from services.notification_service import create_notification
 from services.nlp.utils import is_greeting_only
+from services.summary_service import clean_diary_summary
 
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 logger = logging.getLogger("sereluna.chat")
@@ -384,6 +387,21 @@ async def finish_chat_endpoint(
 ):
     uid = current_user["uid"]
     ensure_user_document(uid, current_user)
+    existing_session = get_session(uid, request.room_id, request.session_id)
+    existing_summary = clean_diary_summary(existing_session.get("summary") or "", "Sesi percakapan selesai.")
+    if existing_session.get("status") in {"finished", "finishing"}:
+        cleaned_existing_summary = existing_summary
+        return ChatResponse(
+            reply=cleaned_existing_summary,
+            ui_metadata=UIMetadata(sentiment_score=3, suggested_action=None, is_risky=False),
+            clinical_insight=ClinicalInsight(),
+            session_summary=cleaned_existing_summary,
+            room_id=request.room_id,
+            session_id=request.session_id,
+            gamification=None,
+        )
+
+    mark_session_finishing(uid, request.room_id, request.session_id)
 
     messages = get_session_messages(uid, request.room_id, request.session_id)
     session_raw = format_messages(messages)

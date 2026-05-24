@@ -11,7 +11,13 @@ _LEADING_SUMMARY_PATTERNS = (
 
 
 def clean_diary_summary(value: Optional[str], fallback: str = "") -> str:
-    text = " ".join((value or "").split()).strip(" \"'")
+    raw = value or ""
+    if "#CONTENT#" in raw:
+        raw = raw.rsplit("#CONTENT#", 1)[1]
+    raw = re.sub(r"#TITLE#.*?(?=#CONTENT#|$)", "", raw, flags=re.IGNORECASE | re.DOTALL)
+    raw = re.sub(r"\b(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+\d{1,2}\s+\w+\s+\d{4}\b", "", raw, flags=re.IGNORECASE)
+    raw = re.sub(r"\b\d{4}-\d{2}-\d{2}\b", "", raw)
+    text = " ".join(raw.split()).strip(" \"'")
     if not text:
         return fallback
 

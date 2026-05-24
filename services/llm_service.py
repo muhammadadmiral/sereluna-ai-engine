@@ -68,10 +68,12 @@ def _build_dialog_context(
     style = style_plan or {}
     intent = style.get("intent")
     recent = _recent_transcript(history_text)
+    current_focus = "Saat pesan terbaru memperkenalkan kondisi/topik baru, jangan menyeret topik lama kecuali user memintanya eksplisit."
     sections: List[str] = []
 
     if recent:
         sections.append(f"Transcript terbaru, prioritas tertinggi:\n{recent}")
+        sections.append(current_focus)
 
     if session_summary.strip():
         sections.append(f"Ringkasan sesi, hanya latar:\n{session_summary.strip()}")
@@ -345,6 +347,7 @@ IDENTITAS & ADAPTASI GAYA:
 - Jangan kaku seperti asisten digital. Hindari istilah formal seperti "Aktivitas", "Aspek", "Fisik" kecuali memang dibutuhkan.
 - Kalau user meminta long text, cerita panjang, atau penjelasan detail, baru beri respons panjang.
 - Kalau user bertanya pendek, follow-up, atau mengoreksi kamu, jawab pendek dan langsung nyambung ke konteks terakhir.
+- Kalau pesan terbaru jelas pindah topik, ikuti topik terbaru. Jangan mengulang topik lama hanya karena ada di transcript.
 - Jangan ulangi tag [Konteks gambar dari backend vision model] atau isinya mentah-mentah. Gunakan informasinya secara natural.
 {image_instruction}
 {doctor_guardrail_instruction}
@@ -363,7 +366,7 @@ KONTEKS:
 ATURAN MATI:
 1. JANGAN pakai pembuka: "Saya senang", "Tentu saja", "Halo [Nama]".
 2. Jangan klaim melihat wajah, ekspresi, gestur, lokasi, masa lalu, atau isi pikiran user kecuali user menyebutnya langsung atau ada konteks gambar eksplisit.
-3. Kalau kamu hanya menafsirkan dari kata-kata user, pakai framing dugaan: "aku nangkepnya..." atau "kayaknya..." bukan "aku tahu pasti".
+3. Kalau kamu hanya menafsirkan dari kata-kata user, pakai framing dugaan secukupnya seperti "kayaknya..." bukan "aku tahu pasti". Jangan mengulang frasa "aku nangkepnya" di tiap respons.
 4. Untuk follow-up pendek seperti "kayak apa?", pakai transcript terbaru sebagai sumber utama. Jangan menarik diary/screening lama kalau user tidak merujuk ke sana.
 5. Jika user mengoreksi atau menantang responsmu, akui singkat, cabut asumsi yang salah, lalu lanjutkan dengan klarifikasi pendek.
 6. Kirimkan JSON:
@@ -447,23 +450,39 @@ def generate_summary(session_raw: str, session_summary: str, user_name: str) -> 
     now = datetime.now()
     date_str = now.strftime("%A, %d %B %Y")
     time_str = now.strftime("%H:%M")
+    cleaned_existing = clean_diary_summary(session_summary or "")
+    cleaned_session = clean_diary_summary(session_raw or "")
+    if not _bool_env("CHAT_FINISH_LLM_SUMMARY", True):
+        content = cleaned_existing or cleaned_session or "Sesi percakapan selesai."
+        title_source = content.splitlines()[0] if content else "Sesi Percakapan"
+        title_source = re.sub(r"^(?:User|Sereluna)\s*:\s*", "", title_source).strip()
+        title = _truncate(title_source, 48) or "Sesi Percakapan"
+        return f"{date_str} | {time_str}\n\n#TITLE#\n{title}\n\n#CONTENT#\n{content}"
     
     system_prompt = (
-        f"Buat ringkasan diary yang mendalam untuk {user_name} dalam Bahasa Indonesia. "
-        "Format output harus diawali dengan JUDUL yang menangkap tema utama obrolan, diikuti isi ringkasan.\n\n"
-        "STRUKTUR WAJIB:\n"
-        "[TITLE]: Judul Singkat & Menarik (max 10 kata)\n"
-        "[CONTENT]: Isi ringkasan detail (2-3 paragraf) yang mencakup poin penting, emosi, dan progres.\n\n"
-        "JANGAN pakai pembuka seperti 'Berikut adalah ringkasan'. LANGSUNG ke [TITLE]."
+        f"Kamu merangkum sesi chat Sereluna untuk diary pribadi {user_name}. "
+        "Return JSON valid: {\"title\":\"judul singkat max 8 kata\", \"content\":\"ringkasan 1-2 paragraf\"}. "
+        "Jangan tulis tag #TITLE#, #CONTENT#, tanggal, markdown, atau pembuka template. "
+        "Fokus pada hal terbaru dan poin emosional penting. Jangan mengulang format diary lama dari input."
     )
-    user_prompt = f"Sesi: {session_raw}\n\nRolling Summary: {session_summary}"
+    user_prompt = (
+        f"Transcript sesi:\n{_truncate(cleaned_session, 5000)}\n\n"
+        f"Rolling summary bersih:\n{_truncate(cleaned_existing, 1600)}"
+    )
     try:
-        content, _ = _completion(
+        summary_model = os.getenv("GROQ_SUMMARY_MODEL") or os.getenv("GROQ_FAST_MODEL", "llama-3.1-8b-instant")
+        content = _call_groq(
+            summary_model,
             messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
+            response_format={"type": "json_object"},
             temperature=0.6,
-            max_completion_tokens=1000,
-            use_fast_model=False 
+            max_tokens=500,
         )
+        logger.info("Summary success: Groq (%s)", summary_model)
+        parsed = _parse_json_object(content, {})
+        title = clean_diary_summary(parsed.get("title") or "Sesi Percakapan")
+        body = clean_diary_summary(parsed.get("content") or content, cleaned_existing or cleaned_session)
+        return f"{date_str} | {time_str}\n\n#TITLE#\n{_truncate(title, 70)}\n\n#CONTENT#\n{body}"
         
         # Format for frontend rendering
         # We will wrap it in a way that's easy to parse or just clear to read
@@ -473,7 +492,12 @@ def generate_summary(session_raw: str, session_summary: str, user_name: str) -> 
         # Use consistent tags for frontend parsing: #TITLE# and #CONTENT#
         final_output = f"📅 {date_str} | ⏰ {time_str}\n\n#TITLE#\n{_extract_tag(content, '[TITLE]', 'Sesi Percakapan')}\n\n#CONTENT#\n{_extract_tag(content, '[CONTENT]', cleaned_content)}"
         return final_output
-    except Exception:
+    except Exception as e:
+        logger.warning("Groq summary failed: %s", e)
+        content = cleaned_existing or cleaned_session or "Sesi percakapan selesai."
+        title_source = re.sub(r"^(?:User|Sereluna)\s*:\s*", "", content).strip()
+        title = _truncate(title_source, 48) or "Sesi Percakapan"
+        return f"{date_str} | {time_str}\n\n#TITLE#\n{title}\n\n#CONTENT#\n{content}"
         return f"📅 {date_str}\n\n#TITLE#\nSesi Percakapan\n\n#CONTENT#\n{clean_diary_summary(session_summary or 'Sesi percakapan selesai.')}"
 
 def _extract_tag(text: str, tag: str, fallback: str) -> str:

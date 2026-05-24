@@ -135,6 +135,15 @@ def is_long_response_request(text: str) -> bool:
         or re.search(r"\bpanjangin\s+(jawaban|respon|respons|balasan|teks|text)\b", normalized)
     )
 
+def is_encouragement_request(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+    return bool(
+        re.search(r"\b(kasih|beri|beriin|minta|butuh|pengen|perlu)\b.{0,24}\b(semangat|support|dukungan)\b", normalized)
+        or re.search(r"\b(semangatin|nyemangatin|dukungin)\b", normalized)
+    )
+
 def is_question_like(text: str) -> bool:
     normalized = normalize_text(text)
     if not normalized:
@@ -183,6 +192,9 @@ def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> st
 
     if is_long_response_request(text):
         return "advice_or_problem_solving" # Treat as advice/problem solving to trigger longer response
+
+    if is_encouragement_request(text):
+        return "emotional_support"
 
     if is_response_feedback(text):
         return "response_feedback"
