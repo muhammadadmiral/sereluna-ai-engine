@@ -1,4 +1,4 @@
-import json
+﻿import json
 import logging
 import os
 import re
@@ -484,21 +484,12 @@ def generate_summary(session_raw: str, session_summary: str, user_name: str) -> 
         body = clean_diary_summary(parsed.get("content") or content, cleaned_existing or cleaned_session)
         return f"#TITLE#\n{_truncate(title, 70)}\n\n#CONTENT#\n{body}"
         
-        # Format for frontend rendering
-        # We will wrap it in a way that's easy to parse or just clear to read
-        cleaned_content = clean_diary_summary(content)
-        
-        # Ensure it has the date header at the very top for context
-        # Use consistent tags for frontend parsing: #TITLE# and #CONTENT#
-        final_output = f"📅 {date_str} | ⏰ {time_str}\n\n#TITLE#\n{_extract_tag(content, '[TITLE]', 'Sesi Percakapan')}\n\n#CONTENT#\n{_extract_tag(content, '[CONTENT]', cleaned_content)}"
-        return final_output
     except Exception as e:
         logger.warning("Groq summary failed: %s", e)
         content = cleaned_existing or cleaned_session or "Sesi percakapan selesai."
         title_source = re.sub(r"^(?:User|Sereluna)\s*:\s*", "", content).strip()
         title = _truncate(title_source, 48) or "Sesi Percakapan"
         return f"#TITLE#\n{title}\n\n#CONTENT#\n{content}"
-        return f"📅 {date_str}\n\n#TITLE#\nSesi Percakapan\n\n#CONTENT#\n{clean_diary_summary(session_summary or 'Sesi percakapan selesai.')}"
 
 def _extract_tag(text: str, tag: str, fallback: str) -> str:
     """Helper to extract content between tags or after a tag."""
