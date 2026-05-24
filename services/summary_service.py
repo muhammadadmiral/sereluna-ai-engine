@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Dict, Optional
 
 
 _LEADING_SUMMARY_PATTERNS = (
@@ -32,3 +32,27 @@ def clean_diary_summary(value: Optional[str], fallback: str = "") -> str:
             break
 
     return cleaned or fallback
+
+
+def extract_diary_summary_parts(value: Optional[str]) -> Dict[str, str]:
+    raw = value or ""
+    title = ""
+    content = ""
+
+    title_match = re.search(r"#TITLE#\s*(.*?)(?=#CONTENT#|$)", raw, flags=re.IGNORECASE | re.DOTALL)
+    content_match = re.search(r"#CONTENT#\s*(.*)$", raw, flags=re.IGNORECASE | re.DOTALL)
+
+    if title_match:
+        title = clean_diary_summary(title_match.group(1))
+    if content_match:
+        content = clean_diary_summary(content_match.group(1))
+
+    if not content:
+        content = clean_diary_summary(raw)
+    if not title:
+        title_source = re.sub(r"^(?:User|Sereluna)\s*:\s*", "", content).strip()
+        title = title_source[:48].rstrip() + ("..." if len(title_source) > 48 else "")
+    if not title:
+        title = "Sesi Percakapan"
+
+    return {"title": title, "content": content}

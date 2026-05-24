@@ -3,8 +3,10 @@ import logging
 import os
 import re
 import time
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
@@ -33,6 +35,7 @@ from services.summary_service import clean_diary_summary
 router = APIRouter(prefix="/api/v1/chat", tags=["chat"])
 logger = logging.getLogger("sereluna.chat")
 logger.setLevel(logging.INFO)
+APP_TIMEZONE = os.getenv("APP_TIMEZONE", "Asia/Jakarta")
 
 # Ensure logs are visible in the console
 if not logger.handlers:
@@ -190,6 +193,39 @@ def _doctor_direct_reply() -> str:
     return (os.getenv("DOCTOR_DIRECT_REPLY") or "").strip()
 
 
+def _client_time_context(request: ChatRequest) -> Dict[str, str]:
+    timezone_name = (request.client_timezone or "").strip()
+    utc_offset = (request.client_utc_offset or "").strip()
+    local_datetime = (request.client_local_datetime or "").strip()
+
+    if not local_datetime:
+        zone_name = timezone_name or APP_TIMEZONE
+        try:
+            now = datetime.now(ZoneInfo(zone_name))
+            local_datetime = now.isoformat(timespec="seconds")
+            timezone_name = timezone_name or zone_name
+            utc_offset = utc_offset or now.strftime("%z")
+            if len(utc_offset) == 5:
+                utc_offset = f"{utc_offset[:3]}:{utc_offset[3:]}"
+        except Exception:
+            now = datetime.now()
+            local_datetime = now.isoformat(timespec="seconds")
+            timezone_name = timezone_name or APP_TIMEZONE
+
+    label_parts = [local_datetime]
+    if timezone_name:
+        label_parts.append(timezone_name)
+    if utc_offset:
+        label_parts.append(f"UTC{utc_offset}" if utc_offset.startswith(("+", "-")) else utc_offset)
+
+    return {
+        "client_timezone": timezone_name,
+        "client_utc_offset": utc_offset,
+        "client_local_datetime": local_datetime,
+        "prompt": " | ".join(label_parts),
+    }
+
+
 @router.post("/", response_model=ChatResponse)
 def chat_endpoint(
     request: ChatRequest,
@@ -205,6 +241,7 @@ def chat_endpoint(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="text is required")
     if not user_text and media_ids:
         user_text = "Tolong bantu baca gambar yang aku kirim."
+    time_context = _client_time_context(request)
 
     uid = current_user["uid"]
     _log_chat_pipeline(trace_id, "request_received", {
@@ -236,6 +273,7 @@ def chat_endpoint(
             "has_image": bool(media_ids),
             "media_ids": media_ids,
             "media_analysis": media_results,
+            "client_time": time_context,
         },
     )
 
@@ -346,6 +384,7 @@ def chat_endpoint(
         emotion_profile=algorithm_result.get("emotion_profile"),
         cognitive_distortions=algorithm_result.get("cognitive_distortions"),
         coping_pathway=algorithm_result.get("coping_pathway"),
+        client_time_context=time_context["prompt"],
     )
 
     reply = bot_result.get("reply") or "Aku dengerin, ya. Bisa ceritain sedikit lagi?"

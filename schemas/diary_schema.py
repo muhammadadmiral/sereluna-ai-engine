@@ -6,6 +6,8 @@ from pydantic import BaseModel, Field
 class DiarySessionItem(BaseModel):
     id: str
     model: str = ""
+    title: str = ""
+    content: str = ""
     summary: str = ""
     preview: str = ""
     status: str = ""
@@ -17,6 +19,8 @@ class DiarySessionItem(BaseModel):
 class DiaryItem(BaseModel):
     id: str
     date: str = ""
+    title: str = ""
+    content: str = ""
     chat_summary: str = ""
     preview: str = ""
     session_count: int = 0
@@ -34,6 +38,8 @@ class DiaryEntryItem(BaseModel):
     diary_id: str
     session_id: str
     date: str = ""
+    title: str = ""
+    content: str = ""
     summary: str = ""
     preview: str = ""
     status: str = ""
@@ -50,6 +56,8 @@ class DiaryEntryListResponse(BaseModel):
 class DiaryDetailResponse(BaseModel):
     id: str
     date: str = ""
+    title: str = ""
+    content: str = ""
     chat_summary: str = ""
     preview: str = ""
     session_count: int = 0

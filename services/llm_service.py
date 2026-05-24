@@ -311,6 +311,7 @@ def generate_dialog(
     user_name: str, history_text: str, keywords: List[str], relevant_diary: Optional[str] = None,
     style_plan: Optional[Dict[str, Any]] = None, emotion_profile: Optional[Dict[str, Any]] = None,
     cognitive_distortions: Optional[Dict[str, Any]] = None, coping_pathway: Optional[Dict[str, Any]] = None,
+    client_time_context: str = "",
 ) -> Dict[str, Any]:
     safe_user_name = (user_name or "Teman").strip() or "Teman"
     style_plan_text = _format_style_plan(style_plan, safe_user_name)
@@ -360,6 +361,7 @@ CARE INTELLIGENCE:
 {care_intel}
 
 KONTEKS:
+- Waktu lokal user saat request ini: {client_time_context or "Tidak tersedia. Jangan menebak jam/tanggal spesifik kecuali user menyebutkannya."}
 - Mood: {mood_signal} | Risiko: {risk_level}
 - Konteks terpilih:
 {dialog_context}
@@ -370,7 +372,8 @@ ATURAN MATI:
 3. Kalau kamu hanya menafsirkan dari kata-kata user, pakai framing dugaan secukupnya seperti "kayaknya..." bukan "aku tahu pasti". Jangan mengulang frasa "aku nangkepnya" di tiap respons.
 4. Untuk follow-up pendek seperti "kayak apa?", pakai transcript terbaru sebagai sumber utama. Jangan menarik diary/screening lama kalau user tidak merujuk ke sana.
 5. Jika user mengoreksi atau menantang responsmu, akui singkat, cabut asumsi yang salah, lalu lanjutkan dengan klarifikasi pendek.
-6. Kirimkan JSON:
+6. Kalau user bertanya jam, hari, tanggal, pagi/siang/malam, atau konteks waktu, jawab berdasarkan "Waktu lokal user saat request ini". Jangan memakai waktu server atau menebak.
+7. Kirimkan JSON:
 {{
   "reply": "balasan asik dan empati kamu",
   "session_summary": "ringkasan singkat",
@@ -447,10 +450,6 @@ ATURAN MATI:
         return {"reply": reply, "session_summary": session_summary, "risk_flag": risk_level == "high"}
 
 def generate_summary(session_raw: str, session_summary: str, user_name: str) -> str:
-    from datetime import datetime
-    now = datetime.now()
-    date_str = now.strftime("%A, %d %B %Y")
-    time_str = now.strftime("%H:%M")
     cleaned_existing = clean_diary_summary(session_summary or "")
     cleaned_session = clean_diary_summary(session_raw or "")
     if not _bool_env("CHAT_FINISH_LLM_SUMMARY", True):
@@ -458,7 +457,7 @@ def generate_summary(session_raw: str, session_summary: str, user_name: str) -> 
         title_source = content.splitlines()[0] if content else "Sesi Percakapan"
         title_source = re.sub(r"^(?:User|Sereluna)\s*:\s*", "", title_source).strip()
         title = _truncate(title_source, 48) or "Sesi Percakapan"
-        return f"{date_str} | {time_str}\n\n#TITLE#\n{title}\n\n#CONTENT#\n{content}"
+        return f"#TITLE#\n{title}\n\n#CONTENT#\n{content}"
     
     system_prompt = (
         f"Kamu merangkum sesi chat Sereluna untuk diary pribadi {user_name}. "
@@ -483,7 +482,7 @@ def generate_summary(session_raw: str, session_summary: str, user_name: str) -> 
         parsed = _parse_json_object(content, {})
         title = clean_diary_summary(parsed.get("title") or "Sesi Percakapan")
         body = clean_diary_summary(parsed.get("content") or content, cleaned_existing or cleaned_session)
-        return f"{date_str} | {time_str}\n\n#TITLE#\n{_truncate(title, 70)}\n\n#CONTENT#\n{body}"
+        return f"#TITLE#\n{_truncate(title, 70)}\n\n#CONTENT#\n{body}"
         
         # Format for frontend rendering
         # We will wrap it in a way that's easy to parse or just clear to read
@@ -498,7 +497,7 @@ def generate_summary(session_raw: str, session_summary: str, user_name: str) -> 
         content = cleaned_existing or cleaned_session or "Sesi percakapan selesai."
         title_source = re.sub(r"^(?:User|Sereluna)\s*:\s*", "", content).strip()
         title = _truncate(title_source, 48) or "Sesi Percakapan"
-        return f"{date_str} | {time_str}\n\n#TITLE#\n{title}\n\n#CONTENT#\n{content}"
+        return f"#TITLE#\n{title}\n\n#CONTENT#\n{content}"
         return f"📅 {date_str}\n\n#TITLE#\nSesi Percakapan\n\n#CONTENT#\n{clean_diary_summary(session_summary or 'Sesi percakapan selesai.')}"
 
 def _extract_tag(text: str, tag: str, fallback: str) -> str:

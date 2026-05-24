@@ -8,6 +8,9 @@ class ChatRequest(BaseModel):
     room_id: Optional[str] = None
     session_id: Optional[str] = None
     mood_signal: Optional[str] = ""
+    client_timezone: Optional[str] = None
+    client_utc_offset: Optional[str] = None
+    client_local_datetime: Optional[str] = None
     mode: Optional[str] = "chat"
     has_image: bool = False
     media_ids: List[str] = Field(default_factory=list)

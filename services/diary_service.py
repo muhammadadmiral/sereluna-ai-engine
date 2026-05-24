@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 from firebase_admin import firestore
 
 from services.firebase_service import serialize_firestore_value, user_document
-from services.summary_service import clean_diary_summary
+from services.summary_service import clean_diary_summary, extract_diary_summary_parts
 
 
 PREVIEW_LENGTH = 160
@@ -24,10 +24,14 @@ def _preview(text: str, limit: int = PREVIEW_LENGTH) -> str:
 
 def _session_item(snapshot) -> Dict[str, Any]:
     data = snapshot.to_dict() or {}
-    summary = clean_diary_summary(data.get("summary") or "")
+    raw_summary = data.get("summary") or ""
+    parts = extract_diary_summary_parts(raw_summary)
+    summary = parts["content"]
     return {
         "id": snapshot.id,
         "model": data.get("model") or data.get("llmModel") or "",
+        "title": parts["title"],
+        "content": parts["content"],
         "summary": summary,
         "preview": _preview(summary),
         "status": data.get("status") or "",
@@ -48,11 +52,15 @@ def _list_sessions(diary_ref) -> List[Dict[str, Any]]:
 
 def _diary_item(snapshot) -> Dict[str, Any]:
     data = snapshot.to_dict() or {}
-    chat_summary = clean_diary_summary(data.get("chatSummary") or data.get("chat_summary") or "")
+    raw_summary = data.get("chatSummary") or data.get("chat_summary") or ""
+    parts = extract_diary_summary_parts(raw_summary)
+    chat_summary = parts["content"]
     sessions = _list_sessions(snapshot.reference)
     return {
         "id": snapshot.id,
         "date": data.get("date") or snapshot.id,
+        "title": parts["title"],
+        "content": parts["content"],
         "chat_summary": chat_summary,
         "preview": _preview(chat_summary),
         "session_count": len(sessions),
@@ -89,6 +97,8 @@ def list_diary_entries(uid: str, limit: int = 30) -> List[Dict[str, Any]]:
                     "diary_id": diary_id,
                     "session_id": session_id,
                     "date": date,
+                    "title": session["title"],
+                    "content": session["content"],
                     "summary": session["summary"],
                     "preview": session["preview"],
                     "status": session["status"],
@@ -116,12 +126,16 @@ def get_diary_detail(uid: str, diary_id: str) -> Optional[Dict[str, Any]]:
     if diary_data is None:
         return None
 
-    chat_summary = clean_diary_summary(diary_data.get("chatSummary") or diary_data.get("chat_summary") or "")
+    raw_summary = diary_data.get("chatSummary") or diary_data.get("chat_summary") or ""
+    parts = extract_diary_summary_parts(raw_summary)
+    chat_summary = parts["content"]
     sessions = _list_sessions(diary_ref)
 
     return {
         "id": diary_id,
         "date": diary_data.get("date") or diary_id,
+        "title": parts["title"],
+        "content": parts["content"],
         "chat_summary": chat_summary,
         "preview": _preview(chat_summary),
         "session_count": len(sessions),
