@@ -109,31 +109,6 @@ def check_titles(uid: str, stats: Dict[str, Any]) -> List[str]:
             
     return new_titles
 
-def generate_nostalgia_message(uid: str) -> Optional[str]:
-    # Fetch a random old diary summary from a month ago
-    system_prompt = (
-        "Kamu adalah Sereluna. Tugasmu adalah memberikan pesan 'Echoes of Stardust'—sebuah pesan nostalgia "
-        "yang menunjukkan perkembangan emosional user. Berikan pesan yang menyentuh dan memvalidasi perjuangan mereka."
-    )
-    
-    user_prompt = (
-        "Buatlah pesan nostalgia singkat (2 kalimat) untuk user yang baru saja naik level. "
-        "Pesannya harus bertema: 'Ingat sebulan lalu saat kamu merasa berat? Lihat betapa jauh kamu sudah melangkah sekarang.'"
-    )
-    
-    try:
-        content, provider = _completion(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.9,
-            use_fast_model=True
-        )
-        return content.strip()
-    except Exception:
-        return None
-
 def activate_lunar_eclipse(uid: str) -> Dict[str, Any]:
     db = get_firestore_client()
     doc_ref = user_document(uid).collection("gamification").document("aura")
@@ -459,7 +434,7 @@ def award_xp(uid: str, amount: int, source: str, details: Optional[Dict[str, Any
         nostalgia_msg = None
         if is_tier_up:
             stardust += 100 # Tier up bonus
-            nostalgia_msg = generate_nostalgia_message(uid)
+            nostalgia_msg = f"Luar biasa! Kamu telah mencapai tingkat kedamaian baru: {new_rank}. Teruslah merefleksikan dirimu."
             
         final_stardust = stardust + stardust_gain
         
@@ -477,6 +452,29 @@ def award_xp(uid: str, amount: int, source: str, details: Optional[Dict[str, Any
 
         return {
             "is_tier_up": is_tier_up,
+            "xp_gained": final_amount,
+            "stardust_gained": stardust_gain,
+            "new_total_xp": new_xp,
+            "streak_extended": streak_extended,
+            "streak_rescued": streak_rescued,
+            "current_streak": current_streak,
+            "celestial_event": multiplier > 1.0,
+            "message": "Aura-mu makin Gacor!" if multiplier > 1.0 else "Aura-mu bersinar!",
+            "nostalgia_message": nostalgia_msg
+        }
+        
+    transaction = db.transaction()
+    result = update_in_transaction(transaction, doc_ref, stats_ref)
+    
+    # Achievements & Oracle Echo
+    if result["is_tier_up"]:
+        result["oracle_echo"] = "Bulan lalu kamu khawatir... hari ini auramu jauh lebih terang. Kamu hebat."
+        
+    badge_source = "deep_diary" if (source == "diary" and details and details.get("is_deep_reflection")) else source
+    result["unlocked_badges"] = check_achievements(uid, calculate_level(result["new_total_xp"]), result["current_streak"], badge_source)
+
+    return result
+ "is_tier_up": is_tier_up,
             "xp_gained": final_amount,
             "stardust_gained": stardust_gain,
             "new_total_xp": new_xp,
