@@ -289,6 +289,8 @@ def classify_risk(
     crisis_screening = match_patterns(screening_text, CRISIS_PATTERNS)
     crisis_summary = match_patterns(summary_text, CRISIS_PATTERNS)
     violence_current = match_patterns(current_text, VIOLENCE_PATTERNS)
+    violence_summary = match_patterns(summary_text, VIOLENCE_PATTERNS)
+    lethal_threat_current = bool(re.search(r"\b(?:diancam\s+(?:mau\s+)?dibunuh|mau\s+dibunuh|dibunuh)\b", current_text))
     sexual_current = match_patterns(current_text, SEXUAL_PATTERNS)
     pii_current = match_patterns(current_text, PII_PATTERNS)
 
@@ -306,6 +308,8 @@ def classify_risk(
         else:
             score += RISK_WEIGHTS["violence"]
             matches.extend({"category": "violence", "keyword": pattern, "weight": RISK_WEIGHTS["violence"], "source": "current_text"} for pattern in violence_current)
+    if violence_summary and not violence_current:
+        matches.extend({"category": "violence", "keyword": pattern, "weight": 1, "source": "session_summary"} for pattern in violence_summary)
 
     if sexual_current:
         score += RISK_WEIGHTS["sexual"]
@@ -321,6 +325,9 @@ def classify_risk(
     if crisis_current:
         level = "high"
         reason = "current_crisis_signal"
+    elif lethal_threat_current:
+        level = "high"
+        reason = "current_lethal_violence_threat"
     elif score >= RISK_THRESHOLDS["high"]:
         level = "high"
         reason = "weighted_signal_score"
@@ -330,6 +337,9 @@ def classify_risk(
     elif crisis_screening or crisis_summary:
         level = "medium"
         reason = "historical_crisis_context"
+    elif violence_summary:
+        level = "medium"
+        reason = "historical_violence_context"
     elif score >= RISK_THRESHOLDS["medium"]:
         level = "medium"
         reason = "weighted_signal_score"

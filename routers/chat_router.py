@@ -156,6 +156,16 @@ def _safety_reply() -> str:
     )
 
 
+def _violence_support_reply() -> str:
+    doctor_message = (os.getenv("DOCTOR_MENU_GUARDRAIL_INSTRUCTION") or "").strip()
+    next_step = doctor_message or "Kalau kamu bisa, cari orang dewasa yang aman dan tepercaya, seperti keluarga lain, guru BK, wali kelas, tetangga dekat, atau layanan darurat setempat."
+    return (
+        "Aku serius nangkep ini sebagai situasi yang perlu bantuan nyata, bukan cuma dipendam sendiri. "
+        "Kalau kamu baru saja dipukul atau merasa bisa dipukul lagi, prioritaskan menjauh ke tempat yang lebih aman dulu dan hubungi orang tepercaya di dekatmu.\n\n"
+        f"{next_step} Kamu juga bisa buka menu Doctor di Sereluna untuk melihat daftar psikolog dan memilih bantuan manusia yang paling sesuai."
+    )
+
+
 def _background_save_and_update(
     uid: str,
     room_id: str,
@@ -190,7 +200,14 @@ def _is_doctor_consultation_request(text: str) -> bool:
 
 
 def _doctor_direct_reply() -> str:
-    return (os.getenv("DOCTOR_DIRECT_REPLY") or "").strip()
+    configured_reply = (os.getenv("DOCTOR_DIRECT_REPLY") or "").strip()
+    if configured_reply:
+        return configured_reply
+    return (
+        "Aku setuju, ini sudah waktunya melibatkan bantuan manusia. "
+        "Buka menu Doctor di Sereluna, lalu pilih psikolog yang tersedia untuk konsultasi. "
+        "Kalau kamu sedang dalam bahaya langsung atau diancam, cari tempat aman dulu dan hubungi orang terdekat atau layanan darurat setempat."
+    )
 
 
 def _client_time_context(request: ChatRequest) -> Dict[str, str]:
@@ -330,6 +347,10 @@ def chat_endpoint(
     # 5. Safety Route Logic (Crisis/Toxicity Detection)
     risk_trace = algorithm_result.get("risk", {})
     route_to_safety = risk_trace.get("reason") in {"current_crisis_signal", "preprocessing_crisis_filter"}
+    route_to_violence_support = any(
+        item.get("category") == "violence" and item.get("source") == "current_text"
+        for item in risk_trace.get("matches", [])
+    )
     
     if route_to_safety:
         reply = _safety_reply()
@@ -348,15 +369,32 @@ def chat_endpoint(
             media=media_results
         )
 
+    if route_to_violence_support:
+        reply = _violence_support_reply()
+        next_summary = build_fallback_session_summary(context["session_summary"], llm_user_text, reply, request.mood_signal or "", risk_level)
+        background_tasks.add_task(_background_save_and_update, uid, room_id, session_id, reply, {"risk_level": risk_level, "violence_support_response": True, "algorithm_result": algorithm_result}, next_summary)
+        _log_professor_demo(user_text, reply, algorithm_result)
+        return ChatResponse(
+            reply=reply,
+            ui_metadata=UIMetadata(sentiment_score=min(current_sentiment, 2), suggested_action="Buka menu Doctor", is_risky=True),
+            clinical_insight=ClinicalInsight(risk_level=risk_level),
+            session_summary=next_summary,
+            room_id=room_id,
+            session_id=session_id,
+            algorithm_trace=algorithm_result,
+            debug_metadata=_debug_metadata(algorithm_result, routed_to="violence_support_triage", elapsed_ms=int((time.perf_counter() - started_at) * 1000)),
+            media=media_results
+        )
+
     # 6. Doctor Consultation Shortcut
     doctor_reply = _doctor_direct_reply()
-    if doctor_reply and _is_doctor_consultation_request(user_text):
+    if _is_doctor_consultation_request(user_text):
         next_summary = build_fallback_session_summary(context["session_summary"], llm_user_text, doctor_reply, request.mood_signal or "", risk_level)
         background_tasks.add_task(_background_save_and_update, uid, room_id, session_id, doctor_reply, {"risk_level": risk_level, "doctor_shortcut": True, "algorithm_result": algorithm_result}, next_summary)
         _log_professor_demo(user_text, doctor_reply, algorithm_result)
         return ChatResponse(
             reply=doctor_reply,
-            ui_metadata=UIMetadata(sentiment_score=current_sentiment, suggested_action="Buka menu Doctor", is_risky=risk_level in {"high", "critical"}),
+            ui_metadata=UIMetadata(sentiment_score=current_sentiment, suggested_action="Buka menu Doctor", is_risky=risk_level in {"medium", "high", "critical"}),
             clinical_insight=ClinicalInsight(risk_level=risk_level),
             session_summary=next_summary,
             room_id=room_id,
@@ -408,7 +446,7 @@ def chat_endpoint(
     
     return ChatResponse(
         reply=reply,
-        ui_metadata=UIMetadata(sentiment_score=current_sentiment, suggested_action=bot_result.get("suggested_action"), is_risky=bot_result.get("risk_flag", False)),
+        ui_metadata=UIMetadata(sentiment_score=current_sentiment, suggested_action=bot_result.get("suggested_action"), is_risky=bot_result.get("risk_flag", False) or risk_level in {"medium", "high", "critical"}),
         clinical_insight=ClinicalInsight(detected_symptoms=bot_result.get("detected_symptoms", []), dass_category=bot_result.get("dominant_category", "None"), risk_level=risk_level),
         session_summary=next_summary,
         room_id=room_id,

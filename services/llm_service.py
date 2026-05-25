@@ -439,7 +439,7 @@ ATURAN MATI:
             "session_summary": clean_diary_summary(parsed.get("session_summary", "")),
             "sentiment_score": _coerce_score(parsed.get("sentiment_score"), 3),
             "suggested_action": parsed.get("suggested_action"),
-            "risk_flag": bool(parsed.get("risk_flag", risk_level == "high")),
+            "risk_flag": bool(parsed.get("risk_flag", False)) or risk_level in {"medium", "high", "critical"},
             "detected_symptoms": parsed.get("detected_symptoms", []),
             "dominant_category": parsed.get("dominant_category", "None")
         }
