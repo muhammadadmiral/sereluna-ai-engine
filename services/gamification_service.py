@@ -474,26 +474,3 @@ def award_xp(uid: str, amount: int, source: str, details: Optional[Dict[str, Any
     result["unlocked_badges"] = check_achievements(uid, calculate_level(result["new_total_xp"]), result["current_streak"], badge_source)
 
     return result
- "is_tier_up": is_tier_up,
-            "xp_gained": final_amount,
-            "stardust_gained": stardust_gain,
-            "new_total_xp": new_xp,
-            "streak_extended": streak_extended,
-            "streak_rescued": streak_rescued,
-            "current_streak": current_streak,
-            "celestial_event": multiplier > 1.0,
-            "message": "Aura-mu makin Gacor!" if multiplier > 1.0 else "Aura-mu bersinar!",
-            "nostalgia_message": nostalgia_msg
-        }
-        
-    transaction = db.transaction()
-    result = update_in_transaction(transaction, doc_ref, stats_ref)
-    
-    # Achievements & Oracle Echo
-    if result["is_tier_up"]:
-        result["oracle_echo"] = "Bulan lalu kamu khawatir... hari ini auramu jauh lebih terang. Kamu hebat."
-        
-    badge_source = "deep_diary" if (source == "diary" and details and details.get("is_deep_reflection")) else source
-    result["unlocked_badges"] = check_achievements(uid, calculate_level(result["new_total_xp"]), result["current_streak"], badge_source)
-
-    return result
