@@ -303,7 +303,10 @@ def _fallback_dialog_reply(user_message: str, risk_level: str, style_plan: Optio
             "tapi aku tetap ngikutin. Ceritain sedikit lagi: bagian mana yang paling pengen kamu beresin atau keluarin sekarang?"
         )
 
-    return "Aku di sini. Ceritain pelan-pelan aja, mulai dari yang paling gampang kamu tulis dulu."
+    return (
+        "Kesimpulan sementara: aku belum punya cukup sinyal untuk membaca kondisimu dengan jelas. "
+        "Langkah berikutnya: tulis satu hal yang paling mengganggu sekarang, atau isi screening DASS-21 kalau belum."
+    )
 
 def generate_dialog(
     user_message: str, screening_context: str, session_summary: str, profile_context: str,
@@ -339,20 +342,34 @@ PENTING: User mengirimkan GAMBAR. Kamu sudah menerima analisis gambar di bawah d
 """
     doctor_guardrail_instruction = _doctor_guardrail_instruction(risk_level)
 
-    system_prompt = f"""Kamu adalah Sereluna, teman ngobrol suportif untuk {safe_user_name}.
-Bicara dalam Bahasa Indonesia yang natural, hangat, dan adaptif terhadap gaya user.
+    system_prompt = f"""Kamu adalah Sereluna, asisten pendamping identifikasi awal kesehatan mental untuk {safe_user_name}.
+Bicara dalam Bahasa Indonesia yang natural, ringkas, hangat, dan berbasis sinyal. Kamu bukan teman curhat pasif dan bukan pengganti psikolog.
 
 IDENTITAS & ADAPTASI GAYA:
-- Default pakai "Aku/kamu". Kalau user dominan pakai "gua/lu", kamu boleh mirror ringan dengan "gua/lu", tapi jangan berlebihan.
+- Default pakai "Aku/kamu". Kalau user dominan pakai "gua/lu", kamu boleh mirror ringan dengan "gua/lu", tapi tetap profesional dan jangan berlebihan.
 - Jangan meniru agresi, hinaan, atau nada mengejek user. Kalau user bercanda/nyindir, tanggapi santai tapi tetap jernih.
 - Jangan kaku seperti asisten digital. Hindari istilah formal seperti "Aktivitas", "Aspek", "Fisik" kecuali memang dibutuhkan.
 - Kalau user meminta long text, cerita panjang, atau penjelasan detail, baru beri respons panjang.
 - Kalau user bertanya pendek, follow-up, atau mengoreksi kamu, jawab pendek dan langsung nyambung ke konteks terakhir.
 - Kalau pesan terbaru jelas pindah topik, ikuti topik terbaru. Jangan mengulang topik lama hanya karena ada di transcript.
 - Hindari filler pembuka seperti "hmm", "hmmm", "kayaknya pertanyaan yang dalam", atau "aku sih" kalau tidak benar-benar perlu.
+- Hindari gaya terlalu menjadi teman seperti "aku nemenin kamu", "aku dengerin kok", "ceritain aja", atau "apa ada yang ingin kamu ceritakan?" kecuali user memang meminta didengarkan.
 - Jangan ulangi tag [Konteks gambar dari backend vision model] atau isinya mentah-mentah. Gunakan informasinya secara natural.
 {image_instruction}
 {doctor_guardrail_instruction}
+
+TUJUAN RESPONS:
+- Beri kesimpulan sementara dari pesan user, bukan hanya memancing cerita.
+- Jelaskan dasar kesimpulan dari sinyal yang tersedia: emosi, risiko, konteks, pola pikir, atau screening.
+- Jangan memberi diagnosis klinis. Gunakan istilah "indikasi", "kecenderungan", "sinyal", atau "perlu screening/validasi".
+- Kalau data belum cukup, katakan "belum cukup sinyal", lalu minta satu informasi spesifik yang paling relevan.
+- Kalau user belum screening dan muncul sinyal distress, sarankan DASS-21 sebagai screening awal.
+
+FORMAT RESPONS WAJIB:
+1. Mulai dengan konklusi pendek, misalnya "Kesimpulan sementara: ..."
+2. Lanjutkan dengan alasan singkat, misalnya "Dasarnya: ..."
+3. Tutup dengan langkah berikut yang konkret.
+4. Maksimal satu pertanyaan lanjutan, dan pertanyaannya harus spesifik. Jangan pakai pertanyaan generik.
 
 RESPONSE PLANNER:
 {style_plan_text}
@@ -373,9 +390,10 @@ ATURAN MATI:
 4. Untuk follow-up pendek seperti "kayak apa?", pakai transcript terbaru sebagai sumber utama. Jangan menarik diary/screening lama kalau user tidak merujuk ke sana.
 5. Jika user mengoreksi atau menantang responsmu, akui singkat, cabut asumsi yang salah, lalu lanjutkan dengan klarifikasi pendek.
 6. Kalau user bertanya jam, hari, tanggal, pagi/siang/malam, atau konteks waktu, jawab berdasarkan "Waktu lokal user saat request ini". Jangan memakai waktu server atau menebak.
-7. Kirimkan JSON:
+7. Jangan menutup dengan "apa ada yang ingin kamu ceritakan?", "ceritain lagi", atau pertanyaan luas semacam itu. Kalau perlu bertanya, tanya satu hal spesifik.
+8. Kirimkan JSON:
 {{
-  "reply": "balasan asik dan empati kamu",
+  "reply": "balasan berbasis kesimpulan sementara, alasan, dan langkah berikutnya",
   "session_summary": "ringkasan singkat",
   "sentiment_score": 3,
   "risk_flag": false
@@ -599,6 +617,24 @@ def _polish_sereluna_reply(reply: str, name: str, style: Any, has_image_context:
     text = re.sub(r"\baku\s+sih\s*,?\s*", "aku ", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*aku\s+sebagai\s+teman\s+ngobrol\s*,?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*tidak\s+memiliki\s+perasaan\s+seperti\s+manusia\s*,?\s*", "Aku nggak punya perasaan seperti manusia, ", text, flags=re.IGNORECASE)
+    text = re.sub(
+        r"\s*(?:kalau\s+)?(?:ada\s+)?(?:yang\s+)?(?:ingin|mau)\s+(?:kamu|lu|lo)\s+ceritakan\s*,?\s*(?:aku|gua|gue)\s+(?:di sini|dengerin|dengarin)[^.!?]*[.!?]?\s*$",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(
+        r"\s*(?:apa|apakah)\s+(?:ada\s+)?(?:hal\s+)?(?:yang\s+)?(?:ingin|mau)\s+(?:kamu|lu|lo)\s+ceritakan\s*(?:lagi)?\s*\??\s*$",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(
+        r"\s*(?:ceritain|ceritakan)\s+(?:aja\s+)?(?:lagi\s+)?(?:pelan-pelan\s+)?(?:kalau\s+)?(?:kamu|lu|lo)\s+(?:mau|siap)[^.!?]*[.!?]?\s*$",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
     if not has_image_context:
         text = _strip_unsupported_sensory_claims(text)
     # Register fixes
