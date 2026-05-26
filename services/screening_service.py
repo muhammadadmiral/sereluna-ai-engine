@@ -54,14 +54,14 @@ def get_dass21_questionnaire() -> Dict[str, Any]:
 def _parse_date(value: Optional[str]):
     if not value:
         return None
-
-
-def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     try:
         return datetime.strptime(value, "%Y-%m-%d").date()
     except ValueError:
         return None
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def get_screening_status(uid: str) -> Dict[str, Any]:

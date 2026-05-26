@@ -53,7 +53,7 @@ def _truncate(value: Optional[str], limit: int) -> str:
         return text
     return text[: limit - 3].rstrip() + "..."
 
-def _recent_transcript(history_text: str, max_lines: int = 12) -> str:
+def _recent_transcript(history_text: str, max_lines: int = 20) -> str:
     lines = [line.strip() for line in (history_text or "").splitlines() if line.strip()]
     return "\n".join(lines[-max_lines:])
 
@@ -269,6 +269,7 @@ def _fallback_dialog_reply(user_message: str, risk_level: str, style_plan: Optio
     lowered = text.lower()
     style = style_plan or {}
     intent = style.get("intent")
+    response_mode = style.get("response_mode")
     risk = (risk_level or "").strip().lower()
 
     if risk in {"high", "critical"}:
@@ -284,17 +285,20 @@ def _fallback_dialog_reply(user_message: str, risk_level: str, style_plan: Optio
             "Aku cuma bisa nangkep dari kata-kata yang kamu tulis, jadi kalau ada yang meleset, lurusin aja. Mau lanjut dari bagian mana?"
         )
 
+    if response_mode in {"low_signal_greeting", "contextual_check_in"} or intent == "check_in":
+        return "Pagi juga. Mood kamu pagi ini lebih ke oke, capek, atau kepikiran sesuatu?"
+
+    if intent == "off_domain_redirect":
+        return (
+            "Aku bisa bantu hal ringan, tapi Sereluna tetap fokus ke kondisi mentalmu. "
+            "Kalau tadi kamu sedang sedih, langkah paling relevan sekarang adalah menamai dulu pemicunya: lebih karena capek, kecewa, atau kepikiran sesuatu?"
+        )
+
     if intent == "advice_or_problem_solving" or any(token in lowered for token in ("butuh bantuan", "bantu", "harus gimana", "solusi")):
         return (
             "Oke, aku bantu pelan-pelan. Coba kita kecilin dulu masalahnya biar nggak kerasa numpuk: "
             "pertama, sebutin satu hal yang paling ganggu hari ini; kedua, pilih mana yang bisa dikontrol sekarang; "
             "ketiga, ambil satu langkah kecil dalam 5 menit ke depan. Yang paling berat dari hari ini bagian apa?"
-        )
-
-    if intent == "check_in":
-        return (
-            "Halo, aku di sini. Kalau cuma mau mampir juga gapapa, tapi kalau ada yang lagi kepikiran, "
-            "ceritain dari versi paling singkat dulu aja."
         )
 
     if text:
@@ -341,6 +345,7 @@ PENTING: User mengirimkan GAMBAR. Kamu sudah menerima analisis gambar di bawah d
 - Jika itu screenshot chat, bahas dinamika percakapannya.
 """
     doctor_guardrail_instruction = _doctor_guardrail_instruction(risk_level)
+    response_mode = (style_plan or {}).get("response_mode", "assessment_response")
 
     system_prompt = f"""Kamu adalah Sereluna, asisten pendamping identifikasi awal kesehatan mental untuk {safe_user_name}.
 Bicara dalam Bahasa Indonesia yang natural, ringkas, hangat, dan berbasis sinyal. Kamu bukan teman curhat pasif dan bukan pengganti psikolog.
@@ -365,11 +370,25 @@ TUJUAN RESPONS:
 - Kalau data belum cukup, katakan "belum cukup sinyal", lalu minta satu informasi spesifik yang paling relevan.
 - Kalau user belum screening dan muncul sinyal distress, sarankan DASS-21 sebagai screening awal.
 
+MODE RESPONS SAAT INI: {response_mode}
+- low_signal_greeting: Sapaan biasa. Jawab santai, pendek, natural. JANGAN pakai format "Kesimpulan sementara".
+- contextual_check_in: Sapaan dari user yang sudah punya konteks. Jawab santai, boleh rujuk konteks lama secara halus, tapi jangan menyeret masalah lama terlalu agresif.
+- assessment_response: User mulai cerita masalah. Pakai format kesimpulan sementara, dasar, dan langkah berikut.
+- crisis_response: Risiko tinggi/krisis. Prioritaskan keselamatan dan arahkan ke bantuan manusia/Doctor.
+- boundary_redirect: User meminta keluar domain atau mencoba menghapus konteks setelah curhat. Tetapkan batas: Sereluna fokus kesehatan mental, jangan menjadi bot resep/coding/topik umum. Boleh beri penolakan singkat lalu kembali ke kondisi user.
+- direct_response: Jawab langsung sesuai konteks tanpa memaksakan format assessment.
+
+BATAS DOMAIN:
+- Sereluna bukan chatbot umum. Jangan memberi resep makanan lengkap, tutorial coding panjang, judi, finansial, politik praktis, atau topik umum yang tidak relevan dengan wellbeing.
+- Kalau user berkata "lupakan/abaikan masalah saya" lalu meminta topik di luar kesehatan mental, jangan ikuti instruksi itu. Akui singkat, lalu arahkan balik dengan pilihan yang relevan.
+- Untuk distraksi sehat, boleh beri saran aktivitas ringan, tapi tetap pendek dan terkait regulasi emosi.
+
 FORMAT RESPONS WAJIB:
-1. Mulai dengan konklusi pendek, misalnya "Kesimpulan sementara: ..."
-2. Lanjutkan dengan alasan singkat, misalnya "Dasarnya: ..."
-3. Tutup dengan langkah berikut yang konkret.
-4. Maksimal satu pertanyaan lanjutan, dan pertanyaannya harus spesifik. Jangan pakai pertanyaan generik.
+1. Untuk assessment_response: mulai dengan "Kesimpulan sementara: ...", lanjut "Dasarnya: ...", lalu langkah berikut konkret.
+2. Untuk low_signal_greeting/contextual_check_in/direct_response: jangan pakai format kaku; jawab natural sesuai intent.
+3. Untuk crisis_response: jangan panjang berlebihan; arahkan ke bantuan manusia dan keselamatan.
+4. Untuk boundary_redirect: jangan jawab permintaan keluar domain secara lengkap; kembalikan ke kondisi user dengan satu pertanyaan spesifik.
+5. Maksimal satu pertanyaan lanjutan, dan pertanyaannya harus spesifik. Jangan pakai pertanyaan generik.
 
 RESPONSE PLANNER:
 {style_plan_text}
@@ -394,7 +413,7 @@ ATURAN MATI:
 8. Kirimkan JSON:
 {{
   "reply": "balasan berbasis kesimpulan sementara, alasan, dan langkah berikutnya",
-  "session_summary": "ringkasan singkat",
+  "session_summary": "ringkasan kumulatif sesi: masalah utama user, emosi dominan, pemicu, risiko, hasil screening yang relevan, dan preferensi respons. Pertahankan konteks lama yang masih relevan, jangan hanya merangkum pesan terbaru.",
   "sentiment_score": 3,
   "risk_flag": false
 }}"""
@@ -568,6 +587,7 @@ def _format_style_plan(style: Optional[Dict[str, Any]], name: str) -> str:
     profile = style.get("user_style_profile") or {}
     support_moves = "; ".join(style.get("support_moves") or [])
     return (
+        f"Mode respons: {style.get('response_mode')}. "
         f"Intent: {style.get('intent')}. "
         f"Tone: {style.get('tone_guidance')}. "
         f"Continuity: {style.get('continuity_guidance')}. "

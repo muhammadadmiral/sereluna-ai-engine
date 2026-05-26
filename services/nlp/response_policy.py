@@ -6,7 +6,7 @@ LENGTH_PROFILES: Dict[int, Dict[str, int]] = {
     1: {"min_words": 12, "max_words": 32, "max_tokens": 180},
     2: {"min_words": 70, "max_words": 170, "max_tokens": 480},
     3: {"min_words": 240, "max_words": 420, "max_tokens": 950},
-    4: {"min_words": 360, "max_words": 640, "max_tokens": 1800},
+    4: {"min_words": 360, "max_words": 760, "max_tokens": 2600},
 }
 
 
@@ -19,6 +19,8 @@ def choose_desired_paragraphs(
     if short_listener_turn and intent not in {"safety_support", "advice_or_problem_solving"}:
         return 1
     if intent in {"meta_challenge", "clarification_followup"}:
+        return 1
+    if intent == "off_domain_redirect":
         return 1
     if intent == "casual_banter":
         return 1

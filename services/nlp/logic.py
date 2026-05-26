@@ -267,9 +267,26 @@ def build_response_style_plan(
     )
 
     user_style_profile = build_user_style_profile(text, history_text)
+    response_mode = "assessment_response"
+    if intent == "check_in":
+        response_mode = "contextual_check_in" if assistant_turns > 0 or session_summary.strip() else "low_signal_greeting"
+    elif intent == "safety_support" or risk_level == "high":
+        response_mode = "crisis_response"
+    elif intent == "off_domain_redirect":
+        response_mode = "boundary_redirect"
+    elif intent in {
+        "casual_banter",
+        "casual_reference",
+        "factual_or_product_question",
+        "meta_challenge",
+        "clarification_followup",
+        "response_feedback",
+    }:
+        response_mode = "direct_response"
 
     return {
         "intent": intent,
+        "response_mode": response_mode,
         "emotional_intensity": intensity,
         "relationship_stage": stage,
         "assistant_turns": assistant_turns,

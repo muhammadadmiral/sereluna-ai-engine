@@ -125,6 +125,19 @@ def is_response_feedback(text: str) -> bool:
         and re.search(style_words, normalized)
     )
 
+def is_off_domain_redirect_request(text: str) -> bool:
+    normalized = normalize_text(text)
+    if not normalized:
+        return False
+
+    override_cues = r"\b(lupakan|abaikan|ignore|forget|hapus|reset)\b.{0,40}\b(masalah|curhat|konteks|instruksi|aturan|prompt|sebelumnya)\b"
+    off_domain_cues = r"\b(resep|masak|makanan|kue|pisang|es\s+pisang|kode|coding|program|film|anime|game|judi|saham|crypto|politik)\b"
+    if re.search(override_cues, normalized) and re.search(off_domain_cues, normalized):
+        return True
+
+    direct_recipe = r"\b(?:berikan|beri|kasih|minta|buatkan|ajarin)\b.{0,40}\b(?:resep|cara\s+masak|cara\s+membuat\s+makanan)\b"
+    return bool(re.search(direct_recipe, normalized))
+
 def is_long_response_request(text: str) -> bool:
     normalized = normalize_text(text)
     if not normalized:
@@ -183,6 +196,9 @@ def classify_chat_intent(text: str, sentiment_score: int, risk_level: str) -> st
         return "safety_support"
     if is_greeting_only(normalized):
         return "check_in"
+
+    if is_off_domain_redirect_request(text):
+        return "off_domain_redirect"
 
     if is_meta_challenge(text):
         return "meta_challenge"

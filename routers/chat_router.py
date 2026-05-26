@@ -63,6 +63,7 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         preprocessing_filter = algorithm_result.get("preprocessing_filter", {})
         filter_method = (preprocessing_filter.get("algorithm", {})).get("method", "N/A")
         normalized = preprocessing_filter.get("normalized_text", "N/A")
+        style_plan = algorithm_result.get("style_plan") or {}
 
         supervised = algorithm_result.get("supervised_emotion_classifier") or {}
         intent_data = algorithm_result.get("intent_classifier") or {}
@@ -100,6 +101,8 @@ def _log_professor_demo(user_text: str, reply: str, algorithm_result: Dict[str, 
         log_msg += f"   - Trend Sentiment   : {algorithm_result.get('sentiment_trend', 'Stable')}\n"
         log_msg += f"   - Routing Logic     : {algorithm_result.get('routing_mode', 'Direct ML')}\n"
         log_msg += f"   - Intent Classifier : {intent_data.get('intent', 'N/A')} (Conf: {intent_data.get('confidence', 'N/A')})\n"
+        log_msg += f"   - Response Mode     : {style_plan.get('response_mode', 'N/A')}\n"
+        log_msg += f"   - Memory Scope      : {style_plan.get('memory_scope', 'N/A')}\n"
         log_msg += "-"*75 + "\n"
         log_msg += f"4. FINAL LLM RESPONSE (SENT TO USER)\n"
         log_msg += f"   - Output Bot        : {reply}\n"
@@ -343,6 +346,14 @@ def chat_endpoint(
     
     if trend == "Declining (User getting worse)":
         style_plan["tone_guidance"] += "; USE DEEP EMPATHY MODE: be extremely gentle, validate deeply."
+    algorithm_result["style_plan"] = {
+        "intent": style_plan.get("intent"),
+        "response_mode": style_plan.get("response_mode"),
+        "memory_scope": style_plan.get("memory_scope"),
+        "relationship_stage": style_plan.get("relationship_stage"),
+        "desired_paragraphs": style_plan.get("desired_paragraphs"),
+        "target_words": style_plan.get("target_words"),
+    }
 
     # 5. Safety Route Logic (Crisis/Toxicity Detection)
     risk_trace = algorithm_result.get("risk", {})

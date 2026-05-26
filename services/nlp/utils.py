@@ -33,4 +33,12 @@ def contains_any(text: str, cues: set[str]) -> bool:
     return any(cue in text for cue in cues)
 
 def is_greeting_only(normalized_text: str) -> bool:
-    return bool(match_patterns(normalized_text, GREETING_PATTERNS))
+    text = normalize_text(normalized_text)
+    if match_patterns(text, GREETING_PATTERNS):
+        return True
+    return bool(
+        re.fullmatch(
+            r"(?:(hai|halo|hello|hi)\s+)?(hai|halo|hello|hi|pagi|selamat pagi|siang|selamat siang|sore|selamat sore|malam|selamat malam)(\s+(sereluna|luna|kak|min))?",
+            text,
+        )
+    )
