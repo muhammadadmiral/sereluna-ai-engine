@@ -161,7 +161,7 @@ data/doctors.*.local.json
 
 # Firebase & Integrations
 google-service.json
-firebaese-service-account.json
+firebase-service-account.json
 docs/ANDROID_INTEGRATION.md
 docs/FRONTEND_SCREENING_CALENDAR_STATS_GUIDE.md
 docs/FRONTEND.md
