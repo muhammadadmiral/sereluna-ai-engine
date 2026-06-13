@@ -168,4 +168,5 @@ docs/FRONTEND.md
 
 # Deployment Scripts
 deploy.ps1
+deploy.sh
 error.txt
