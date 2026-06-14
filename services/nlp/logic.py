@@ -34,7 +34,7 @@ def select_coping_pathway(
     elif distortion_count:
         pathway = "cbt_reframe_plus_problem_solving"
         steps = [
-            "validasi emosi tanpa menguatkan pikiran katastrofik",
+            "validasi emosi tanpa kesan nge-judge atau diagnosis",
             "ajak user membedakan fakta, asumsi, dan skenario terburuk",
             "beri satu langkah problem-solving yang konkret",
         ]
@@ -102,7 +102,7 @@ def build_response_style_plan(
     history_text: str,
 ) -> Dict[str, Any]:
     normalized = normalize_text(text)
-    word_count = len(normalized.split()) if normalized else 0
+    word_count_val = len(normalized.split()) if normalized else 0
     assistant_turns = assistant_turn_count(history_text)
     intent = classify_chat_intent(text, sentiment_score, risk_level)
     intensity = estimate_emotional_intensity(text, mood_signal, sentiment_score, risk_level)
@@ -113,7 +113,7 @@ def build_response_style_plan(
     desired_paragraphs = choose_desired_paragraphs(
         intent=intent,
         intensity=intensity,
-        word_count=word_count,
+        word_count=word_count_val,
         short_listener_turn=short_listener_turn,
     )
 
@@ -128,137 +128,131 @@ def build_response_style_plan(
 
     opening_variants = {
         "check_in": [
-            "sapa balik singkat lalu ajak user cerita kondisi hari ini",
-            "mulai dengan energi hangat tanpa menyebut nama user",
+            "sapa balik santai dan tanya kabarnya hari ini gimana",
+            "mulai dengan sapaan hangat yang nggak kaku",
         ],
         "advice_or_problem_solving": [
-            "jawab pertanyaan inti dulu sebelum validasi emosi",
-            "petakan masalah user secara ringkas lalu beri langkah konkret",
+            "coba pahami dulu masalahnya sebelum kasih saran",
+            "tanggapi ceritanya dengan empati, baru tawarkan solusi kecil",
         ],
         "emotional_support": [
-            "pantulkan satu detail spesifik dari cerita user",
-            "validasi rasa lelah atau berat tanpa kalimat template",
+            "tunjukkan kalau kamu dengerin detail ceritanya",
+            "validasi perasaannya pake bahasa yang biasa kita pake sehari-hari",
         ],
         "celebration_or_progress": [
-            "ikut merayakan progres user secara natural",
-            "tandai hal kecil yang layak diapresiasi",
+            "ikut seneng denger progres user",
+            "kasih apresiasi buat hal kecil yang udah user lakuin",
         ],
         "safety_support": [
-            "validasi kondisi berat dan arahkan ke bantuan nyata",
-            "bicara tenang, langsung, dan tidak panjang berlebihan",
+            "validasi kondisi berat user dengan tenang dan langsung",
+            "tunjukkan kamu ada di sini untuk nemenin di masa sulit",
         ],
         "curious_question": [
-            "jawab seperti teman ngobrol yang informatif",
-            "beri jawaban jelas lalu kaitkan dengan konteks Sereluna",
+            "jawab pertanyaannya kayak lagi ngobrol sama temen",
+            "jelasin dikit hubungannya sama kesehatan mental kalo nyambung",
         ],
         "clarification_followup": [
-            "jawab berdasarkan pesan terakhir, bukan ringkasan lama",
-            "jelaskan maksudmu secara pendek dan beri satu contoh kalau perlu",
+            "fokus jawab apa yang user tanya barusan",
+            "kalo ada salah paham, lurusin pake bahasa yang enak",
         ],
         "meta_challenge": [
-            "akui koreksi user dengan santai",
-            "cabut asumsi yang terlalu jauh lalu luruskan maksudmu",
+            "akui koreksi user dengan santai dan terbuka",
+            "cabut asumsi yang salah dan minta user jelasin maksudnya",
         ],
         "response_feedback": [
-            "akui feedback user secara santai dan langsung sesuaikan gaya",
-            "jelaskan singkat kenapa tadi bisa terlalu pendek atau panjang",
+            "terima masukannya dengan senang hati",
+            "janji buat sesuaikan gaya ngobrol biar makin nyambung",
         ],
         "factual_or_product_question": [
-            "jawab fakta yang ditanya dulu secara jujur dan ringkas",
-            "kalau tidak punya data pasti, bilang tidak punya akses angka pastinya",
+            "kasih jawaban yang jujur dan nggak muter-muter",
+            "fokus ke fakta yang ditanya aja",
         ],
         "casual_reference": [
-            "tangkap referensi user secara santai",
-            "jangan langsung mengubah referensi lagu/film menjadi sesi dukungan emosional berat",
+            "tanggapi referensinya dengan asik",
+            "tanya dikit kenapa user kepikiran hal itu",
         ],
         "casual_banter": [
-            "balas bercanda ringan tanpa membuat asumsi emosional",
-            "jaga respons tetap pendek dan natural",
+            "ikutin bercandanya user biar suasana cair",
+            "balas pendek dan santai aja",
         ],
         "reflective_companion": [
-            "lanjutkan topik tanpa sapaan ulang",
-            "mulai dari respons yang terasa spontan dan relevan",
+            "lanjutin obrolan biar ngalir terus",
+            "kasih respon yang spontan dan relevan",
         ],
     }
     options = opening_variants.get(intent, opening_variants["reflective_companion"])
-    opening_strategy = options[(assistant_turns + word_count) % len(options)]
+    opening_strategy = options[(assistant_turns + word_count_val) % len(options)]
 
-    support_moves = ["pakai bahasa Indonesia kasual yang tetap aman dan suportif"]
+    support_moves = ["pake bahasa Indonesia yang asik, santai, dan penuh empati"]
     if intent == "advice_or_problem_solving":
         support_moves.extend([
-            "beri 2-3 langkah praktis yang bisa dicoba hari ini",
-            "jelaskan alasan singkat di balik saran",
-            "akhiri dengan satu pertanyaan pilihan supaya user mudah balas",
+            "kasih saran praktis yang gampang dicoba",
+            "jelasin kenapa saran itu mungkin membantu",
+            "tanya pendapat user soal saran itu",
         ])
     elif intent == "emotional_support":
         support_moves.extend([
-            "validasi emosi berdasarkan detail pesan, bukan diagnosis",
-            "tawarkan satu micro-action ringan seperti napas, minum, atau tulis satu kalimat",
-            "kalau user baru memberi potongan cerita pendek, boleh lanjutkan dengan attentive continuer seperti 'ohh terus?' atau 'lanjut, aku ngikutin'",
-            "akhiri dengan satu pertanyaan lembut tentang bagian paling berat",
+            "validasi emosi tanpa kesan nge-judge atau diagnosis",
+            "ajak tarik napas atau minum air kalo ceritanya berat",
+            "pake attentive continuer kayak 'oh gitu ya...', 'terus gimana?'",
+            "tanya pelan-pelan bagian mana yang paling bikin sesak",
         ])
     elif intent == "celebration_or_progress":
         support_moves.extend([
-            "beri apresiasi yang spesifik",
-            "ajak user menyimpan pola baik yang sedang muncul",
+            "kasih selamat yang tulus",
+            "tanya apa yang bikin user ngerasa berhasil hari ini",
         ])
     elif intent == "check_in":
         support_moves.extend([
-            "jangan membuka obrolan dengan kalimat formal",
-            "beri ruang user memilih mau cerita singkat atau panjang",
+            "hindari sapaan template yang kaku",
+            "biarin user cerita apa aja yang ada di kepalanya",
         ])
     elif intent == "safety_support":
         support_moves.extend([
-            "prioritaskan keselamatan dan bantuan manusia tepercaya",
-            "hindari emoji, candaan, dan instruksi yang terdengar menggurui",
+            "prioritaskan keselamatan dan bantuan nyata",
+            "jangan pake bahasa yang kesannya nyuruh-nyuruh",
         ])
     elif intent == "response_feedback":
         support_moves.extend([
-            "jangan defensif",
-            "beri komitmen gaya respons berikutnya dengan bahasa natural",
-            "jangan berubah menjadi promosi aplikasi",
+            "akui kalo respon sebelumnya kurang pas",
+            "langsung balik ke topik utama user",
         ])
     elif intent == "clarification_followup":
         support_moves.extend([
-            "prioritaskan 3-6 pesan terakhir untuk menjawab follow-up",
-            "jangan membuka sesi dukungan emosional baru",
-            "jangan memberi nasihat panjang kecuali user minta",
+            "jawab pertanyaan spesifik user dengan singkat",
+            "nggak usah bahas masalah emosi kalo user lagi tanya teknis",
         ])
     elif intent == "meta_challenge":
         support_moves.extend([
-            "akui kalau respons sebelumnya bisa terdengar sok tahu",
-            "jangan klaim melihat wajah, gestur, atau isi pikiran user",
-            "lanjutkan dengan klarifikasi pendek yang nyambung",
+            "akui kalo kamu tadi 'sok tahu'",
+            "ajak user buat koreksi pemahamanmu",
         ])
     elif intent == "factual_or_product_question":
         support_moves.extend([
-            "jawab langsung tanpa klaim jumlah pengguna kalau datanya tidak tersedia",
-            "hindari paragraf motivasi kesehatan mental yang tidak ditanya",
-            "boleh sebut privasi secara singkat kalau relevan",
+            "jawab langsung inti pertanyaannya",
+            "sebutin soal privasi cuma kalo relevan",
         ])
     elif intent == "casual_reference":
         support_moves.extend([
-            "balas seperti teman yang nangkep referensi",
-            "boleh tanya ringan apakah user cuma quote lagu atau lagi relate beneran",
-            "jangan membuat asumsi sedih/kehilangan kalau user belum bilang",
+            "balas kayak temen yang nangkep referensinya",
+            "jangan langsung ditarik ke topik sedih kalo user cuma lagi denger lagu",
         ])
     elif intent == "casual_banter":
         support_moves.extend([
-            "ikuti energi bercanda user secukupnya",
-            "jangan sok menganalisis emosi dari candaan pendek",
-            "boleh lempar satu pertanyaan ringan kalau perlu",
+            "bercanda balik dikit biar seru",
+            "jangan kaku nanggapi candaan user",
         ])
     else:
         support_moves.extend([
-            "respons seperti teman sebaya yang nyambung",
-            "gunakan konteks memori hanya jika benar-benar relevan",
+            "ngobrol kayak temen sebaya yang nyambung",
+            "pake memori lama cuma kalo bener-bener pas",
         ])
 
     emoji_allowed = (
         risk_level != "high"
         and intensity != "crisis"
         and intent != "safety_support"
-        and (assistant_turns + word_count) % 3 != 0
+        and (assistant_turns + word_count_val) % 3 != 0
     )
     emoji = EMOJI_ROTATION[(assistant_turns + len(normalized)) % len(EMOJI_ROTATION)] if emoji_allowed else None
     name_allowed = (
@@ -318,9 +312,9 @@ def build_response_style_plan(
         "question_budget": 1,
         "short_listener_turn": short_listener_turn,
         "memory_scope": memory_scope,
-        "memory_policy": "Pakai memori lama hanya saat relevan dengan pesan terbaru. Untuk sapaan netral di room baru, abaikan diary/screening lama dan jawab seperti fresh greeting.",
+        "memory_policy": "Pakai memori lama hanya saat relevan dengan pesan terbaru. Untuk sapaan netral di room baru, abaikan diary/screening lama and jawab seperti fresh greeting.",
         "context_priority": (
-            "Untuk meta challenge dan follow-up pendek: pesan user terbaru + 3-6 pesan terakhir adalah sumber utama. "
+            "Untuk meta challenge and follow-up pendek: pesan user terbaru + 3-6 pesan terakhir adalah sumber utama. "
             "Session summary hanya latar. Diary/screening lama hanya boleh dipakai kalau user jelas merujuk ke topik itu."
         ),
     }
