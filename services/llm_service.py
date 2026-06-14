@@ -308,8 +308,8 @@ def _fallback_dialog_reply(user_message: str, risk_level: str, style_plan: Optio
         )
 
     return (
-        "Kesimpulan sementara: aku belum punya cukup sinyal untuk membaca kondisimu dengan jelas. "
-        "Langkah berikutnya: tulis satu hal yang paling mengganggu sekarang, atau isi screening DASS-21 kalau belum."
+        "Aku belum bisa nangkep ceritamu sepenuhnya karena lagi ada kendala koneksi nih. "
+        "Tapi aku tetep di sini. Coba tulis satu hal yang paling ngeganjal di pikiranmu sekarang, pelan-pelan aja."
     )
 
 def generate_dialog(
@@ -364,9 +364,9 @@ STRATEGI FLOW (Data Gathering):
 
 MODE RESPONS SAAT INI: {response_mode}
 - low_signal_greeting/contextual_check_in: Sapaan hangat dan santai. Tanya kabar dengan cara yang beda-beda.
-- assessment_response: Gunakan jika user curhat panjang. Jangan kaku. Gunakan kalimat pembuka seperti "Aku dengerin... sepertinya kamu lagi ngerasa [emosi] ya karena [pemicu]?" bukan "Kesimpulan sementara: ...".
-- crisis_response: Tetap tenang, sangat empati, dan pastikan user merasa aman.
-- boundary_redirect: Jika user minta resep/coding, tolak dengan halus dan bilang, "Wah, menarik sih, tapi aku lebih pengen denger kondisi kamu sekarang. Tadi kamu bilang lagi [emosi], boleh cerita lebih lanjut?"
+- assessment_response: Gunakan jika user curhat panjang atau intens. Awali dengan validasi empati (misal: "Aku dengerin cerita kamu, rasanya emang berat ya pas lagi ngerasa..."), lalu tanya pelan-pelan pemicunya. Jangan kaku.
+- crisis_response: PENTING! User dalam risiko tinggi. Tetap tenang dan empati. Berikan observasi awal secara halus (misal: "Dari ceritamu, sepertinya tekanan yang kamu rasain udah sangat membebani..."). Kamu WAJIB menyuruh user untuk menekan menu Konsultasi Dokter / Psikolog di aplikasi Sereluna ini SEKARANG JUGA. JANGAN bertanya balik. JANGAN minta user bercerita lebih lanjut. Prioritas utama adalah mengarahkan user ke tenaga medis.
+- boundary_redirect: Jika user minta resep/coding/hal di luar kesehatan mental, tolak dengan halus. Contoh: "Wah, sori banget, aku difokusin cuma buat nemenin kamu bahas soal kesehatan mental dan perasaanmu. Tadi kamu sempet bahas soal [emosi/topik sebelumnya], kita lanjut bahas itu aja yuk?"
 - direct_response: Ngobrol biasa, asik, dan nyambung.
 
 {image_instruction}
@@ -381,7 +381,22 @@ FORMAT RESPONS:
   "session_summary": "ringkasan untuk memori jangka panjang: masalah user, emosi, pemicu, dan apa yang harus digali selanjutnya.",
   "sentiment_score": 3,
   "risk_flag": false
-}}"""
+}}
+
+DATA LATAR BELAKANG (GUNAKAN SECARA INVISIBLE/TIDAK KASAT MATA):
+PENTING: Jangan pernah menyebutkan kata "Intelligence", "Plan", "ML", "Skor", atau "Distorsi" kepada user. Gunakan data ini HANYA sebagai panduan caramu bersikap dan merespons.
+
+RESPONSE PLANNER:
+{style_plan_text}
+
+CARE INTELLIGENCE:
+{care_intel}
+
+KONTEKS:
+- Waktu lokal user: {client_time_context or "Tidak tersedia"}
+- Mood: {mood_signal} | Risiko: {risk_level}
+- Konteks terpilih:
+{dialog_context}"""
 
     user_prompt = f"User terbaru: {user_message}"
 
@@ -594,7 +609,8 @@ def _capitalize_first(text: str) -> str:
 
 def _polish_sereluna_reply(reply: str, name: str, style: Any, has_image_context: bool = False) -> str:
     text = (reply or "").strip()
-    # Strip repetitive openers
+    
+    # Strip repetitive openers and clinical fillers
     text = re.sub(rf"^\s*(?:h+m+|hm+|wah|aduh|duh|oke|baiklah|siap|tentu|{re.escape(name)})\s*[,!.]?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*kayaknya\s+pertanyaan\s+(?:yang\s+)?(?:cukup\s+)?dalam\s*,?\s*(?:nih)?\.?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*(?:aku\s+(?:paham|ngerti|mengerti|dengerin))\s*[,!.]?\s*", "", text, flags=re.IGNORECASE)
@@ -602,6 +618,13 @@ def _polish_sereluna_reply(reply: str, name: str, style: Any, has_image_context:
     text = re.sub(r"\baku\s+sih\s*,?\s*", "aku ", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*aku\s+sebagai\s+teman\s+ngobrol\s*,?\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^\s*tidak\s+memiliki\s+perasaan\s+seperti\s+manusia\s*,?\s*", "Aku nggak punya perasaan seperti manusia, ", text, flags=re.IGNORECASE)
+    
+    # Fix weird AI combinations like "Halo lu" or "Halo juga lu"
+    text = re.sub(r"^\s*(?:Halo|Hai)\s+juga\s*,\s*(?:lu|lo|kamu)\b", "Halo juga", text, flags=re.IGNORECASE)
+    text = re.sub(r"^\s*(?:Halo|Hai)\s*,\s*(?:lu|lo|kamu)\b", "Halo", text, flags=re.IGNORECASE)
+    text = re.sub(r"^\s*(?:Lu|Lo|Kamu)\s*,", "", text, flags=re.IGNORECASE)
+
+    # Therapy fillers
     text = re.sub(
         r"\s*(?:kalau\s+)?(?:ada\s+)?(?:yang\s+)?(?:ingin|mau)\s+(?:kamu|lu|lo)\s+ceritakan\s*,?\s*(?:aku|gua|gue)\s+(?:di sini|dengerin|dengarin)[^.!?]*[.!?]?\s*$",
         "",
@@ -622,18 +645,46 @@ def _polish_sereluna_reply(reply: str, name: str, style: Any, has_image_context:
     )
     if not has_image_context:
         text = _strip_unsupported_sensory_claims(text)
+        
     # Register fixes
     register = ((style or {}).get("user_register") or "").lower()
     profile = (style or {}).get("user_style_profile") or {}
+    
     if "gue-lu" in register and profile.get("register") == "gue-lu":
-        if not re.search(r"\b(gua|gue|gw)\b", text, flags=re.IGNORECASE):
-            text = re.sub(r"\bAku\b", "Gua", text, count=1)
-            text = re.sub(r"\baku\b", "gua", text, count=1)
+        text = re.sub(r"\bmenghubungiku\b", "hubungin gua", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bmenghubungi gua\b", "hubungin gua", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bhubungiku\b", "hubungin gua", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bbantuku\b", "bantu gua", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bperasaanmu\b", "perasaan lu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bpikiranmu\b", "pikiran lu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bceritamu\b", "cerita lu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bkabarmu\b", "kabar lu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bmenyakitimu\b", "nyakitin lu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\buntukmu\b", "buat lu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bhari mu\b", "hari lu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bharimu\b", "hari lu", text, flags=re.IGNORECASE)
+        
+        # Stop mixed phrases like "Gua seneng lu menghubungiku" -> handled above
+        # Stop "Gua seneng kamu..."
+        text = re.sub(r"\bAku\b", "Gua", text)
+        text = re.sub(r"\baku\b", "gua", text)
+        text = re.sub(r"\bSaya\b", "Gua", text)
+        text = re.sub(r"\bsaya\b", "gua", text)
         text = re.sub(r"\bKamu\b", "Lu", text)
         text = re.sub(r"\bkamu\b", "lu", text)
         text = re.sub(r"\bAnda\b", "Lu", text)
         text = re.sub(r"\banda\b", "lu", text)
     elif "saya-anda" not in register:
-        text = re.sub(r"\bSaya\b", "Aku", text); text = re.sub(r"\bsaya\b", "aku", text)
-        text = re.sub(r"\bAnda\b", "kamu", text); text = re.sub(r"\banda\b", "kamu", text)
+        text = re.sub(r"\bmenghubungiku\b", "menghubungi aku", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bperasaanmu\b", "perasaan kamu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bpikiranmu\b", "pikiran kamu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bceritamu\b", "cerita kamu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bhari mu\b", "hari kamu", text, flags=re.IGNORECASE)
+        text = re.sub(r"\bharimu\b", "hari kamu", text, flags=re.IGNORECASE)
+        
+        text = re.sub(r"\bSaya\b", "Aku", text)
+        text = re.sub(r"\bsaya\b", "aku", text)
+        text = re.sub(r"\bAnda\b", "kamu", text)
+        text = re.sub(r"\banda\b", "kamu", text)
+        
     return _capitalize_first(text) if text else reply
