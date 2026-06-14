@@ -217,7 +217,6 @@ def search_guardian_articles(
         "articles": articles,
     }
 
-
 def article_notification_body(article: Dict[str, Any]) -> str:
     title = article.get("title") or "Ada artikel rekomendasi baru"
     return f"Artikel rekomendasi dari The Guardian: {title}"

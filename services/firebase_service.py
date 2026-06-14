@@ -172,6 +172,7 @@ def verify_id_token(id_token: str) -> Dict[str, Any]:
 
 async def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[str, Any]:
     if not authorization:
+        print("DEBUG AUTH: Missing Authorization header")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing Authorization header",
@@ -179,6 +180,7 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[
 
     scheme, _, token = authorization.partition(" ")
     if scheme.lower() != "bearer" or not token:
+        print(f"DEBUG AUTH: Invalid scheme or missing token: {scheme}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authorization header must be Bearer token",
@@ -187,6 +189,7 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[
     try:
         decoded = await asyncio.to_thread(verify_id_token, token.strip())
     except Exception as exc:
+        print(f"DEBUG AUTH: Firebase token verification failed: {str(exc)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid Firebase ID token",
@@ -194,6 +197,7 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> Dict[
 
     uid = decoded.get("uid") or decoded.get("user_id")
     if not uid:
+        print("DEBUG AUTH: Token decoded but no UID found")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Firebase token does not contain uid",
