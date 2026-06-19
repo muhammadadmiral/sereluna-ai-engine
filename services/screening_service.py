@@ -88,7 +88,7 @@ def get_screening_status(uid: str) -> Dict[str, Any]:
         create_notification(
             uid=uid,
             title="Skrining tersedia lagi",
-            body="DASS-21 bisa diisi lagi untuk memperbarui baseline wellbeing mingguanmu.",
+            body="DASS-21 bisa diisi lagi untuk memperbarui riwayat skriningmu.",
             notification_type="screening",
             priority="medium",
             category_label="Skrining",

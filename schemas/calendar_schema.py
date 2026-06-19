@@ -8,13 +8,8 @@ class CalendarSummaryItem(BaseModel):
     has_sleep_data: bool = False
     mood: Optional[str] = None
     has_diary: bool = False
-    wellbeing_score: Optional[int] = None
-    wellbeing_level: str = "no_data"
     indicator: str = "empty"
     summary: Optional[str] = None
-    recommendation: Optional[str] = None
-    risk_level: str = "low"
-    model_version: str = ""
     screening_context: Optional[Dict[str, Any]] = None
 
 
@@ -29,24 +24,6 @@ class CalendarSleepDetail(BaseModel):
     wakeup: Optional[str] = None
 
 
-class CalendarWellbeingComponent(BaseModel):
-    name: str
-    score: int
-    weight: float
-    reason: str = ""
-
-
-class CalendarWellbeingInsight(BaseModel):
-    score: Optional[int] = None
-    level: str = "no_data"
-    signals: List[str] = Field(default_factory=list)
-    recommendation: Optional[str] = None
-    risk_level: str = "low"
-    model_version: str = ""
-    components: List[CalendarWellbeingComponent] = Field(default_factory=list)
-    algorithm: Dict[str, Any] = Field(default_factory=dict)
-
-
 class CalendarDetailResponse(BaseModel):
     date: str
     mood: Optional[str] = None
@@ -55,4 +32,3 @@ class CalendarDetailResponse(BaseModel):
     summary: Optional[str] = None
     indicator: str = "empty"
     screening_context: Optional[Dict[str, Any]] = None
-    wellbeing: CalendarWellbeingInsight = Field(default_factory=CalendarWellbeingInsight)

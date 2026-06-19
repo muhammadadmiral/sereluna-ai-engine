@@ -36,8 +36,8 @@ async def save_mood_daily(
     create_notification(
         uid=current_user["uid"],
         title="Mood harian tersimpan",
-        body="Mood kamu sudah masuk ke kalender wellbeing hari ini.",
-        notification_type="wellbeing",
+        body="Mood kamu sudah masuk ke kalender harian hari ini.",
+        notification_type="system",
         priority="low",
         category_label="Kalender",
         action_link=f"/calendar?date={date_value}",

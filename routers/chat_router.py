@@ -505,7 +505,7 @@ async def finish_chat_endpoint(
         uid=uid,
         title="Diary baru tersimpan",
         body="Sesi chat kamu sudah dirangkum menjadi diary. Kamu bisa membukanya dari kalender atau halaman diary.",
-        notification_type="wellbeing",
+        notification_type="system",
         priority="low",
         category_label="Diary",
         action_link=f"/diary/{request.room_id}",
