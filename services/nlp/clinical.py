@@ -30,10 +30,9 @@ def build_emotion_profile(text: str, mood_signal: str, sentiment_score: int, ris
         scores[mood_emotion] += 2
         evidence[mood_emotion].append(f"mood_signal:{mood_signal}")
 
-    ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)
-    primary_emotion, primary_score = ranked[0] if ranked else ("neutral", 0)
+    primary_emotion, primary_score = ranked[0] if ranked else ("normal", 0)
     if primary_score == 0:
-        primary_emotion = "distress" if sentiment_score <= 2 else "neutral"
+        primary_emotion = "distress" if sentiment_score <= 2 else "normal"
 
     raw_intensity = primary_score
     if sentiment_score <= 2:
@@ -50,7 +49,7 @@ def build_emotion_profile(text: str, mood_signal: str, sentiment_score: int, ris
     elif raw_intensity >= 1:
         intensity = "low"
     else:
-        intensity = "neutral"
+        intensity = "normal"
 
     secondary = [
         {"emotion": emotion, "score": score, "evidence": evidence[emotion][:4]}
@@ -159,22 +158,20 @@ def predict_implicit_dass21(
     Predict implicit DASS-21 signals based on current session NLP metrics.
     This is used for 'Proactive Mental Health Support' in the thesis.
     """
-    primary_emotion = emotion_profile.get("primary_emotion", "neutral")
-    intensity = emotion_profile.get("intensity", "neutral")
+    primary_emotion = emotion_profile.get("primary_emotion", "normal")
+    intensity = emotion_profile.get("intensity", "normal")
     distortion_count = distortion_profile.get("count", 0)
 
     # Base scores
     d_score, a_score, s_score = 0, 0, 0
 
     # Emotion mapping to DASS categories
-    if primary_emotion == "sadness":
+    if primary_emotion == "emosi":
         d_score += 2 if intensity == "low" else 4 if intensity == "medium" else 6
     elif primary_emotion == "anxiety":
         a_score += 2 if intensity == "low" else 4 if intensity == "medium" else 6
-    elif primary_emotion in {"anger", "fatigue"}:
+    elif primary_emotion == "stress":
         s_score += 2 if intensity == "low" else 4 if intensity == "medium" else 6
-    elif primary_emotion == "shame":
-        d_score += 3
 
     # Distortion impact
     if distortion_count > 0:

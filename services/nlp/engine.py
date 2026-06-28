@@ -65,7 +65,7 @@ def build_context_algorithm_result(
     
     ml_emotion = (
         {
-            "predicted_emotion": "neutral",
+            "predicted_emotion": "normal",
             "confidence": 0.0,
             "scores": {},
             "algorithm": {
@@ -80,7 +80,7 @@ def build_context_algorithm_result(
     )
     supervised_emotion = (
         {
-            "predicted_emotion": "neutral",
+            "predicted_emotion": "normal",
             "confidence": 0.0,
             "accepted": False,
             "top_probabilities": [],
@@ -116,15 +116,15 @@ def build_context_algorithm_result(
     )
     
     if (
-        emotion_profile["primary_emotion"] in {"neutral", "distress"}
-        and supervised_emotion["predicted_emotion"] != "neutral"
+        emotion_profile["primary_emotion"] in {"normal", "distress"}
+        and supervised_emotion["predicted_emotion"] != "normal"
         and supervised_reliability in {"strong", "tentative"}
     ):
         emotion_profile["primary_emotion"] = supervised_emotion["predicted_emotion"]
         emotion_profile["intensity"] = "low"
     elif (
-        emotion_profile["primary_emotion"] in {"neutral", "distress"}
-        and ml_emotion["predicted_emotion"] != "neutral"
+        emotion_profile["primary_emotion"] in {"normal", "distress"}
+        and ml_emotion["predicted_emotion"] != "normal"
         and supervised_reliability != "low"
     ):
         emotion_profile["primary_emotion"] = ml_emotion["predicted_emotion"]

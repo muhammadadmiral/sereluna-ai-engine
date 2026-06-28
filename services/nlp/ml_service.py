@@ -59,10 +59,20 @@ def get_trained_model():
 
 @lru_cache(maxsize=1)
 def _emotion_centroid_model() -> Dict[str, Any]:
+    label_map = {
+        "anxiety": "anxiety",
+        "fatigue": "stress",
+        "sadness": "emosi",
+        "shame": "emosi",
+        "loneliness": "emosi",
+        "anger": "emosi",
+        "joy": "normal",
+        "relief": "normal"
+    }
     training_rows = [
         {
             "term": row["term"],
-            "emotion": row["emotion"],
+            "emotion": label_map.get(row["emotion"], "normal"),
             "weight": int(row.get("weight") or 1),
         }
         for row in EMOTION_LEXICON_ENTRIES
@@ -97,7 +107,7 @@ def classify_emotion_ml(text: str) -> Dict[str, Any]:
     normalized = _normalize_text(text)
     if not normalized:
         return {
-            "predicted_emotion": "neutral",
+            "predicted_emotion": "normal",
             "confidence": 0.0,
             "scores": {},
             "algorithm": {
@@ -115,7 +125,7 @@ def classify_emotion_ml(text: str) -> Dict[str, Any]:
     }
     predicted_emotion, confidence = max(scores.items(), key=lambda item: item[1])
     if confidence < 0.02:
-        predicted_emotion = "neutral"
+        predicted_emotion = "normal"
 
     return {
         "predicted_emotion": predicted_emotion,
@@ -135,12 +145,28 @@ def classify_emotion_ml(text: str) -> Dict[str, Any]:
 def _read_emotion_csv(path: Path) -> List[Dict[str, str]]:
     if not path.exists():
         return []
+    
+    label_map = {
+        "anxiety": "anxiety",
+        "fatigue": "stress",
+        "sadness": "emosi",
+        "shame": "emosi",
+        "loneliness": "emosi",
+        "anger": "emosi",
+        "joy": "normal",
+        "relief": "normal",
+        "neutral": "normal"
+    }
+    
+    results = []
     with path.open("r", encoding="utf-8", newline="") as file:
-        return [
-            {"text": (row.get("text") or "").strip(), "label": (row.get("label") or "").strip()}
-            for row in csv.DictReader(file)
-            if (row.get("text") or "").strip() and (row.get("label") or "").strip()
-        ]
+        for row in csv.DictReader(file):
+            text = (row.get("text") or "").strip()
+            orig_label = (row.get("label") or "").strip()
+            if text and orig_label:
+                mapped_label = label_map.get(orig_label, "normal")
+                results.append({"text": text, "label": mapped_label})
+    return results
 
 
 def _read_supervised_emotion_dataset(include_supplements: bool = True) -> List[Dict[str, str]]:
@@ -409,7 +435,7 @@ def reload_supervised_emotion_model() -> Dict[str, Any]:
 def classify_emotion_supervised(text: str) -> Dict[str, Any]:
     normalized = _normalize_text(text)
     if not normalized:
-        return {"predicted_emotion": "neutral", "confidence": 0.0, "accepted": False}
+        return {"predicted_emotion": "normal", "confidence": 0.0, "accepted": False}
 
     # Use the cached global model
     model_bundle = get_trained_model()
