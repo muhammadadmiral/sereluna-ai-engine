@@ -332,8 +332,7 @@ def _emotion_classification_pipeline() -> Pipeline:
                 "classifier",
                 LogisticRegression(
                     max_iter=3000,
-                    class_weight="balanced",
-                    C=3.0,
+                    C=1.0,
                     solver="lbfgs",
                     random_state=42,
                 ),
