@@ -317,7 +317,7 @@ def _emotion_classification_pipeline() -> Pipeline:
                             "char_tfidf",
                             TfidfVectorizer(
                                 analyzer="char_wb",
-                                ngram_range=(3, 6),
+                                ngram_range=(2, 5),
                                 lowercase=True,
                                 sublinear_tf=True,
                                 max_df=0.8,
@@ -332,7 +332,7 @@ def _emotion_classification_pipeline() -> Pipeline:
                 "classifier",
                 LogisticRegression(
                     max_iter=3000,
-                    C=0.5,
+                    C=2.0,
                     solver="lbfgs",
                     random_state=42,
                 ),
